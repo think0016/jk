@@ -5,7 +5,7 @@ $a=array(
 		"aax"=>"aa"
 );
 
-
+//有一个修改
 
 
 echo json_encode($a);
