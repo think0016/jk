@@ -6,51 +6,38 @@ use Think\Controller;
 
 class IndexController extends Controller {
 	public function postwebtask() {
-		wlog ( "POST:" . serialize ( $_POST ) );
-		// 获取监控点信息
-		$ip = get_client_ip ();
+		wlog ( "(postwebtask)POST:" . serialize ( $_POST ) );
 		
-		$pointmodel = D ( "jk_monitorypoint" );
-		$point = $pointmodel->field ( 'id' )->where ( array (
-				'status' => 1,
-				'ip' => $ip 
-		) )->find ();
-		
-		if (! $point) {
-			wlog ( "NO POINT BY " . $ip );
-			exit ( "NO POINT BY " . $ip );
-		}
-		$mid = $point ['id'];
-		
-		$data = $_POST ["data"];
-		$id = $_POST ["id"];
 		$type = $_POST ["type"];
-		if (! $data) {
-			exit ();
-		}
 		
-		$_POST ["taskid"] = $id;
-		$_POST ["type"] = $type;
-		$_POST ["mid"] = $mid;
-		
-		/*
-		// http存储测试		
-		if ($_POST ["type"] == 'http') {
-			// 先去一下数据看看
+		if($type == "appcrash" || $type == "appmem" || $type == "appnet"){
+			$r =$this->saveappdata($_POST);//存APP数据
+		}else{
 			
-			$r = $this->httptest ( $_POST );
-			// 测试查看推送数据
+			// 获取监控点信息
+			$ip = get_client_ip ();
+			
+			$pointmodel = D ( "jk_monitorypoint" );
+			$point = $pointmodel->field ( 'id' )->where ( array (
+					'status' => 1,
+					'ip' => $ip
+			) )->find ();
+			
+			if (! $point) {
+				wlog ( "NO POINT BY " . $ip );
+				exit ( "NO POINT BY " . $ip );
+			}
+			$mid = $point ['id'];
+			
+			$data = $_POST ["data"];
+			$id = $_POST ["id"];
+			
+			$_POST ["taskid"] = $id;
+			$_POST ["mid"] = $mid;
+			$r =$this->savedata($_POST);
 		}
-		*/
-		$r =$this->savedata($_POST);
 		
-		
-		// if ($list !== false) { // 保存成功
 		$this->success ( '新增成功!' );
-		// } else {
-		// // 失败提示
-		// $this->error ( '新增失败!' );
-		// }
 	}
 	
 	public function getwebtask() {
@@ -338,5 +325,48 @@ class IndexController extends Controller {
 		return $return;
 	}
 	
+	private function saveappdata($post) {
+		$return = 0;
+		$now = date("Y-m-d H:i:s");
+		$ip=get_client_ip();
+		switch ($post['type']){
+			case "appcrash":
+				$logModel=D("taskapp_crash_log");
+				$data['osversion']=$_POST['osversion'];
+				$data['deviceid']=$_POST['deviceid'];
+				$data['networks']=$_POST['networks'];
+				$data['reason']=$_POST['reason'];
+				$data['exception']=$_POST['exception'];
+				$data['remark']=$_POST['remark'];
+				$data['ip']=$ip;
+				$data['stime']=$now;
+				$return=$logModel->save($data);
+				break;
+			case "appmem":
+				$logModel=D("taskapp_mem_log");
+				$data['osversion']=$_POST['osversion'];
+				$data['deviceid']=$_POST['deviceid'];
+				$data['networks']=$_POST['networks'];
+				$data['used_mem']=$_POST['used_mem'];
+				$data['unused_mem']=$_POST['unused_mem'];
+				$data['remark']=$_POST['remark'];
+				$data['ip']=$ip;
+				$data['stime']=$now;
+				$return=$logModel->save($data);
+				break;
+			case "appnet":
+				$logModel=D("taskapp_net_log");
+				$data['osversion']=$_POST['osversion'];
+				$data['deviceid']=$_POST['deviceid'];
+				$data['networks']=$_POST['networks'];
+				$data['destination']=$_POST['destination'];
+				$data['remark']=$_POST['remark'];
+				$data['ip']=$ip;
+				$data['stime']=$now;
+				$return=$logModel->save($data);
+				break;
+		}
 	
+		return $return;
+	}
 }
