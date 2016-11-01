@@ -252,7 +252,6 @@ class IndexController extends Controller {
 	private function format_rddname($tid, $uid, $mid, $sid, $ssid, $itemid) {
 		return $tid . "_" . $uid . "_" . $mid . "_" . $sid . "_" . $ssid . "_" . $itemid;
 	}
-	
 
 	public function fx() {
 		// $m = M ( "lqtest" );

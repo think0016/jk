@@ -1,7 +1,7 @@
 <?php
 namespace Jk\Controller;
 use Think\Controller;
-class IndexController extends BaseController {
+class SitetaskController extends BaseController {
     public function index(){
     	
     	//检查登录情况
@@ -9,7 +9,4 @@ class IndexController extends BaseController {
         $this->display();
     }
     
-    public function test() {
-    	$this->display();
-    }
 }
