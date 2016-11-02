@@ -6,7 +6,10 @@ class SitetaskController extends BaseController {
     	
     	//检查登录情况
     	$this->is_login(1);
+    	
+    	$this->assign("sitetitle",C('sitetitle'));
         $this->display();
     }
+    
     
 }

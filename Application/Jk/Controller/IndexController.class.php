@@ -6,10 +6,14 @@ class IndexController extends BaseController {
     	
     	//检查登录情况
     	$this->is_login(1);
+    	
+    	$this->assign("sitetitle",C('sitetitle'));
         $this->display();
     }
     
     public function test() {
     	$this->display();
     }
+    
+    
 }

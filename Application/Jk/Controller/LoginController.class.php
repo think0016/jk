@@ -23,7 +23,6 @@ class LoginController extends Controller {
 		
 		$user=$userModel->where($map)->find();
 		if($user){
-			
 			if($user['status']==0){
 				session("uid",$user['id']);
 				session("username",$username);
@@ -31,12 +30,9 @@ class LoginController extends Controller {
 			}else{
 				$this->error("该账号已经被冻结");
 			}
-			
 		}else{
 			$this->error("账号或密码不正确");
 		}
-		
-		
 	}
 	
 	public function register() {

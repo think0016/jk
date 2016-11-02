@@ -31,9 +31,8 @@
   </div>
 
   <div class="register-box-body">
-    <p class="login-box-msg">Register a new membership</p>
-
-    <form action="__APP__/Login/register2.html" method="post">
+    <div class="alertmsg alert alert-danger" style="display: none;"></div>
+    <form id="form" action="__APP__/Login/register2.html" method="post">
       <div class="form-group has-feedback">
         <input type="text" class="form-control" name="username" placeholder="用户名">
         <span class="glyphicon glyphicon-user form-control-feedback"></span>
@@ -43,11 +42,11 @@
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" name="password" placeholder="密码">
+        <input type="password" id="p1" class="form-control" name="password" placeholder="密码">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="再输入一遍密码">
+        <input type="password" id="p2" class="form-control" placeholder="再输入一遍密码">
         <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
       </div>
       <div class="row">
@@ -60,7 +59,7 @@
         </div>
         <!-- /.col -->
         <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">注册</button>
+          <input type="button" id="sub" class="btn btn-primary btn-block btn-flat" value="注册">
         </div>
         <!-- /.col -->
       </div>
@@ -93,7 +92,26 @@
       radioClass: 'iradio_square-blue',
       increaseArea: '20%' // optional
     });
+    
+    $("#sub").click(function(){
+    	var usename=$('input[name=username]').val();
+    	var email=$('input[name=email]').val();
+    	var p1=$('#p1').val();
+    	var p2=$('#p2').val();
+    	if(usename=="" || email=="" || p1=="" || p2==""){
+    		$(".alertmsg").css("display","block");
+    		$(".alertmsg").append("表单项不能为空");
+    	}else{
+    		if(p1 != p2){
+        		$(".alertmsg").css("display","block");
+        		$(".alertmsg").append("两次密码输入不正确！");
+    		}else{
+    			$('#form').submit();
+    		}
+    	}
+    });
   });
+  
 </script>
 </body>
 </html>
