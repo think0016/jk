@@ -11,6 +11,15 @@ class TaskController extends BaseController {
         $this->display();
     }
     
+    public function tasklist(){
+        
+        //检查登录情况
+        $this->is_login(1);
+        
+        $this->assign("sitetitle",C('sitetitle'));
+        $this->display();
+    }
+
     public function create() {
     	$this->is_login(1);
     	 

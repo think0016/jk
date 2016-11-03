@@ -1,0 +1,61 @@
+@charset "UTF-8";
+
+.bgtest {
+    background-color: #C0C0C0;
+}
+.titletest {
+    border: 1px solid #BB0400;
+}
+.divider, .divider1, .divider15, .divider20, .divider30, .divider40, .divider50, .divider60, .divider70, .divider80, .divider90 {
+    margin: 0px;
+    width: 100%;
+    padding: 0px;
+    display: block;
+}
+.divider1 {
+    height: 1px;
+    background-color: #DFDFDF;
+}
+.divider {
+    height: 10px;
+}
+.divider15 {
+    height: 15px;
+}
+.divider20 {
+    height: 20px;
+}
+.divider30 {
+    height: 30px;
+}
+.divider40 {
+    height: 40px;
+}
+.divider50 {
+    height: 50px;
+}
+.divider60 {
+    height: 60px;
+}
+.divider70 {
+    height: 70px;
+}
+.divider80 {
+    height: 80px;
+}
+.divider90 {
+    height: 90px;
+}
+.divider100 {
+    height: 100px;
+}
+.clear {
+    clear: both;
+    margin: 0px;
+    padding: 0px;
+    display: block;
+}
+.fixcolumn {
+    padding-right: 0px;
+    padding-left: 0px;
+}
