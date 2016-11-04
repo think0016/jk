@@ -24,10 +24,27 @@ class TaskController extends BaseController {
     	$this->is_login(1);
     	 
     	$this->assign("sitetitle",C('sitetitle'));
-    	$type = I("get.type");
-    	if($type=="http"){
-    		$this->display('httpadd');
+    	$tasktype_name = I("get.ttype");
+    	
+    	$tasktype = $this->getTaskType($tasktype_name,1);
+    	if(count($tasktype)==0){
+    		$this->error("请求错误");
+    	}
+    	
+    	//监控点
+    	$mps=$this->getMonitoryPoint();
+    	//监控报警项
+    	$alarmitems = D(("jk_taskitem_".$tasktype['sid']))->where(array("is_alarm"=>1,"is_use"=>1))->select();
+    	
+    	$this->assign("alarmitems",$alarmitems);
+    	$this->assign("mps",$mps);
+    	switch ($tasktype_name){
+    		case "http":
+    			$this->display('httpadd');
+    			break;
     	}
     	
     }
+    
+    
 }

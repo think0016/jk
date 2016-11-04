@@ -15,5 +15,7 @@ class IndexController extends BaseController {
     	$this->display();
     }
     
-    
+    public function testx() {
+    	print_r($_POST);
+    }
 }

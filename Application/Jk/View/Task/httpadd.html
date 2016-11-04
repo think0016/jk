@@ -95,8 +95,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<h1>创建任务</h1>
 				<ol class="breadcrumb">
 					<li>
-						<a href="#">
-							<i class="fa fa-dashboard"></i>
+						<a href="#"> <i class="fa fa-dashboard"></i>
 							Level
 						</a>
 					</li>
@@ -117,30 +116,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							</div>
 							<!-- /.box-header -->
 							<!-- form start -->
-							<form class="form-horizontal">
-								<input type="hidden" name="adv" value="0">
+							<form action="__APP__/Index/testx" class="form-horizontal"  method="post" id="form1">
+								<div id="hiddens">
+									<input type="hidden" name="adv" value="0">
+									<input type="hidden" name="alarm_num" value="0"></div>
 								<div class="box-body">
 									<div class="form-group">
 										<label for="input1" class="col-sm-2 control-label">任务名称：</label>
 
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="input1"
-												placeholder="任务名称"></div>
+											<input type="text" name="title" class="form-control" id="input1" placeholder="任务名称"></div>
 									</div>
 									<div class="form-group">
 										<label for="input2" class="col-sm-2 control-label">http监控地址：</label>
 
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="input2" placeholder="http监控地址"></div>
+											<input type="text" name="target" class="form-control" id="input2" placeholder="http监控地址"></div>
 									</div>
 									<div class="form-group">
 										<label class="col-sm-2 control-label">监控点</label>
 										<div class="col-sm-10">
-											<select class="form-control select2"
-											multiple="multiple" data-placeholder="点击选择监控点" style="width: 100%;">
-												<option>河南电信监控点</option>
-												<option>北京联通监控点</option>
-												<option>134测试点</option>
+											<select class="form-control select2" name="mids[]" multiple="multiple" data-placeholder="点击选择监控点" style="width: 100%;">
+												<foreach name="mps" item="vo" >
+													<option value="{$vo.id}">{$vo.title}</option>
+												</foreach>
 											</select>
 										</div>
 									</div>
@@ -148,10 +147,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<label class="col-sm-2 control-label">标签</label>
 										<div class="col-sm-8">
 											<select class="form-control select2"
-											multiple="multiple" data-placeholder="点击选择标签" style="width: 100%;">
-												<option>标签1</option>
-												<option>标签2</option>
-												<option>标签3</option>
+											multiple="multiple" name="labels[]" data-placeholder="点击选择标签" style="width: 100%;">
+												<option value="1">标签1</option>
+												<option value="2">标签2</option>
+												<option value="3">标签3</option>
 											</select>
 										</div>
 										<div class="col-sm-2">
@@ -167,7 +166,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<div class="form-group adv">
 										<label for="ex1" class="col-sm-2 control-label">监控频率：</label>
 										<div class="col-sm-4">
-											<input id="ex1" data-slider-id='blue' type="text" data-slider-min="5" data-slider-max="60" data-slider-step="5" data-slider-value="10"/>
+											<input id="ex1" name="frequency" data-slider-id='blue' type="text" data-slider-min="5" data-slider-max="60" data-slider-step="5" data-slider-value="10"/>
 										</div>
 										<div class="col-sm-6">
 											<span class="ext1v">10分钟</span>
@@ -192,62 +191,63 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<div class="form-group adv">
 										<label for="input5" class="col-sm-2 control-label">post提交内容：</label>
 										<div class="col-sm-10">
-											<textarea id="input5" class="form-control" rows="3"></textarea>
+											<textarea id="input5" name="postdata" class="form-control" rows="3"></textarea>
 										</div>
 									</div>
 									<div class="form-group adv">
 										<label for="input6" class="col-sm-2 control-label">匹配响应内容：</label>
 										<div class="col-sm-10">
-											<textarea id="input6" class="form-control" rows="3"></textarea>
+											<textarea id="input6" name="matchresp" class="form-control" rows="3"></textarea>
 										</div>
 									</div>
 									<div class="form-group adv">
 										<label for="input7" class="col-sm-2 control-label">匹配方式:</label>
 										<div class="col-sm-10">
-											<input type="radio" name="match" value="1">
+											<input type="radio" name="matchtype" value="1">
 											包含匹配内容
-											<input type="radio" name="match" value="0">不包含匹配内容</div>
+											<input type="radio" name="matchtype" value="0">不包含匹配内容</div>
 									</div>
 									<div class="form-group adv">
 										<label for="input8" class="col-sm-2 control-label">Cookies：</label>
 										<div class="col-sm-10">
-											<textarea id="input8" class="form-control" rows="3" ></textarea>
+											<textarea id="input8" name="cookies" class="form-control" rows="3" ></textarea>
 										</div>
 									</div>
 									<div class="form-group adv">
 										<label for="input9" class="col-sm-2 control-label">http头信息：</label>
 										<div class="col-sm-10">
-											<textarea id="input9" class="form-control" rows="3" ></textarea>
+											<textarea id="input9" name="httphead" class="form-control" rows="3" ></textarea>
 										</div>
 									</div>
 									<div class="form-group adv">
 										<label for="input10" class="col-sm-2 control-label">http验证用户名：</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="input10" placeholder=""></div>
+											<input type="text" name="httpusername" class="form-control" id="input10" placeholder=""></div>
 									</div>
 									<div class="form-group adv">
 										<label for="input11" class="col-sm-2 control-label">http验证密码：</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="input11" placeholder=""></div>
+											<input type="text" name="httppassword" class="form-control" id="input11" placeholder=""></div>
 									</div>
 									<div class="form-group adv">
 										<label for="input12" class="col-sm-2 control-label">服务器IP：</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="input12" placeholder=""></div>
+											<input type="text" name="serverip" class="form-control" id="input12" placeholder=""></div>
 									</div>
 									<div class="form-group adv" >
 										<div class="col-sm-12">
 											<div class="divider15"></div>
 										</div>
 										<label for="input4" class="col-sm-2 control-label" style="font-size: 16px;">告警设置</label>
-										<div class="col-sm-10"><button type="button" class="btn btn-info">增加告警策略</button></div>
+										<div class="col-sm-10">
+											<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addalarm">增加告警策略</button>
+										</div>
 									</div>
 									<div class="form-group adv" >
 										<div class="col-sm-1"></div>
 										<div class="col-sm-10">
-											<table class="table table-bordered">
+											<table id="alarm_table" class="table table-bordered">
 												<tr>
-													<th style="width: 10px">#</th>
 													<th>指标</th>
 													<th>条件</th>
 													<th>预警值</th>
@@ -255,78 +255,146 @@ scratch. This page gets rid of all links and provides the needed markup only.
 													<th style="width: 40px">状态</th>
 													<th>操作</th>
 												</tr>
-												<tr>
-													<td>1.</td>
-													<td>HTTP时延</td>
-													<td>
-														大于
-													</td>
-													<td>
-														1000ms
-													</td>
-													<td>
-														2
-													</td>
-													<td>
-														<span class="badge bg-green">开启</span>
-													</td>
-													<td>
-														<div class="btn-group">
-									                      <button type="button" class="btn btn-xs btn-info">修改</button>
-									                      <button type="button" class="btn btn-xs btn-info">删除</button>
-									                    </div>
-													</td>
-												</tr>
-												
-											</table>
-										</div><div class="col-sm-1"></div>
+												<!-- <tr>
+												<td>HTTP时延</td>
+												<td>大于</td>
+												<td>1000ms</td>
+												<td>2</td>
+												<td>
+													<span class="badge bg-green">开启</span>
+												</td>
+												<td>
+													<div class="btn-group">
+														<button type="button" class="btn btn-xs btn-info">修改</button>
+														<button type="button" class="btn btn-xs btn-info">删除</button>
+													</div>
+												</td>
+											</tr>
+											-->
+										</table>
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+							</div>
+							<!-- /.box-body -->
+							<div class="box-footer">
+								<button type="button" class="btn btn-info pull-right" onclick="savefrom();">保存</button>
+							</div>
+							<!-- /.box-footer -->
+						</form>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+
+			<!-- 告警模态框（Modal） -->
+			<div class="modal fade" id="addalarm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content" >
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4 class="modal-title" id="myModalLabel">增加告警策略</h4>
+						</div>
+						<div class="modal-body">
+							<!-- modal start -->
+							<form class="form-horizontal" role="form" id="form2">
+								<div class="form-group">
+									<label for="firstname" class="col-sm-3 control-label">监控指标名称：</label>
+									<div class="col-sm-9">
+										<select class="form-control" id="item_id">
+											<foreach name="alarmitems" item="vo" >
+												<option value="{$vo.itemid}">{$vo.comment}</option>
+											</foreach>
+										</select>
 									</div>
 								</div>
-								<!-- /.box-body -->
-								<div class="box-footer">
-									<button type="button" class="btn btn-info pull-right">保存</button>
+								<div class="form-group">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-3">
+										<select class="form-control" id="op">
+											<option value="gt">大于</option>
+											<option value="lt">小于</option>
+											<option value="eq">等于</option>
+										</select>
+									</div>
+									<div class="col-sm-5">
+										<input type="number" id="threshold" class="form-control" id="lastname" placeholder=""></div>
+									<div class="col-sm-3">
+										<select class="form-control" id="unit">
+											<option value="ms">毫秒</option>
+											<option value="s">秒</option>
+										</select>
+									</div>
 								</div>
-								<!-- /.box-footer -->
-							</form>
-						</div>
+								<div class="form-group">
+									<label for="firstname" class="col-sm-3 control-label">数值计算方式：</label>
+									<div class="col-sm-9">
+										<select class="form-control" id="calc">
+											<option value="0">所有监测点平均</option>
+											<!-- <option value="AVG">选中监测点平均</option>
+										-->
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="firstname" class="col-sm-3 control-label">连续告警次数：</label>
+								<div class="col-sm-9">
+									<select class="form-control" id="atimes">
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+									</select>
+								</div>
+							</div>
+						</form>
+						<!-- modal end -->
 					</div>
-					<div class="col-md-1"></div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary" onclick="savealarm();">提交保存</button>
+					</div>
 				</div>
-			</section>
-			<!-- /.content -->
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal -->
 		</div>
-		<!-- /.content-wrapper -->
+	</section>
+	<!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
 
-		<!-- Main Footer -->
-		<include file="Public/main_footer" />
+<!-- Main Footer -->
+<include file="Public/main_footer" />
 
-		<!-- Control Sidebar -->
+<!-- Control Sidebar -->
 
-		<!-- /.control-sidebar -->
-		<!-- Add the sidebar's background. This div must be placed
+<!-- /.control-sidebar -->
+<!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
-		<div class="control-sidebar-bg"></div>
-	</div>
-	<!-- ./wrapper -->
+<div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
 
-	<!-- REQUIRED JS SCRIPTS -->
+<!-- REQUIRED JS SCRIPTS -->
 
-	<!-- jQuery 2.2.3 -->
-	<load href="__PUBLIC__/plugins/jQuery/jquery-2.2.3.min.js" />
-	<!-- Bootstrap 3.3.6 -->
-	<load href="__PUBLIC__/bootstrap/js/bootstrap.min.js" />
-	<!-- Select2 -->
-	<load href="__PUBLIC__/plugins/select2/select2.full.min.js" />
-	<!-- Bootstrap slider -->
-	<load href="__PUBLIC__/plugins/bootstrap-slider/bootstrap-slider.js" />
-	<!-- AdminLTE App -->
-	<load href="__PUBLIC__/dist/js/app.min.js" />
-
-	<!-- Optionally, you can add Slimscroll and FastClick plugins.
+<!-- jQuery 2.2.3 -->
+<load href="__PUBLIC__/plugins/jQuery/jquery-2.2.3.min.js" />
+<!-- Bootstrap 3.3.6 -->
+<load href="__PUBLIC__/bootstrap/js/bootstrap.min.js" />
+<!-- Select2 -->
+<load href="__PUBLIC__/plugins/select2/select2.full.min.js" />
+<!-- Bootstrap slider -->
+<load href="__PUBLIC__/plugins/bootstrap-slider/bootstrap-slider.js" />
+<!-- AdminLTE App -->
+<load href="__PUBLIC__/dist/js/app.min.js" />
+<!-- private JS -->
+<load href="__PUBLIC__/jk/js/http.js" />
+<!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the
      fixed layout. -->
-	<script type="text/javascript">
+<script type="text/javascript">
 	/* SELECT2 */
 	$(".select2").select2();
 
@@ -351,7 +419,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		}
 	}
 
-	adv_show();
+	//adv_show();
+
 	</script>
 </body>
 </html>

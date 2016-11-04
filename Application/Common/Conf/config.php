@@ -10,4 +10,7 @@ return array(
     'DB_PWD'    => 'sd@2012',  // 密码
     'DB_PORT'   => '3306', // 端口
     'DB_PREFIX' => '', // 数据库表前缀
+    
+	//扩展配置
+	'LOAD_EXT_CONFIG' => 'extcfg'
 );

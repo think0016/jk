@@ -5,15 +5,16 @@ namespace Webservice\Controller;
 use Think\Controller;
 
 class IndexController extends Controller {
-	public function postwebtask() {
-		wlog ( "(postwebtask)POST:" . serialize ( $_POST ) );
+	public function postwebtask() {	
 		
 		$type = $_POST ["type"];
 		
+		$r=0;
 		if($type == "appcrash" || $type == "appmem" || $type == "appnet"){
+			wlog ( "(app)POST:" . serialize ( $_POST ) );
 			$r =$this->saveappdata($_POST);//存APP数据
 		}else{
-			
+			wlog ( "(postwebtask)POST:" . serialize ( $_POST ) );
 			// 获取监控点信息
 			$ip = get_client_ip ();
 			
@@ -37,7 +38,13 @@ class IndexController extends Controller {
 			$r =$this->savedata($_POST);
 		}
 		
-		$this->success ( '新增成功!' );
+		if($r){
+			$msg['result'] = "操作成功";
+			echo json_encode($msg);
+		}else {
+			$msg['result'] = "操作成功";
+			echo json_encode($msg);
+		}
 	}
 	
 	public function getwebtask() {
@@ -321,7 +328,7 @@ class IndexController extends Controller {
 		}
 	
 		wlog ( serialize ( $return ) );
-		return $return;
+		return count($return);
 	}
 	
 	private function saveappdata($post) {
@@ -339,7 +346,7 @@ class IndexController extends Controller {
 				$data['remark']=$_POST['remark'];
 				$data['ip']=$ip;
 				$data['stime']=$now;
-				$return=$logModel->save($data);
+				$return=$logModel->add($data);
 				break;
 			case "appmem":
 				$logModel=D("taskapp_mem_log");
@@ -351,7 +358,7 @@ class IndexController extends Controller {
 				$data['remark']=$_POST['remark'];
 				$data['ip']=$ip;
 				$data['stime']=$now;
-				$return=$logModel->save($data);
+				$return=$logModel->add($data);
 				break;
 			case "appnet":
 				$logModel=D("taskapp_net_log");
@@ -362,7 +369,7 @@ class IndexController extends Controller {
 				$data['remark']=$_POST['remark'];
 				$data['ip']=$ip;
 				$data['stime']=$now;
-				$return=$logModel->save($data);
+				$return=$logModel->add($data);
 				break;
 		}
 	
