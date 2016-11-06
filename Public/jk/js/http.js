@@ -2,15 +2,23 @@ var alarmlist = new Array();
 
 
 function savealarm() {
-
 	var item_text = $("#item_id option:selected").text();
 	var item_id = $("#item_id option:selected").val();
-	var op = $("#op option:selected").val();
-	var op_text = $("#op option:selected").text();
-	var threshold = $("#threshold").val();
+	var op = $("#op1 option:selected").val();
+	var op_text = $("#op1 option:selected").text();
+	var threshold = $("#threshold1").val();
 	var unit = $("#unit option:selected").val();
 	var calc = $("#calc option:selected").val();
 	var atimes = $("#atimes option:selected").val();
+
+
+	var aitem = $("#item_id").find("option:selected").text();
+	if (aitem == '可用率') {
+		op = $("#op2 option:selected").val();
+		op_text = $("#op2 option:selected").text();
+		threshold = $("#threshold2").val();
+		unit = '%';
+	}
 
 	var index = alarmlist.length;
 	var temp = new Array();
@@ -34,15 +42,15 @@ function savealarm() {
 
 }
 
-function savefrom(){
+function savefrom() {
 	var num = alarmlist.length;
 	$("input[name='alarm_num']").val(alarmlist.length);
 	for (var i = 0; i < alarmlist.length; i++) {
-		var temp=alarmlist[i];
-		var name="a"+i;
-		var input = "<input type=\"hidden\" name=\""+name+"\" value=\"0\"></div>";
+		var temp = alarmlist[i];
+		var name = "a" + i;
+		var input = "<input type=\"hidden\" name=\"" + name + "\" value=\"0\"></div>";
 		$('#hiddens').append(input);
-		var s = "input[name='"+name+"']";
+		var s = "input[name='" + name + "']";
 		$(s).val(temp);
 	}
 	$('#form1').submit();

@@ -36,8 +36,7 @@ class TaskController extends BaseController {
 		$mps = $this->getMonitoryPoint ();
 		// 监控报警项
 		$alarmitems = D ( ("jk_taskitem_" . $tasktype ['sid']) )->where ( array (
-				"is_alarm" => 1,
-				"is_use" => 1 
+				"is_alarm" => 1
 		) )->select ();
 		
 		$this->assign ( "alarmitems", $alarmitems );
@@ -172,16 +171,12 @@ class TaskController extends BaseController {
 						"threshold" => $threshold,
 						"data_times" => $atimes,
 						"httphead" => $httphead,
-						"index_id" => $a_itemid
+						"index_id" => $a_itemid,
+						"monitor_id" => $mid
 				);
 				
-				foreach ($mids as $val){
-					$data['monitor_id'] = $val;
-					if($triggerModel->add($data)){
-						$flag++;
-					}
-				}
-				
+					//$data['monitor_id'] = $mid;
+					$flag=$triggerModel->add($data);
 			}
 			if($flag==0){
 				$this->error ( "ERROR4" );

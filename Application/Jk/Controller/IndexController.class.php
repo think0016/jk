@@ -18,4 +18,5 @@ class IndexController extends BaseController {
     public function testx() {
     	print_r($_POST);
     }
+    
 }
