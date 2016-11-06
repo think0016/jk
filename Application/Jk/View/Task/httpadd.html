@@ -116,7 +116,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							</div>
 							<!-- /.box-header -->
 							<!-- form start -->
-							<form action="__APP__/Index/testx" class="form-horizontal"  method="post" id="form1">
+							<form action="__APP__/Task/httptaskadd" class="form-horizontal"  method="post" id="form1">
 								<div id="hiddens">
 									<input type="hidden" name="adv" value="0">
 									<input type="hidden" name="alarm_num" value="0"></div>
@@ -203,7 +203,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<div class="form-group adv">
 										<label for="input7" class="col-sm-2 control-label">匹配方式:</label>
 										<div class="col-sm-10">
-											<input type="radio" name="matchtype" value="1">
+											<input type="radio" name="matchtype" value="1" checked="checked">
 											包含匹配内容
 											<input type="radio" name="matchtype" value="0">不包含匹配内容</div>
 									</div>
@@ -407,6 +407,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	$('#ex1').on("slide", function(slideEvt) {
 		$(".ext1v").text((slideEvt.value + '分钟'));
 	});
+	
 	/* 操作 */
 	function adv_show() {
 		var adv=$("input[name='adv']").val();

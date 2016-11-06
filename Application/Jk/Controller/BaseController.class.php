@@ -5,6 +5,12 @@ namespace Jk\Controller;
 use Think\Controller;
 
 class BaseController extends Controller {
+	
+	/**
+	 * 
+	 * @param number $type 1跳转0不跳转
+	 * @return boolean 
+	 */
 	public function is_login($type = 0) {
 		$uid = session ( "uid" );
 		
