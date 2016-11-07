@@ -87,15 +87,7 @@ class TaskController extends BaseController {
 		if (! isset ( $target ) || $target == "") {
 			$this->error ( "监控地址不能为空" );
 		}
-		// 添加detail表
-		$data = array (
-				"sid" => 1,
-				"target" => $target 
-		);
-		$ssid = $taskDetailsModel->add ( $data );
-		if (! $ssid) {
-			$this->error ( "ERROR1" );
-		}
+
 		
 		// 添加task表
 		$mid = "";
@@ -116,12 +108,12 @@ class TaskController extends BaseController {
 		$frequency = $frequency * 60;
 		$data = array (
 				"sid" => 1,
-				"ssid" => $ssid,
 				"mids" => $mid,
 				"uid" => session ( "uid" ),
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
+				"lasttime" => time(),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -129,10 +121,22 @@ class TaskController extends BaseController {
 		if (! $taskid) {
 			$this->error ( "ERROR2" );
 		}
+		
+		// 添加detail表
+		$data = array (
+				"sid" => 1,
+				"taskid" =>$taskid,
+				"target" => $target
+		);
+		$ssid = $taskDetailsModel->add ( $data );
+		if (! $ssid) {
+			$this->error ( "ERROR1" );
+		}
+		
 		// 添加高级选项
 		if ($adv == 1) {
 			$data = array (
-					"ssid" => $ssid,
+					"taskid" => $taskid,
 					"reqtype" => $reqtype,
 					"postdata" => $postdata,
 					"matchresp" => $matchresp,

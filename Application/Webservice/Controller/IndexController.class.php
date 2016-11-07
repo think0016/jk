@@ -2,18 +2,19 @@
 
 namespace Webservice\Controller;
 
-use Think\Controller;
-
 class IndexController extends BaseController {
 	public function postwebtask() {
 		$type = $_POST ["type"];
 		
 		$r = 0;
 		if ($type == "appcrash" || $type == "appmem" || $type == "appnet") {
-			wlog ( "(app)POST:" . serialize ( $_POST ) );
+			//wlog ( "(app)POST:" . serialize ( $_POST ) );
 			$r = $this->saveappdata ( $_POST ); // 存APP数据
 		} else {
+			
 			wlog ( "(postwebtask)POST:" . serialize ( $_POST ) );
+// 			exit("测试停止");
+			
 			// 获取监控点信息
 			$ip = get_client_ip ();
 			
@@ -22,6 +23,7 @@ class IndexController extends BaseController {
 					'status' => 1,
 					'ip' => $ip 
 			) )->find ();
+			
 			
 			if (! $point) {
 				wlog ( "NO POINT BY " . $ip );
@@ -34,8 +36,10 @@ class IndexController extends BaseController {
 			
 			$_POST ["taskid"] = $id;
 			$_POST ["mid"] = $mid;
+			wlog ( "开始存数据1" );
 			$r = $this->savedata ( $_POST );
 		}
+		
 		
 		if ($r) {
 			$msg ['result'] = "操作成功";
@@ -74,7 +78,6 @@ class IndexController extends BaseController {
 		foreach ( $tasklist as $k => $taskval ) {
 			
 			$sid = $taskval ['sid'];
-			$ssid = $taskval ['ssid'];
 			$tid = $taskval ['id'];
 			
 			$task = array ();
@@ -87,61 +90,23 @@ class IndexController extends BaseController {
 			$type = $type1 ['name'];
 			
 			// 获取监控参数
-			$table = "jk_taskdetails_" . $sid;
-			$taskdetailsmodel = D ( $table );
 			switch ($type) {
 				case "http" :
 					$task = $this->gethttptask ( $taskval );
 					break;
 				case "ping" :
-					$detailslist = $taskdetailsmodel->where ( array (
-							"ssid" => $ssid 
-					) )->find ();
-					$task ["target"] = $detailslist ["target"];
 					break;
 				case "apache" :
-					$detailslist = $taskdetailsmodel->where ( array (
-							"ssid" => $ssid 
-					) )->find ();
-					$task ["target"] = $detailslist ["target"];
 					break;
 				case "nginx" :
-					$detailslist = $taskdetailsmodel->where ( array (
-							"ssid" => $ssid 
-					) )->find ();
-					$task ["target"] = $detailslist ["target"];
 					break;
 				case "ftp" :
-					$detailslist = $taskdetailsmodel->where ( array (
-							"ssid" => $ssid 
-					) )->find ();
-					$task ["target"] = $detailslist ["target"];
-					$task ["port"] = $detailslist ["port"];
-					$task ["username"] = $detailslist ["username"];
-					$task ["password"] = $detailslist ["password"];
 					break;
 				case "udp" :
-					$detailslist = $taskdetailsmodel->where ( array (
-							"ssid" => $ssid 
-					) )->find ();
-					$task ["target"] = $detailslist ["target"];
-					$task ["port"] = $detailslist ["port"];
 					break;
 				case "tcp" :
-					$detailslist = $taskdetailsmodel->where ( array (
-							"ssid" => $ssid 
-					) )->find ();
-					$task ["target"] = $detailslist ["target"];
-					$task ["port"] = $detailslist ["port"];
 					break;
 				case "mysql" :
-					$detailslist = $taskdetailsmodel->where ( array (
-							"ssid" => $ssid 
-					) )->find ();
-					$task ["target"] = $detailslist ["target"];
-					$task ["port"] = $detailslist ["port"];
-					$task ["username"] = $detailslist ["username"];
-					$task ["password"] = $detailslist ["password"];
 					break;
 			}
 			// $task ["type"] = $type;
@@ -272,16 +237,17 @@ class IndexController extends BaseController {
 	// echo json_encode ( $return );
 	// }
 	public function index() {
-		$subject = ":3:,:4:";
-		echo str_replace ( ":", "", $subject );
+		echo $this->CreateRrd("aaaa",300,"asas");
 		echo "INDEX";
 	}
 	private function savedata($post) {
+		
 		$return = array ();
 		$taskid = $post ['taskid'];
 		$mid = $post ['mid'];
 		$data = object_array ( json_decode ( $post ['data'] ) );
-		
+		$lasttime = $post['dotime'];
+		wlog("DDD".$lasttime);
 		/*
 		 * [status] => 1
 		 * [dotime] => 2016-10-23 12:53:31
@@ -300,9 +266,14 @@ class IndexController extends BaseController {
 		if (! $tasklist) {
 			exit ();
 		}
+		//添加lasttime
+		$taskModel->where ( array (
+				"id" => $taskid 
+		) )-> save(array("lasttime"=>$lasttime));
+		
 		$uid = $tasklist ["uid"];
 		$sid = $tasklist ["sid"];
-		$ssid = $tasklist ["ssid"];
+		$ssid = 0;
 		
 		$taskitemModel = D ( "jk_taskitem_" . $sid );
 		// $taskdetailsModel=D("jk_taskdetails_".$sid);
@@ -310,21 +281,24 @@ class IndexController extends BaseController {
 		$taskitem_arr = $taskitemModel->where ( array (
 				"is_use" => 1 
 		) )->select ();
-		
+		wlog ( "SAVE2" );
 		foreach ( $taskitem_arr as $k => $val ) {
 			$item_id = $val ['itemid']; // 指标名称
 			$item_name = $val ['name']; // 指标名称
+			wlog ( "开始存数据；指标".$item_name );
 			$rdata = 0;
 			if ($data [$item_name]) {
 				$rdata = $data [$item_name];
 			}
 			$filename = $this->format_rddname ( $taskid, $uid, $mid, $sid, $ssid, $item_id );
 			$return [] = $this->UpdateRrd ( $filename, $item_name, $rdata );
+			
 		}
 		
 		wlog ( serialize ( $return ) );
 		return count ( $return );
 	}
+	
 	private function saveappdata($post) {
 		$return = 0;
 		$now = date ( "Y-m-d H:i:s" );
@@ -373,20 +347,22 @@ class IndexController extends BaseController {
 		$return = array ();
 		
 		$taskdetailsModel = D ( "jk_taskdetails_1" );
-		$ssid = $taskval ['ssid'];
+		//$ssid = $taskval ['ssid'];
 		$tid = $taskval ['id'];
 		$isadv = $taskval ['isadv'];
 		$frequency = $taskval ['frequency'];
+		$lasttime = $taskval ['lasttime'];
+		
 		
 		$return ['id'] = $tid;
 		$return ['frequency'] = $frequency;
-		
+		$return ['lasttime'] = $lasttime;
 		$taskdetail = $taskdetailsModel->where ( array (
-				"ssid" => $ssid 
+				"taskid" => $tid 
 		) )->find ();
 		
 		if ($taskdetail) {
-			$return ['target'] = $tid;
+			$return ['target'] = $taskdetail['target'];
 		}
 		
 		if ($isadv == 0) {
@@ -394,8 +370,9 @@ class IndexController extends BaseController {
 		} else if ($isadv == 1) {
 			$taskdetailsadvModel = D ( "jk_taskdetails_adv_1" );
 			$taskadvdetail = $taskdetailsadvModel->where ( array (
-					"ssid" => $ssid 
+					"taskid" => $tid 
 			) )->find ();
+			
 			
 			$return ['reqtype'] = $taskadvdetail ['reqtype']; // 高级任务
 			$return ['postdata'] = $taskadvdetail ['postdata']; // 高级任务
@@ -409,7 +386,7 @@ class IndexController extends BaseController {
 			
 			$return ['type'] = "http2"; // 高级任务
 		}
-		wlog($data);
+		
 		return $return;
 	}
 }
