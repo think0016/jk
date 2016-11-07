@@ -104,13 +104,14 @@ class TaskController extends BaseController {
 			if ($i > 0) {
 				$mid = $mid . ",";
 			}
-			$mid = $mid . $mids [$i];
+			$mid = $mid .":".$mids [$i].":";
 		}
+		
 		for($i = 0; $i < count ( $labels ); $i ++) {
 			if ($i > 0) {
 				$label = $label . ",";
 			}
-			$label = $label . $labels [$i];
+			$label = $label .":". $labels [$i].":";
 		}
 		$frequency = $frequency * 60;
 		$data = array (
@@ -151,6 +152,7 @@ class TaskController extends BaseController {
 		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
 		if ($alarm_num > 0) {
+			$monitor_id = str_replace(":", "", $mid);
 			$flag = 0;
 			$triggerModel=D('jk_trigger_ruls');
 			for($i = 0; $i < $alarm_num; $i ++) {
@@ -172,7 +174,7 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"httphead" => $httphead,
 						"index_id" => $a_itemid,
-						"monitor_id" => $mid
+						"monitor_id" => $monitor_id
 				);
 				
 					//$data['monitor_id'] = $mid;
