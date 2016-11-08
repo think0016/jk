@@ -18,7 +18,17 @@ class TaskController extends BaseController {
 		// 检查登录情况
 		$this->is_login ( 1 );
 		
+		
+		$taskModel = D("jk_task");
+		$map['uid']=session("uid");
+		$tasklist=$taskModel
+		->where($map)
+		->join('jk_tasktype ON jk_task.sid = jk_tasktype.sid')
+		->select();
+		
+	
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
+		$this->assign ( "tasklist", $tasklist );
 		$this->display ();
 	}
 	public function create() {
@@ -27,10 +37,16 @@ class TaskController extends BaseController {
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
 		$tasktype_name = I ( "get.ttype" );
 		
+		if(!isset($tasktype_name) || $tasktype_name==""){
+			$this->display ( 'createindex' );
+			exit();
+		}
+		
 		$tasktype = $this->getTaskType ( $tasktype_name, 1 );
 		if (count ( $tasktype ) == 0) {
 			$this->error ( "请求错误" );
 		}
+		
 		
 		// 监控点
 		$mps = $this->getMonitoryPoint ();
@@ -51,7 +67,6 @@ class TaskController extends BaseController {
 		if (! $this->is_login ()) {
 			exit ( "请登录" );
 		}
-		
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 1;
 		$taskModel = D ( 'jk_task' );
@@ -155,6 +170,7 @@ class TaskController extends BaseController {
 		}
 		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
+		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
 		if ($alarm_num > 0) {
 			$monitor_id = str_replace(":", "", $mid);
 			$flag = 0;
@@ -162,23 +178,29 @@ class TaskController extends BaseController {
 			for($i = 0; $i < $alarm_num; $i ++) {
 				$key = "post.a" . $i;
 				$alarm = I ( $key );
+				if($alarm == "del"){
+					continue;
+				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
 				if ($unit == "s") {
 					$threshold *= 60;
 				}
-				if($calc == 0){
-					$calc = "avg";
+				if($calc == 1){
+					//$calc = "avg";
+					$amids = $alist[8];
+					$monitor_id = str_replace(";", ",", $amids);
 				}
 				$data =array(
 						"task_id" => $taskid,
-						"data_calc_func" => $calc,
+						"data_calc_func" => "avg",
 						"operator_type" => $a_operator,
 						"threshold" => $threshold,
 						"data_times" => $atimes,
 						"httphead" => $httphead,
 						"index_id" => $a_itemid,
-						"monitor_id" => $monitor_id
+						"monitor_id" => $monitor_id,
+						"is_monitor_avg" => 0
 				);
 				
 					//$data['monitor_id'] = $mid;

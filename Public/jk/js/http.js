@@ -1,3 +1,5 @@
+//$(".select2").select2();
+
 var alarmlist = new Array();
 
 
@@ -10,7 +12,7 @@ function savealarm() {
 	var unit = $("#unit option:selected").val();
 	var calc = $("#calc option:selected").val();
 	var atimes = $("#atimes option:selected").val();
-
+	var amids ="";
 
 	var aitem = $("#item_id").find("option:selected").text();
 	if (aitem == '可用率') {
@@ -20,6 +22,18 @@ function savealarm() {
 		unit = '%';
 	}
 
+	if(calc == 1){
+		var n = 0;
+		$(".mids").find("option:selected").each(function(){
+			//console.log($(this).text());
+		    //console.log($(this).val());
+		    if(n>0){
+		    	amids = amids + ";";
+		    }
+		    amids = amids + $(this).val();
+		    n++;
+		});
+	}
 	var index = alarmlist.length;
 	var temp = new Array();
 	temp[0] = item_id;
@@ -30,6 +44,8 @@ function savealarm() {
 	temp[5] = atimes;
 	temp[6] = item_text;
 	temp[7] = op_text;
+	temp[8] = amids;
+
 
 	alarmlist[index] = temp;
 

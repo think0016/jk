@@ -136,7 +136,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<div class="form-group">
 										<label class="col-sm-2 control-label">监控点</label>
 										<div class="col-sm-10">
-											<select class="form-control select2" name="mids[]" multiple="multiple" data-placeholder="点击选择监控点" style="width: 100%;">
+											<select class="form-control select2 mids" name="mids[]" multiple="multiple" data-placeholder="点击选择监控点" style="width: 100%;">
 												<foreach name="mps" item="vo" >
 													<option value="{$vo.id}">{$vo.title}</option>
 												</foreach>
@@ -146,7 +146,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<div class="form-group">
 										<label class="col-sm-2 control-label">标签</label>
 										<div class="col-sm-8">
-											<select class="form-control select2"
+											<select class="form-control select2 labels"
 											multiple="multiple" name="labels[]" data-placeholder="点击选择标签" style="width: 100%;">
 												<option value="1">标签1</option>
 												<option value="2">标签2</option>
@@ -234,7 +234,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<div class="col-sm-10">
 											<input type="text" name="serverip" class="form-control" id="input12" placeholder=""></div>
 									</div>
-									<div class="form-group adv" >
+									<div class="form-group " >
 										<div class="col-sm-12">
 											<div class="divider15"></div>
 										</div>
@@ -243,7 +243,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addalarm">增加告警策略</button>
 										</div>
 									</div>
-									<div class="form-group adv" >
+									<div class="form-group " >
 										<div class="col-sm-1"></div>
 										<div class="col-sm-10">
 											<table id="alarm_table" class="table table-bordered">
@@ -255,7 +255,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 													<th style="width: 40px">状态</th>
 													<th>操作</th>
 												</tr>
-												<!-- <tr>
+												<!--  <tr id="ttt">
 												<td>HTTP时延</td>
 												<td>大于</td>
 												<td>1000ms</td>
@@ -269,8 +269,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 														<button type="button" class="btn btn-xs btn-info">删除</button>
 													</div>
 												</td>
-											</tr>
-											-->
+											</tr> -->
+											
 										</table>
 									</div>
 									<div class="col-sm-1"></div>
@@ -344,7 +344,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<div class="col-sm-9">
 										<select class="form-control" id="calc">
 											<option value="0">所有监测点平均</option>
+											<option value="1">所选监控点平均</option>
 										</select>
+									</div>
+								</div>
+								<div class="form-group amidsdiv">
+									<label for="firstname" class="col-sm-3 control-label">监控点选择：</label>
+									<div class="col-sm-9 ">
+										<select class="form-control select2 amids"
+											multiple="multiple" name="amids[]" data-placeholder="点击选择标签" style="width: 100%;">
+												<option value="1">标签1</option>
+												<option value="2">标签2</option>
+												<option value="3">标签3</option>
+											</select>
 									</div>
 								</div>
 								<div class="form-group">
@@ -400,7 +412,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- AdminLTE App -->
 <load href="__PUBLIC__/dist/js/app.min.js" />
 <!-- private JS -->
-<load href="__PUBLIC__/jk/js/http.js" />
+<!-- <load href="__PUBLIC__/jk/js/http.js" /> -->
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the
@@ -453,6 +465,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		//console.log($(this).val());
 	});
 
+	$('.amidsdiv').css('display', 'none');
+	$("#calc").change(function(){
+		var aitem = $("#calc").find("option:selected").val();
+		var amidsdiv = $(".amidsdiv");
+		if(aitem==1){
+			$('.amids').empty();
+			$(".mids").find("option:selected").each(function(){
+			//console.log($(this).text());
+		    //console.log($(this).val());
+		    var html="<option value=\""+$(this).val()+"\">"+$(this).text()+"</option>";
+		    $('.amids').append(html);
+		  	});
+			amidsdiv.css('display', 'block');
+		}else{
+			$('.amids').empty();
+			amidsdiv.css('display', 'none');
+		}
+	});
+
+	$('.alarmv2').css('display', 'none');
 	$("#item_id").change(function(){
 		var aitem=$("#item_id").find("option:selected").text();
 		var a1 = $('.alarmv1');
@@ -465,10 +497,94 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			a1.css('display', 'block');
 		}
 	});
-
-
-	$('.alarmv2').css('display', 'none');
 	//adv_show();
+
+	//原外置js
+	var alarmlist = new Array();
+	function savealarm() {
+		var item_text = $("#item_id option:selected").text();
+		var item_id = $("#item_id option:selected").val();
+		var op = $("#op1 option:selected").val();
+		var op_text = $("#op1 option:selected").text();
+		var threshold = $("#threshold1").val();
+		var unit = $("#unit option:selected").val();
+		var calc = $("#calc option:selected").val();
+		var atimes = $("#atimes option:selected").val();
+		var amids ="";
+
+		var aitem = $("#item_id").find("option:selected").text();
+		if (aitem == '可用率') {
+			op = $("#op2 option:selected").val();
+			op_text = $("#op2 option:selected").text();
+			threshold = $("#threshold2").val();
+			unit = '%';
+		}
+
+		if(calc == 1){
+			var n = 0;
+			$(".mids").find("option:selected").each(function(){
+				//console.log($(this).text());
+			    //console.log($(this).val());
+			    if(n>0){
+			    	amids = amids + ";";
+			    }
+			    amids = amids + $(this).val();
+			    n++;
+			});
+		}
+		var index = alarmlist.length;
+		var temp = new Array();
+		temp[0] = item_id;
+		temp[1] = op;
+		temp[2] = threshold;
+		temp[3] = unit;
+		temp[4] = calc;
+		temp[5] = atimes;
+		temp[6] = item_text;
+		temp[7] = op_text;
+		temp[8] = amids;
+
+
+		alarmlist[index] = temp;
+
+		$('#addalarm').modal('hide');
+		$('#addalarm').modal('hide');
+		var tr = createtr(temp,index);
+		$('#alarm_table').append(tr);
+		//console.log("alarmlist");
+		//console.log(alarmlist);
+		$("#form2")[0].reset();
+	}
+
+	function savefrom() {
+		var num = alarmlist.length;
+		$("input[name='alarm_num']").val(alarmlist.length);
+		for (var i = 0; i < alarmlist.length; i++) {
+			var temp = alarmlist[i];
+			var name = "a" + i;
+			var input = "<input type=\"hidden\" name=\"" + name + "\" value=\"0\"></div>";
+			$('#hiddens').append(input);
+			var s = "input[name='" + name + "']";
+			$(s).val(temp);
+		}
+		$('#form1')[0].submit();
+	}
+
+	function createtr(arr,index) {
+		var html = "<tr id=\"atr"+index+"\">";
+		html += "<td>" + arr[6] + "</td><td>" + arr[7] + "</td><td>" + arr[2] + arr[3] + "</td><td>" + arr[5] + "</td><td><span class=\"badge bg-green\">开启</span></td><td><div class=\"btn-group\"><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"\">修改</button><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"delalarm("+index+","+"0"+");\">删除</button></div></td>";
+		html += "</tr>";
+		return html;
+	}
+
+	function delalarm(index,type){
+		if(type==0){
+			//不用AJAX
+			console.log("DEL:"+index);
+			alarmlist[index]="del";
+			$(("#atr"+index)).remove();
+		}
+	}
 
 	</script>
 </body>
