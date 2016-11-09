@@ -14,14 +14,13 @@ class BaseController extends Controller {
 	public function CreateRrd($name, $step, $ds_name) {
 		$flag = 0;
 		$filename = C ( "rrd_dir" ) . $name . ".rrd";
-		$c="/usr/bin/rrdtool  create $filename  --start -32092970 --step $step DS:$ds_name:GAUGE:600:U:U RRA:AVERAGE:0.5:1:210240 RRA:AVERAGE:0.5:12:17520 RRA:AVERAGE:0.5:288:730 RRA:AVERAGE:0.5:2016:104 RRA:AVERAGE:0.5:8640:24  RRA:MAX:0.5:1:210240  RRA:MAX:0.5:12:17520  RRA:MAX:0.5:288:730  RRA:MAX:0.5:2016:104   RRA:MAX:0.5:8640:24 ";
+		$c = "/usr/bin/rrdtool  create $filename  --start -32092970 --step $step DS:$ds_name:GAUGE:600:U:U RRA:AVERAGE:0.5:1:210240 RRA:AVERAGE:0.5:12:17520 RRA:AVERAGE:0.5:288:730 RRA:AVERAGE:0.5:2016:104 RRA:AVERAGE:0.5:8640:24  RRA:MAX:0.5:1:210240  RRA:MAX:0.5:12:17520  RRA:MAX:0.5:288:730  RRA:MAX:0.5:2016:104   RRA:MAX:0.5:8640:24 ";
 		system ( $c, $status );
 		if (($status == 0) and (file_exists ( $filename ))) {
 			$flag = 1;
 		}
 		return $flag;
 	}
-	
 	public function UpdateRrd($name, $ds_name, $data) {
 		$flag = 0;
 		$filename = C ( "rrd_dir" ) . $name . ".rrd";
@@ -42,11 +41,15 @@ class BaseController extends Controller {
 			return "ERROR:update:" . $c;
 		}
 	}
-	
-	public function format_rddname($tid, $uid, $mid, $sid, $ssid, $itemid) {
+	public function format_rddname($tid, $uid, $mid, $sid, $ssid, $itemid,$step) {
 		return $tid . "_" . $uid . "_" . $mid . "_" . $sid . "_" . $ssid . "_" . $itemid;
 	}
-
+	public function UpdateRrdBysh($filename, $dotime, $ds_name, $data, $taskid, $step) {
+		$c = "sh /var/www/ce/cmd/create_rrd.sh " . $filename .".rrd". " " . $dotime . " " . $ds_name . " " . $data. " " . $taskid. " " . $step;
+		wlog("[UpdateRrdBysh]".$c);
+		system($c,$status);
+		return $status;
+	}
 /**
  * Rrd操作END
  */

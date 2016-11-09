@@ -21,7 +21,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<!-- Select2 -->
 	<load href="__PUBLIC__/plugins/select2/select2.min.css" />
 	<!-- bootstrap slider -->
-	.
 	<load href="__PUBLIC__/plugins/bootstrap-slider/slider.css" />
 	<!-- 最下面 -->
 	<!-- Theme style -->
@@ -140,8 +139,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<div class="col-sm-10">
 											<select class="form-control select2 mids" name="mids[]" multiple="multiple" data-placeholder="点击选择监控点" style="width: 100%;">
 												<foreach name="mps" item="vo" >
-													<option value="{$vo.id}" <if condition="($vo.isdefault eq 1)">selected=""</if>
-													>{$vo.title}
+													<option value="{$vo.id}" <if condition="($vo.isdefault eq 1)">selected=""</if>>{$vo.title}
 												</option>
 											</foreach>
 										</select>
@@ -180,15 +178,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<div class="form-group adv">
 									<label for="input4" class="col-sm-2 control-label">请求方式:</label>
 									<div class="col-sm-10">
-										<input type="radio" name="reqtype" value="post" <if condition="($taskadvdata.reqtype eq 'post')">checked</if>
-									>
+										<input type="radio" name="reqtype" value="post" <if condition="($taskadvdata.reqtype eq 'post')">checked</if>>
 											post&nbsp;&nbsp;
-									<input type="radio" name="reqtype" value="get" <if condition="($taskadvdata.reqtype eq 'get')">checked</if>
-								>
+									<input type="radio" name="reqtype" value="get" <if condition="($taskadvdata.reqtype eq 'get')">checked</if> <empty name="taskadvdata.reqtype">checked</empty>>
 											get&nbsp;&nbsp;
-								<input type="radio" name="reqtype" value="head" <if condition="($taskadvdata.reqtype eq 'head')">checked</if>
-							<empty name="taskadvdata.reqtype">checked</empty>
-							>head&nbsp;&nbsp;
+								<input type="radio" name="reqtype" value="head" <if condition="($taskadvdata.reqtype eq 'head')">checked</if>>head&nbsp;&nbsp;
 						</div>
 					</div>
 					<div class="form-group adv adv_post">
@@ -206,11 +200,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<div class="form-group adv adv_m2">
 						<label for="input7" class="col-sm-2 control-label">匹配方式:</label>
 						<div class="col-sm-10">
-							<input type="radio" name="matchtype" value="1" <if condition="($taskadvdata.matchtype eq 1)">checked</if>
-						>
+							<input type="radio" name="matchtype" value="1" <if condition="($taskadvdata.matchtype eq 1)">checked</if>>
 											包含匹配内容
-						<input type="radio" name="matchtype" value="0" <if condition="($taskadvdata.matchtype eq 0)">checked</if>
-					>不包含匹配内容
+						<input type="radio" name="matchtype" value="0" <if condition="($taskadvdata.matchtype eq 0)">checked</if>>不包含匹配内容
 				</div>
 			</div>
 			<div class="form-group adv">
@@ -265,7 +257,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<tr id="atrx{$vo.id}">
 								<td>{$vo.comment}</td>
 								<td>
-									<switch name="vo.operator_type" ><case value="gt">大于</case><case value="lt">小于</case><case value="eq">等于</case></switch>
+									<switch name="vo.operator_type" >
+										<case value="gt">大于</case>
+										<case value="lt">小于</case>
+										<case value="eq">等于</case>
+									</switch>
 								</td>
 								<td>{$vo.threshold}</td>
 								<td>{$vo.data_times}</td>
@@ -506,17 +502,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			$('.amids').empty();
 			amidsdiv.css('display', 'none');
 		}
+
 	});
+
 
 	$('.alarmv2').css('display', 'none');
 	$("#item_id").change(function(){
 		var aitem=$("#item_id").find("option:selected").text();
 		var a1 = $('.alarmv1');
 		var a2 = $('.alarmv2');
-		if(aitem=='可用率'){
+		if(aitem=='当日可用率'){
 			a1.css('display', 'none');
 			a2.css('display', 'block');
-		}else if(aitem == '链接时间'){
+		}else if(aitem == '当前响应时间'){
 			a2.css('display', 'none');
 			a1.css('display', 'block');
 		}
@@ -577,6 +575,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		$('#alarm_table').append(tr);
 		//console.log("alarmlist");
 		//console.log(alarmlist);
+		$(".amidsdiv").css('display', 'none');
 		$("#form2")[0].reset();
 	}
 
@@ -591,6 +590,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			var s = "input[name='" + name + "']";
 			$(s).val(temp);
 		}
+		//判断表单
+		var title=$("input[name='title']").val();
+		var target=$("input[name='target']").val();
+
 		$('#form1')[0].submit();
 	}
 

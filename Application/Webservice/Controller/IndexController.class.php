@@ -36,7 +36,6 @@ class IndexController extends BaseController {
 			
 			$_POST ["taskid"] = $id;
 			$_POST ["mid"] = $mid;
-			wlog ( "开始存数据1" );
 			$r = $this->savedata ( $_POST );
 		}
 		
@@ -69,6 +68,7 @@ class IndexController extends BaseController {
 		
 		// 获取任务信息
 		$taskmodel = D ( "jk_task" );
+		$map ["is_del"] = 0;
 		$map ["status"] = 1;
 		$map ["mids"] = array (
 				"like",
@@ -247,7 +247,7 @@ class IndexController extends BaseController {
 		$mid = $post ['mid'];
 		$data = object_array ( json_decode ( $post ['data'] ) );
 		$lasttime = $post['dotime'];
-		wlog("DDD".$lasttime);
+		
 		/*
 		 * [status] => 1
 		 * [dotime] => 2016-10-23 12:53:31
@@ -273,6 +273,7 @@ class IndexController extends BaseController {
 		
 		$uid = $tasklist ["uid"];
 		$sid = $tasklist ["sid"];
+		$frequency = $tasklist ["frequency"];
 		$ssid = 0;
 		
 		$taskitemModel = D ( "jk_taskitem_" . $sid );
@@ -281,21 +282,19 @@ class IndexController extends BaseController {
 		$taskitem_arr = $taskitemModel->where ( array (
 				"is_use" => 1 
 		) )->select ();
-		wlog ( "SAVE2" );
 		foreach ( $taskitem_arr as $k => $val ) {
 			$item_id = $val ['itemid']; // 指标名称
 			$item_name = $val ['name']; // 指标名称
-			wlog ( "开始存数据；指标".$item_name );
 			$rdata = 0;
 			if ($data [$item_name]) {
 				$rdata = $data [$item_name];
 			}
 			$filename = $this->format_rddname ( $taskid, $uid, $mid, $sid, $ssid, $item_id );
-			$return [] = $this->UpdateRrd ( $filename, $item_name, $rdata );
+			//$return [] = $this->UpdateRrd ( $filename, $item_name, $rdata );
+			$this->UpdateRrdBysh($filename, $lasttime, $item_name, $rdata, $taskid, $frequency);
 			
 		}
 		
-		wlog ( serialize ( $return ) );
 		return count ( $return );
 	}
 	
