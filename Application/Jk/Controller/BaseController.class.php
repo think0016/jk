@@ -84,4 +84,8 @@ class BaseController extends Controller {
 			return array();
 		}
 	}
+	
+	public function assignbase(){
+		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
+	}
 }

@@ -118,6 +118,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<!-- form start -->
 							<form action="__APP__/Task/httptaskadd" class="form-horizontal"  method="post" id="form1">
 								<div id="hiddens">
+									<input type="hidden" name="tid" value="{$task.id}">
+									<input type="hidden" name="update" value="{$update}">
 									<input type="hidden" name="adv" value="0">
 									<input type="hidden" name="alarm_num" value="0"></div>
 								<div class="box-body">
@@ -125,277 +127,288 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<label for="input1" class="col-sm-2 control-label">任务名称：</label>
 
 										<div class="col-sm-10">
-											<input type="text" name="title" class="form-control" id="input1" placeholder="任务名称"></div>
+											<input type="text" name="title" class="form-control" id="input1" placeholder="任务名称" value="{$task.title}"></div>
 									</div>
 									<div class="form-group">
 										<label for="input2" class="col-sm-2 control-label">http监控地址：</label>
 
 										<div class="col-sm-10">
-											<input type="text" name="target" class="form-control" id="input2" placeholder="http监控地址"></div>
+											<input type="text" name="target" class="form-control" id="input2" placeholder="http监控地址" value="{$taskdetail.target}"></div>
 									</div>
 									<div class="form-group">
 										<label class="col-sm-2 control-label">监控点</label>
 										<div class="col-sm-10">
 											<select class="form-control select2 mids" name="mids[]" multiple="multiple" data-placeholder="点击选择监控点" style="width: 100%;">
 												<foreach name="mps" item="vo" >
-													<option value="{$vo.id}">{$vo.title}</option>
-												</foreach>
-											</select>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label">标签</label>
-										<div class="col-sm-8">
-											<select class="form-control select2 labels"
-											multiple="multiple" name="labels[]" data-placeholder="点击选择标签" style="width: 100%;">
-												<option value="1">标签1</option>
-												<option value="2">标签2</option>
-												<option value="3">标签3</option>
-											</select>
-										</div>
-										<div class="col-sm-2">
-											<button type="button" class="btn btn-info pull-left">添加</button>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="input3" class="col-sm-2 control-label"></label>
-										<div class="col-sm-10">
-											<button id="" onclick="adv_show();" type="button" class="btn btn-info pull-left">高级选项</button>
-										</div>
-									</div>
-									<div class="form-group adv">
-										<label for="ex1" class="col-sm-2 control-label">监控频率：</label>
-										<div class="col-sm-4">
-											<input id="ex1" name="frequency" data-slider-id='blue' type="text" data-slider-min="5" data-slider-max="60" data-slider-step="5" data-slider-value="10"/>
-										</div>
-										<div class="col-sm-6">
-											<span class="ext1v">10分钟</span>
-										</div>
-									</div>
-									<div class="form-group adv" >
-										<div class="col-sm-12">
-											<div class="divider15"></div>
-										</div>
-										<label for="input4" class="col-sm-2 control-label" style="font-size: 16px;">监控点采集设置</label>
-										<div class="col-sm-10"></div>
-									</div>
-									<div class="form-group adv">
-										<label for="input4" class="col-sm-2 control-label">请求方式:</label>
-										<div class="col-sm-10">
-											<input type="radio" name="reqtype" value="post" checked>
-											post&nbsp;&nbsp;
-											<input type="radio" name="reqtype" value="get">
-											get&nbsp;&nbsp;
-											<input type="radio" name="reqtype" value="head">head&nbsp;&nbsp;</div>
-									</div>
-									<div class="form-group adv adv_post">
-										<label for="input5" class="col-sm-2 control-label">post提交内容：</label>
-										<div class="col-sm-10">
-											<textarea id="input5" name="postdata" class="form-control" rows="3"></textarea>
-										</div>
-									</div>
-									<div class="form-group adv adv_m1">
-										<label for="input6" class="col-sm-2 control-label">匹配响应内容：</label>
-										<div class="col-sm-10">
-											<textarea id="input6" name="matchresp" class="form-control" rows="3"></textarea>
-										</div>
-									</div>
-									<div class="form-group adv adv_m2">
-										<label for="input7" class="col-sm-2 control-label">匹配方式:</label>
-										<div class="col-sm-10">
-											<input type="radio" name="matchtype" value="1" checked="checked">
-											包含匹配内容
-											<input type="radio" name="matchtype" value="0">不包含匹配内容</div>
-									</div>
-									<div class="form-group adv">
-										<label for="input8" class="col-sm-2 control-label">Cookies：</label>
-										<div class="col-sm-10">
-											<textarea id="input8" name="cookies" class="form-control" rows="3" ></textarea>
-										</div>
-									</div>
-									<div class="form-group adv">
-										<label for="input9" class="col-sm-2 control-label">http头信息：</label>
-										<div class="col-sm-10">
-											<textarea id="input9" name="httphead" class="form-control" rows="3" ></textarea>
-										</div>
-									</div>
-									<div class="form-group adv">
-										<label for="input10" class="col-sm-2 control-label">http验证用户名：</label>
-										<div class="col-sm-10">
-											<input type="text" name="httpusername" class="form-control" id="input10" placeholder=""></div>
-									</div>
-									<div class="form-group adv">
-										<label for="input11" class="col-sm-2 control-label">http验证密码：</label>
-										<div class="col-sm-10">
-											<input type="text" name="httppassword" class="form-control" id="input11" placeholder=""></div>
-									</div>
-									<div class="form-group adv">
-										<label for="input12" class="col-sm-2 control-label">服务器IP：</label>
-										<div class="col-sm-10">
-											<input type="text" name="serverip" class="form-control" id="input12" placeholder=""></div>
-									</div>
-									<div class="form-group " >
-										<div class="col-sm-12">
-											<div class="divider15"></div>
-										</div>
-										<label for="input4" class="col-sm-2 control-label" style="font-size: 16px;">告警设置</label>
-										<div class="col-sm-10">
-											<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addalarm">增加告警策略</button>
-										</div>
-									</div>
-									<div class="form-group " >
-										<div class="col-sm-1"></div>
-										<div class="col-sm-10">
-											<table id="alarm_table" class="table table-bordered">
-												<tr>
-													<th>指标</th>
-													<th>条件</th>
-													<th>预警值</th>
-													<th>连续告警次数</th>
-													<th style="width: 40px">状态</th>
-													<th>操作</th>
-												</tr>
-												<!--  <tr id="ttt">
-												<td>HTTP时延</td>
-												<td>大于</td>
-												<td>1000ms</td>
-												<td>2</td>
-												<td>
-													<span class="badge bg-green">开启</span>
-												</td>
-												<td>
-													<div class="btn-group">
-														<button type="button" class="btn btn-xs btn-info">修改</button>
-														<button type="button" class="btn btn-xs btn-info">删除</button>
-													</div>
-												</td>
-											</tr> -->
-											
-										</table>
-									</div>
-									<div class="col-sm-1"></div>
-								</div>
-							</div>
-							<!-- /.box-body -->
-							<div class="box-footer">
-								<button type="button" class="btn btn-info pull-right" onclick="savefrom();">保存</button>
-							</div>
-							<!-- /.box-footer -->
-						</form>
-					</div>
-				</div>
-				<div class="col-md-1"></div>
-			</div>
-
-			<!-- 告警模态框（Modal） -->
-			<div class="modal fade" id="addalarm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content" >
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-							<h4 class="modal-title" id="myModalLabel">增加告警策略</h4>
-						</div>
-						<div class="modal-body">
-							<!-- modal start -->
-							<form class="form-horizontal" role="form" id="form2">
-								<div class="form-group">
-									<label for="firstname" class="col-sm-3 control-label">监控指标名称：</label>
-									<div class="col-sm-9">
-										<select class="form-control" id="item_id">
-											<foreach name="alarmitems" item="vo" >
-												<option value="{$vo.itemid}">{$vo.comment}</option>
+													<option value="{$vo.id}" <if condition="($vo.isdefault eq 1)">selected=""</if>
+													>{$vo.title}
+												</option>
 											</foreach>
 										</select>
 									</div>
 								</div>
 								<div class="form-group">
-									<div class="col-sm-1 alarmv1"></div>
-									<div class="col-sm-3 alarmv1">
-										<select class="form-control" id="op1">
-											<option value="gt">大于</option>
-											<option value="lt">小于</option>
-											<option value="eq">等于</option>
+									<label class="col-sm-2 control-label">标签</label>
+									<div class="col-sm-8">
+										<select class="form-control select2 labels"
+											multiple="multiple" name="labels[]" data-placeholder="点击选择标签" style="width: 100%;">
+											<option value="1">标签1</option>
+											<option value="2">标签2</option>
+											<option value="3">标签3</option>
 										</select>
 									</div>
-									<div class="col-sm-5 alarmv1">
-										<input type="number" id="threshold1" class="form-control" id="lastname" placeholder=""></div>
-									<div class="col-sm-3 alarmv1">
-										<select class="form-control" id="unit">
-											<option value="ms">毫秒</option>
-											<option value="s">秒</option>
-										</select>
-									</div>
-									<div class="col-sm-3 alarmv2"></div>
-									<div class="col-sm-3 alarmv2">
-										<select class="form-control" id="op2">
-											<option value="gt">大于</option>
-											<option value="lt">小于</option>
-											<option value="eq">等于</option>
-										</select>
-									</div>
-									<div class="col-sm-6 alarmv2">
-										<input type="number" id="threshold2" class="form-control" id="lastname" placeholder="百分比">
-
-									</div>
-									
-								</div>
-								<div class="form-group">
-									<label for="firstname" class="col-sm-3 control-label">数值计算方式：</label>
-									<div class="col-sm-9">
-										<select class="form-control" id="calc">
-											<option value="0">所有监测点平均</option>
-											<option value="1">所选监控点平均</option>
-										</select>
+									<div class="col-sm-2">
+										<button type="button" class="btn btn-info pull-left">添加</button>
 									</div>
 								</div>
-								<div class="form-group amidsdiv">
-									<label for="firstname" class="col-sm-3 control-label">监控点选择：</label>
-									<div class="col-sm-9 ">
-										<select class="form-control select2 amids"
-											multiple="multiple" name="amids[]" data-placeholder="点击选择标签" style="width: 100%;">
-												<option value="1">标签1</option>
-												<option value="2">标签2</option>
-												<option value="3">标签3</option>
-											</select>
+								<div class="form-group adv">
+									<label for="ex1" class="col-sm-2 control-label">监控频率：</label>
+									<div class="col-sm-4">
+										<input id="ex1" name="frequency" data-slider-id='blue' type="text" data-slider-min="5" data-slider-max="60" data-slider-step="5" data-slider-value="{$task.frequency|default=5}"/>
+									</div>
+									<div class="col-sm-6">
+										<span class="ext1v">{$task.frequency|default=5}分钟</span>
 									</div>
 								</div>
-								<div class="form-group">
-									<label for="firstname" class="col-sm-3 control-label">连续告警次数：</label>
-									<div class="col-sm-9">
-										<select class="form-control" id="atimes">
-											<option value="1">1</option>
-											<option value="2">2</option>
-											<option value="3">3</option>
-										</select>
+								<div class="form-group adv" >
+									<div class="col-sm-12">
+										<div class="divider15"></div>
 									</div>
+									<label for="input4" class="col-sm-2 control-label" style="font-size: 16px;">监控点采集设置</label>
+									<div class="col-sm-10"></div>
 								</div>
-							</form>
-							<!-- modal end -->
-						</div>
-
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-							<button type="button" class="btn btn-primary" onclick="savealarm();">提交保存</button>
+								<div class="form-group adv">
+									<label for="input4" class="col-sm-2 control-label">请求方式:</label>
+									<div class="col-sm-10">
+										<input type="radio" name="reqtype" value="post" <if condition="($taskadvdata.reqtype eq 'post')">checked</if>
+									>
+											post&nbsp;&nbsp;
+									<input type="radio" name="reqtype" value="get" <if condition="($taskadvdata.reqtype eq 'get')">checked</if>
+								>
+											get&nbsp;&nbsp;
+								<input type="radio" name="reqtype" value="head" <if condition="($taskadvdata.reqtype eq 'head')">checked</if>
+							<empty name="taskadvdata.reqtype">checked</empty>
+							>head&nbsp;&nbsp;
 						</div>
 					</div>
-					<!-- /.modal-content -->
+					<div class="form-group adv adv_post">
+						<label for="input5" class="col-sm-2 control-label">post提交内容：</label>
+						<div class="col-sm-10">
+							<textarea id="input5" name="postdata" class="form-control" rows="3">{$taskadvdata.postdata}</textarea>
+						</div>
+					</div>
+					<div class="form-group adv adv_m1">
+						<label for="input6" class="col-sm-2 control-label">匹配响应内容：</label>
+						<div class="col-sm-10">
+							<textarea id="input6" name="matchresp" class="form-control" rows="3">{$taskadvdata.matchresp}</textarea>
+						</div>
+					</div>
+					<div class="form-group adv adv_m2">
+						<label for="input7" class="col-sm-2 control-label">匹配方式:</label>
+						<div class="col-sm-10">
+							<input type="radio" name="matchtype" value="1" <if condition="($taskadvdata.matchtype eq 1)">checked</if>
+						>
+											包含匹配内容
+						<input type="radio" name="matchtype" value="0" <if condition="($taskadvdata.matchtype eq 0)">checked</if>
+					>不包含匹配内容
 				</div>
-				<!-- /.modal -->
 			</div>
-		</section>
-		<!-- /.content -->
+			<div class="form-group adv">
+				<label for="input8" class="col-sm-2 control-label">Cookies：</label>
+				<div class="col-sm-10">
+					<textarea id="input8" name="cookies" class="form-control" rows="3" >{$taskadvdata.cookies}</textarea>
+				</div>
+			</div>
+			<div class="form-group adv">
+				<label for="input9" class="col-sm-2 control-label">http头信息：</label>
+				<div class="col-sm-10">
+					<textarea id="input9" name="httphead" class="form-control" rows="3" >{$taskadvdata.httphead}</textarea>
+				</div>
+			</div>
+			<div class="form-group adv">
+				<label for="input10" class="col-sm-2 control-label">http验证用户名：</label>
+				<div class="col-sm-10">
+					<input type="text" name="httpusername" class="form-control" id="input10" value="{$taskadvdata.httpusername}" placeholder=""></div>
+			</div>
+			<div class="form-group adv">
+				<label for="input11" class="col-sm-2 control-label">http验证密码：</label>
+				<div class="col-sm-10">
+					<input type="text" name="httppassword" class="form-control" id="input11" value="{$taskadvdata.httppassword}" placeholder="" ></div>
+			</div>
+			<div class="form-group adv">
+				<label for="input12" class="col-sm-2 control-label">服务器IP：</label>
+				<div class="col-sm-10">
+					<input type="text" name="serverip" class="form-control" id="input12" value="{$taskadvdata.serverip}" placeholder=""></div>
+			</div>
+			<div class="form-group " >
+				<div class="col-sm-12">
+					<div class="divider15"></div>
+				</div>
+				<label for="input4" class="col-sm-2 control-label" style="font-size: 16px;">告警设置</label>
+				<div class="col-sm-10">
+					<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addalarm">增加告警策略</button>
+				</div>
+			</div>
+			<div class="form-group " >
+				<div class="col-sm-1"></div>
+				<div class="col-sm-10">
+					<table id="alarm_table" class="table table-bordered">
+						<tr>
+							<th>指标</th>
+							<th>条件</th>
+							<th>预警值</th>
+							<th>连续告警次数</th>
+							<th style="width: 40px">状态</th>
+							<th>操作</th>
+						</tr>
+						<foreach name="triggers" item="vo" >
+							<tr id="atrx{$vo.id}">
+								<td>{$vo.comment}</td>
+								<td>
+									<switch name="vo.operator_type" ><case value="gt">大于</case><case value="lt">小于</case><case value="eq">等于</case></switch>
+								</td>
+								<td>{$vo.threshold}</td>
+								<td>{$vo.data_times}</td>
+								<td>
+									<span class="badge bg-green">开启</span>
+								</td>
+								<td>
+									<div class="btn-group">
+										<button type="button" class="btn btn-xs btn-info">修改</button>
+										<button type="button" class="btn btn-xs btn-info" onclick="delalarm({$vo.id},1)">删除</button>
+									</div>
+								</td>
+							</tr>
+						</foreach>
+					</table>
+				</div>
+				<div class="col-sm-1"></div>
+			</div>
+			<div class="form-group">
+				<label for="input3" class="col-sm-2 control-label"></label>
+				<div class="col-sm-10">
+					<button id="" onclick="adv_show();" type="button" class="btn btn-info pull-left">高级选项</button>
+				</div>
+			</div>
+		</div>
+		<!-- /.box-body -->
+		<div class="box-footer">
+			<button type="button" class="btn btn-info pull-right" onclick="savefrom();">保存</button>
+		</div>
+		<!-- /.box-footer -->
+	</form>
+</div>
+</div>
+<div class="col-md-1"></div>
+</div>
+
+<!-- 告警模态框（Modal） -->
+<div class="modal fade" id="addalarm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content" >
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h4 class="modal-title" id="myModalLabel">增加告警策略</h4>
 	</div>
-	<!-- /.content-wrapper -->
+	<div class="modal-body">
+		<!-- modal start -->
+		<form class="form-horizontal" role="form" id="form2">
+			<div class="form-group">
+				<label for="firstname" class="col-sm-3 control-label">监控指标名称：</label>
+				<div class="col-sm-9">
+					<select class="form-control" id="item_id">
+						<foreach name="alarmitems" item="vo" >
+							<option value="{$vo.itemid}">{$vo.comment}</option>
+						</foreach>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-1 alarmv1"></div>
+				<div class="col-sm-3 alarmv1">
+					<select class="form-control" id="op1">
+						<option value="gt">大于</option>
+						<option value="lt">小于</option>
+						<option value="eq">等于</option>
+					</select>
+				</div>
+				<div class="col-sm-5 alarmv1">
+					<input type="number" id="threshold1" class="form-control" id="lastname" placeholder=""></div>
+				<div class="col-sm-3 alarmv1">
+					<select class="form-control" id="unit">
+						<option value="ms">毫秒</option>
+						<option value="s">秒</option>
+					</select>
+				</div>
+				<div class="col-sm-3 alarmv2"></div>
+				<div class="col-sm-3 alarmv2">
+					<select class="form-control" id="op2">
+						<option value="gt">大于</option>
+						<option value="lt">小于</option>
+						<option value="eq">等于</option>
+					</select>
+				</div>
+				<div class="col-sm-6 alarmv2">
+					<input type="number" id="threshold2" class="form-control" id="lastname" placeholder="百分比"></div>
 
-	<!-- Main Footer -->
-	<include file="Public/main_footer" />
+			</div>
+			<div class="form-group">
+				<label for="firstname" class="col-sm-3 control-label">数值计算方式：</label>
+				<div class="col-sm-9">
+					<select class="form-control" id="calc">
+						<option value="0">所有监测点平均</option>
+						<option value="1">所选监控点平均</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group amidsdiv">
+				<label for="firstname" class="col-sm-3 control-label">监控点选择：</label>
+				<div class="col-sm-9 ">
+					<select class="form-control select2 amids"
+											multiple="multiple" name="amids[]" data-placeholder="点击选择标签" style="width: 100%;">
+						<option value="1">标签1</option>
+						<option value="2">标签2</option>
+						<option value="3">标签3</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="firstname" class="col-sm-3 control-label">连续告警次数：</label>
+				<div class="col-sm-9">
+					<select class="form-control" id="atimes">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+					</select>
+				</div>
+			</div>
+		</form>
+		<!-- modal end -->
+	</div>
 
-	<!-- Control Sidebar -->
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+		<button type="button" class="btn btn-primary" onclick="savealarm();">提交保存</button>
+	</div>
+</div>
+<!-- /.modal-content -->
+</div>
+<!-- /.modal -->
+</div>
+</section>
+<!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
 
-	<!-- /.control-sidebar -->
-	<!-- Add the sidebar's background. This div must be placed
+<!-- Main Footer -->
+<include file="Public/main_footer" />
+
+<!-- Control Sidebar -->
+
+<!-- /.control-sidebar -->
+<!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
-	<div class="control-sidebar-bg"></div>
+<div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
 
@@ -412,12 +425,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- AdminLTE App -->
 <load href="__PUBLIC__/dist/js/app.min.js" />
 <!-- private JS -->
-<!-- <load href="__PUBLIC__/jk/js/http.js" /> -->
+<!-- <load href="__PUBLIC__/jk/js/http.js" />
+-->
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the
      fixed layout. -->
 <script type="text/javascript">
+	var is_adv = {$task.isadv|default=0};
 	/* SELECT2 */
 	$(".select2").select2();
 
@@ -437,6 +452,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		if(adv == 0){
 			$("input[name='adv']").val(1);
 			$('.adv').css("display", "block");
+			if($("input[name='reqtype']:checked").val() == 'head'){
+				$('.adv_post').css('display', 'none');
+				$('.adv_m1').css('display', 'none');
+				$('.adv_m2').css('display', 'none');
+			}else if($("input[name='reqtype']:checked").val() == 'get'){
+				$('.adv_post').css('display', 'none');
+				//$('.adv_m1').css('display', 'block');
+				//$('.adv_m2').css('display', 'block');
+			}
 		}else{
 			$("input[name='adv']").val(0);
 			$('.adv').css("display", "none");
@@ -497,7 +521,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			a1.css('display', 'block');
 		}
 	});
-	//adv_show();
+	
 
 	//原外置js
 	var alarmlist = new Array();
@@ -583,8 +607,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			console.log("DEL:"+index);
 			alarmlist[index]="del";
 			$(("#atr"+index)).remove();
+		}else{
+			var delurl = '__APP__/Task/delalarm';
+			$.post(delurl, {
+					aid: index
+				},
+				function(data, status) {
+					if (data == 1) {
+						alert('操作成功');
+						$(("#atrx"+index)).remove();
+					} else {
+						alert('操作失败');
+					}
+				});
 		}
 	}
+
+	if(is_adv==1){
+		adv_show();	
+	}
+	
 
 	</script>
 </body>
