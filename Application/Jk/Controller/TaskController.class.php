@@ -2,8 +2,6 @@
 
 namespace Jk\Controller;
 
-use Think\Controller;
-
 class TaskController extends BaseController {
 	public function index() {
 		
