@@ -121,6 +121,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<!-- form start -->
 							<form action="__APP__/Task/httptaskadd" class="form-horizontal"  method="post" id="form1">
 								<div id="hiddens">
+									<input type="hidden" name="mids" value="{$task.mids}">
 									<input type="hidden" name="tid" value="{$task.id}">
 									<input type="hidden" name="update" value="{$update}">
 									<input type="hidden" name="adv" value="0">
@@ -139,11 +140,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											<input type="text" name="target" class="form-control" id="input2" placeholder="http监控地址" value="{$taskdetail.target}"></div>
 									</div>
 									<div class="form-group">
-										<label for="input2" class="col-sm-2 control-label">新监控点：</label>
+										<label for="input2" class="col-sm-2 control-label">监控点：</label>
 									
-										<div class="col-sm-10"><button type="button" class="btn btn-info pull-left" onclick="smp();">配置</button></div>
+										<div class="col-sm-1"><button type="button" class="btn btn-info pull-left" onclick="smp();">配置</button></div>
+										<div class="col-sm-9" id="midinfo">已配置0个监控点</div>
 									</div>
-									<div class="form-group">
+<!-- 									<div class="form-group">
 										<label class="col-sm-2 control-label">监控点</label>
 										<div class="col-sm-10">
 											<select class="form-control select2 mids" name="mids[]" multiple="multiple" data-placeholder="点击选择监控点" style="width: 100%;">
@@ -153,7 +155,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											</foreach>
 										</select>
 									</div>
-								</div>
+								</div> -->
 								<div class="form-group">
 									<label class="col-sm-2 control-label">标签</label>
 									<div class="col-sm-8">
@@ -171,7 +173,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<div class="form-group adv">
 									<label for="ex1" class="col-sm-2 control-label">监控频率：</label>
 									<div class="col-sm-4">
-										<input id="ex1" name="frequency" data-slider-id='blue' type="text" data-slider-min="5" data-slider-max="60" data-slider-step="5" data-slider-value="{$task.frequency|default=5}"/>
+										<input id="ex1" name="frequency" data-slider-id='blue' type="text" data-slider-min="1" data-slider-max="60" data-slider-step="1" data-slider-value="{$task.frequency|default=5}"/>
 									</div>
 									<div class="col-sm-6">
 										<span class="ext1v">{$task.frequency|default=5}分钟</span>
@@ -307,24 +309,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <div class="col-md-1"></div>
 </div>
 
-<!-- 选择监控点模态框 --> 
+<!-- 添加监控点模态框 --> 
 
-<div id="pointdiv" class="col-sm-12" style="max-height: 600px;display: none;padding: 0px 30px;">
-	<div class="divider40"></div>
-	<div class="col-sm-12">
-		<div class="col-sm-7" style="height: 500px;">
-			<div id="mmap" style="width: 600px;height:500px;"></div>
-		</div>
-		<div class="col-sm-5" style="height: 500px;">
-			<foreach name="mps" item="vo" >
-			<input type="checkbox" name="cmpoint" value="{$vo.id}">{$vo.title}<br/>
-			</foreach>
-		</div>
-	</div>
-</div>
+<include file="Public/mpoint_add_div" />
 
-
-<!-- 选择监控点模态框 END -->
+<!-- 添加监控点模态框 END -->
 
 
 <!-- 告警模态框（Modal） -->
@@ -527,14 +516,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		var aitem = $("#calc").find("option:selected").val();
 		var amidsdiv = $(".amidsdiv");
 		if(aitem==1){
+
 			$('.amids').empty();
-			$(".mids").find("option:selected").each(function(){
-			//console.log($(this).text());
-		    //console.log($(this).val());
-		    var html="<option value=\""+$(this).val()+"\">"+$(this).text()+"</option>";
-		    $('.amids').append(html);
-		  	});
+
+			for (var i = 0; i < pointlist.length; i++) {
+
+				var v1=pointlist[i][0];
+				var v2=pointlist[i][1];
+		    	var html="<option value=\""+v1+"\">"+v2+"</option>";
+		    	$('.amids').append(html);
+
+			}
+
+
+			// $(".mids").find("option:selected").each(function(){
+			// //console.log($(this).text());
+		 //    //console.log($(this).val());
+		 //    var html="<option value=\""+$(this).val()+"\">"+$(this).text()+"</option>";
+		 //    $('.amids').append(html);
+		 //  	});
+
 			amidsdiv.css('display', 'block');
+
+
 		}else{
 			$('.amids').empty();
 			amidsdiv.css('display', 'none');
@@ -627,11 +631,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			var s = "input[name='" + name + "']";
 			$(s).val(temp);
 		}
-		//判断表单
-		var title=$("input[name='title']").val();
+		//验证表单
+		var title=$("input[name='title']").val(); 
 		var target=$("input[name='target']").val();
 
-		$('#form1')[0].submit();
+		if(title == ''){
+			layer.msg('任务名称不能为空');
+		}else if(target == ''){
+			layer.msg('监控地址不能为空');
+		}else if(pointlist.length == 0){
+			layer.msg('监控点不能为空');
+		}else{
+			var mids = "";
+			for (var i = 0; i < pointlist.length; i++) {
+				if(i > 0 ){
+					mids = mids + ",:" + pointlist[i][0] + ":";
+				}else{
+					mids = mids + ":" + pointlist[i][0] + ":";
+				}
+			}
+			$("input[name='mids']").val(mids);
+			$('#form1')[0].submit();
+		}
+
+		
 	}
 
 	function createtr(arr,index) {

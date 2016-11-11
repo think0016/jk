@@ -198,6 +198,9 @@ class TaskController extends BaseController {
 		if (! $this->is_login ()) {
 			exit ( "请登录" );
 		}
+
+		//var_dump($_POST);
+		//exit();
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 1;
 		$taskModel = D ( 'jk_task' );
@@ -227,8 +230,8 @@ class TaskController extends BaseController {
 		$serverip = I ( 'post.serverip' );
 		
 		// 数据验证（简单）
-		if (count ( $mids ) == 0) {
-			$this->error ( "监控定不能为空" );
+		if ( $mids == "") {
+			$this->error ( "监控点不能为空" );
 		}
 		if (! isset ( $title ) || $title == "") {
 			$this->error ( "任务名不能为空" );
@@ -238,14 +241,14 @@ class TaskController extends BaseController {
 		}
 		
 		// 添加task表
-		$mid = "";
+		$mid = $mids;
 		$label = "";
-		for($i = 0; $i < count ( $mids ); $i ++) {
-			if ($i > 0) {
-				$mid = $mid . ",";
-			}
-			$mid = $mid . ":" . $mids [$i] . ":";
-		}
+		// for($i = 0; $i < count ( $mids ); $i ++) {
+		// 	if ($i > 0) {
+		// 		$mid = $mid . ",";
+		// 	}
+		// 	$mid = $mid . ":" . $mids [$i] . ":";
+		// }
 		
 		for($i = 0; $i < count ( $labels ); $i ++) {
 			if ($i > 0) {
