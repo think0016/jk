@@ -23,6 +23,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         apply the skin class to the body tag so the changes take effect.
   -->
   <load href="__PUBLIC__/dist/css/skins/skin-blue.min.css" />
+  <!-- private css -->
+  <load href="__PUBLIC__/jk/css/style.css" />
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -32,124 +34,211 @@ scratch. This page gets rid of all links and provides the needed markup only.
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
+  <div class="wrapper">
 
-  <!-- Main Header -->
-  <header class="main-header">
+    <!-- Main Header -->
+    <header class="main-header">
 
-    <!-- Logo -->
-		<include file="Public/logo" />
+      <!-- Logo -->
+      <include file="Public/logo" />
 
-    <!-- Header Navbar -->
-    <nav class="navbar navbar-static-top" role="navigation">
-      <!-- Sidebar toggle button-->
-      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-        <span class="sr-only">Toggle navigation</span>
-      </a>
+      <!-- Header Navbar -->
+      <nav class="navbar navbar-static-top" role="navigation">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+          <span class="sr-only">Toggle navigation</span>
+        </a>
 
-      <!-- 上方导航栏 START -->
-		<include file="Public/top_nav" />
-      <!-- 上方导航栏 END -->
+        <!-- 上方导航栏 START -->
+        <include file="Public/top_nav" />
+        <!-- 上方导航栏 END -->
 
-      <!-- Navbar Right Menu -->
-      	<include file="Public/top_right_menu" />
-	  <!-- Navbar Right Menu end -->
-    </nav>
-  </header>
-  <!-- Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
+        <!-- Navbar Right Menu -->
+        <include file="Public/top_right_menu" />
+        <!-- Navbar Right Menu end --> </nav>
+    </header>
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
 
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
+      <!-- sidebar: style can be found in sidebar.less -->
+      <section class="sidebar">
 
-      <!-- Sidebar user panel (optional) -->
+        <!-- Sidebar user panel (optional) -->
 
-      <!-- search form (Optional) -->
+        <!-- search form (Optional) -->
 
-      <!-- /.search form -->
+        <!-- /.search form -->
 
-      <!-- Sidebar Menu -->
+        <!-- Sidebar Menu -->
         <include file="Public/task_sidebar" />
-      <!-- /.sidebar-menu -->
-    </section>
-    <!-- /.sidebar -->
-  </aside>
+        <!-- /.sidebar-menu --> </section>
+      <!-- /.sidebar --> </aside>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        任务列表
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
-        <li class="active">Here</li>
-      </ol>
-    </section>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <h1>任务管理</h1>
+        <ol class="breadcrumb">
+          <li>
+            <a href="#"> <i class="fa fa-dashboard"></i>
+              Level
+            </a>
+          </li>
+          <li class="active">Here</li>
+        </ol>
+      </section>
 
-    <!-- Main content -->
-    <section class="content">
-      <!-- Your Page Content Here -->
-      <div class="row">
+      <!-- Main content -->
+      <section class="content">
+        <!-- Your Page Content Here -->
+        <div class="row">
           <div class="col-xs-12">
             <div class="box">
               <div class="box-header">
                 <h3 class="box-title"></h3>
 
-                <div class="box-tools">
-                      <a class="btn btn-info" href="">
-                        <i class="fa fa-plus"></i>&nbsp;添加任务
-                      </a>
+                <!--                 <div class="box-tools">
+                <a class="btn btn-info" href=""> <i class="fa fa-plus"></i>
+                  &nbsp;添加任务
+                </a>
+              </div>
+              -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+
+              <div class="col-xs-12" style="">
+                <!-- 任务添加项 -->
+                <div class="clear"></div>
+                <div class="divider"></div>
+                <div class="col-xs-12" style="border: 1px solid #3C8DBC;">
+
+                  <div class="col-xs-11">
+                    <div class="divider40 "  >
+                      <p style="line-height:40px;">http监控：使用http监控，可时刻监测网站的基本可用性。</p>
+                    </div>
+                  </div>
+                  <div class="col-xs-1" style="line-height:40px;">
+                    <a class="btn btn-sm btn-info" href="__APP__/Task/create/ttype/http">
+                      <i class="fa fa-plus"></i>
+                      &nbsp;添加任务
+                    </a>
+                  </div>
+
                 </div>
-              </div>
-              <!-- /.box-header -->
-              <div class="box-body table-responsive no-padding">
-                <table class="table table-hover">
-                  <tr>
-                    <th>任务序号</th>
-                    <th>任务名称</th>
-                    <th>任务类型</th>
-                    <th>任务状态</th>
-                    <th>操作</th>                   
-                  </tr>
+                <!-- 任务添加项 END -->
+                <!-- 任务添加项 -->
+                <div class="clear"></div>
+                <div class="divider"></div>
+                <div class="col-xs-12" style="border: 1px solid #3C8DBC;">
 
-                  <volist name="tasklist" id="vo">
-                  <tr>
-                    <td>{$vo.id}</td>
-                    <td>{$vo.title}</td>
-                    <td>{$vo.name}</td>
-                    <td>
-                    <if condition="($vo.status eq 1) "> 
-                    <span class="label label-success">正常</span>
-                    <else />
-                    <span class="label label-warning">关闭</span>
-                    </if>
-                      
-                    </td>
-                    <td>
-                      <div class="btn-group">
-                        <button type="button" class="btn btn-xs btn-default">修改</button>
-                        <button type="button" class="btn btn-xs btn-default">删除</button>
-                        <button type="button" class="btn btn-xs btn-default">详情</button>
-                      </div>
-                    </td>
-                  </tr>
-                  
+                  <div class="col-xs-11">
+                    <div class="divider40 "  >
+                      <p style="line-height:40px;">ping监控：使用ping监控可诊断网站通达性和网络时延情况。</p>
+                    </div>
+                  </div>
+                  <div class="col-xs-1" style="line-height:40px;">
+                    <a class="btn btn-sm btn-info" href="">
+                      <i class="fa fa-plus"></i>
+                      &nbsp;添加任务
+                    </a>
+                  </div>
 
-                  </volist>
-                </table>
+                </div>
+                <!-- 任务添加项 END -->
+                <!-- 任务添加项 -->
+                <div class="clear"></div>
+                <div class="divider"></div>
+                <div class="col-xs-12" style="border: 1px solid #3C8DBC;">
+
+                  <div class="col-xs-11">
+                    <div class="divider40 "  >
+                      <p style="line-height:40px;">ftp监控：监测网站ftp的可用性及下载上传速率。</p>
+                    </div>
+                  </div>
+                  <div class="col-xs-1" style="line-height:40px;">
+                    <a class="btn btn-sm btn-info" href="">
+                      <i class="fa fa-plus"></i>
+                      &nbsp;添加任务
+                    </a>
+                  </div>
+
+                </div>
+                <!-- 任务添加项 END -->
+                <!-- 任务添加项 -->
+                <div class="clear"></div>
+                <div class="divider"></div>
+                <div class="col-xs-12" style="border: 1px solid #3C8DBC;">
+
+                  <div class="col-xs-11">
+                    <div class="divider40 "  >
+                      <p style="line-height:40px;">tcp监控：监控指定tcp端口的可用性。</p>
+                    </div>
+                  </div>
+                  <div class="col-xs-1" style="line-height:40px;">
+                    <a class="btn btn-sm btn-info" href="">
+                      <i class="fa fa-plus"></i>
+                      &nbsp;添加任务
+                    </a>
+                  </div>
+
+                </div>
+                <!-- 任务添加项 END -->
+                <!-- 任务添加项 -->
+                <div class="clear"></div>
+                <div class="divider"></div>
+                <div class="col-xs-12" style="border: 1px solid #3C8DBC;">
+
+                  <div class="col-xs-11">
+                    <div class="divider40 "  >
+                      <p style="line-height:40px;">udp监控：监控指定UDP端口的可用性。</p>
+                    </div>
+                  </div>
+                  <div class="col-xs-1" style="line-height:40px;">
+                    <a class="btn btn-sm btn-info" href="">
+                      <i class="fa fa-plus"></i>
+                      &nbsp;添加任务
+                    </a>
+                  </div>
+
+                </div>
+                <!-- 任务添加项 END -->
+                <!-- 任务添加项 -->
+                <div class="clear"></div>
+                <div class="divider"></div>
+                <div class="col-xs-12" style="border: 1px solid #3C8DBC;">
+
+                  <div class="col-xs-11">
+                    <div class="divider40 "  >
+                      <p style="line-height:40px;">dns监控：监控网站DNS解析时延及可用性。</p>
+                    </div>
+                  </div>
+                  <div class="col-xs-1" style="line-height:40px;">
+                    <a class="btn btn-sm btn-info" href="">
+                      <i class="fa fa-plus"></i>
+                      &nbsp;添加任务
+                    </a>
+                  </div>
+
+                </div>
+                <!-- 任务添加项 END -->
+                
+
               </div>
-              <!-- /.box-body --> </div>
-            <!-- /.box --> </div>
-        </div>
+
+              <div class="clear"></div>
+              <div class="divider20"></div>
+            </div>
+            <!-- /.box-body --> </div>
+          <!-- /.box --> </div>
+      </div>
     </section>
-    <!-- /.content -->
-  </div>
+    <!-- /.content --> </div>
   <!-- /.content-wrapper -->
 
   <!-- Main Footer -->
-	<include file="Public/main_footer" />
+  <include file="Public/main_footer" />
 
   <!-- Control Sidebar -->
 
