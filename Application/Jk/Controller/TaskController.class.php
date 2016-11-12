@@ -11,7 +11,6 @@ class TaskController extends BaseController {
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
 		$this->display ();
 	}
-	
 	public function tasklist() {
 		
 		// 检查登录情况
@@ -26,7 +25,6 @@ class TaskController extends BaseController {
 		$this->assign ( "tasklist", $tasklist );
 		$this->display ();
 	}
-	
 	public function create() {
 		$this->is_login ( 1 );
 		
@@ -56,9 +54,11 @@ class TaskController extends BaseController {
 			case "http" :
 				$this->display ( 'httpadd' );
 				break;
+			case "ping" :
+				$this->display ( 'pingadd' );
+				break;
 		}
 	}
-	
 	public function delete() {
 		$r = $this->is_login ( 0 );
 		
@@ -86,7 +86,6 @@ class TaskController extends BaseController {
 			;
 		}
 	}
-	
 	public function delalarm() {
 		$r = $this->is_login ( 0 );
 		
@@ -114,7 +113,6 @@ class TaskController extends BaseController {
 			echo "2";
 		}
 	}
-	
 	public function update() {
 		$this->is_login ( 1 );
 		
@@ -191,16 +189,168 @@ class TaskController extends BaseController {
 				// http任务
 				$this->display ( 'httpadd' );
 				break;
+			case 2 :
+			case 3 :
+				// http任务
+				$this->display ( 'pingadd' );
+				break;
 		}
 	}
-	
+	public function pingtaskadd() {
+		if (! $this->is_login ()) {
+			exit ( "请登录" );
+		}
+		// print_r($_POST);
+		// exit();
+		
+		$now = date ( "Y-m-d H:i:s" );
+		$sid = 3;
+		$taskModel = D ( 'jk_task' );
+		$taskDetailsModel = D ( 'jk_taskdetails_3' );
+		
+		/*
+		 * Array ( [mids] => :3:,:4:,:5:,:6: [tid] => [update] => [adv] => 0 [alarm_num] => 2 [a0] => 1,gt,34,ms,0,1,当前响应时间,大于, [a1] => 3,gt,44,%,0,1,当前丢包率,大于, [title] => 131 [target] => 123123 [labels] => Array ( [0] => 1 [1] => 2 ) [frequency] => 5 )
+		 */
+		
+		$taskid = I ( 'post.tid' );
+		$update = FALSE;
+		// $update = I ( 'post.update' );
+		$alarm_num = I ( 'post.alarm_num' );
+		$title = I ( 'post.title' );
+		$target = I ( 'post.target' );
+		$mids = I ( 'post.mids' );
+		$labels = I ( 'post.labels' );
+		$frequency = I ( 'post.frequency' );
+		$adv = I ( 'post.adv' );
+		
+		// 数据验证（简单）
+		if ($mids == "") {
+			$this->error ( "监控点不能为空" );
+		}
+		if (! isset ( $title ) || $title == "") {
+			$this->error ( "任务名不能为空" );
+		}
+		if (! isset ( $target ) || $target == "") {
+			$this->error ( "监控地址不能为空" );
+		}
+		
+		// 添加task表
+		$mid = $mids;
+		$label = "";
+		// for($i = 0; $i < count ( $mids ); $i ++) {
+		// if ($i > 0) {
+		// $mid = $mid . ",";
+		// }
+		// $mid = $mid . ":" . $mids [$i] . ":";
+		// }
+		
+		for($i = 0; $i < count ( $labels ); $i ++) {
+			if ($i > 0) {
+				$label = $label . ",";
+			}
+			$label = $label . ":" . $labels [$i] . ":";
+		}
+		$frequency = $frequency * 60;
+		$data = array (
+				"sid" => $sid,
+				"mids" => $mid,
+				"uid" => session ( "uid" ),
+				"addtime" => $now,
+				"title" => $title,
+				"frequency" => $frequency,
+				"lasttime" => time (),
+				"labels" => $label,
+				"isadv" => $adv 
+		);
+		
+		if ($taskid == "") {
+			$taskid = $taskModel->add ( $data );
+			if (! $taskid) {
+				$this->error ( "ERROR2" );
+			}
+		} else {
+			$r = $taskModel->where ( array (
+					"id" => $taskid 
+			) )->save ( $data );
+			if (! $r) {
+				$this->error ( "ERROR2" );
+			}
+			$update = TRUE;
+		}
+		
+		// 添加detail表
+		if ($update) {
+			$data = array (
+					"target" => $target 
+			);
+			$r = $taskDetailsModel->where ( array (
+					"taskid" => $taskid 
+			) )->save ( $data );
+			// if (! $r) {
+			// $this->error ( "ERROR1" );
+			// }
+		} else {
+			$data = array (
+					"sid" => $sid,
+					"taskid" => $taskid,
+					"target" => $target 
+			);
+			$ssid = $taskDetailsModel->add ( $data );
+			if (! $ssid) {
+				$this->error ( "ERROR1" );
+			}
+		}
+		
+		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
+		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
+		if ($alarm_num > 0) {
+			$monitor_id = str_replace ( ":", "", $mid );
+			$flag = 0;
+			$triggerModel = D ( 'jk_trigger_ruls' );
+			for($i = 0; $i < $alarm_num; $i ++) {
+				$key = "post.a" . $i;
+				$alarm = I ( $key );
+				if ($alarm == "del") {
+					continue;
+				}
+				$alist = explode ( ",", $alarm );
+				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+				if ($unit == "s") {
+					$threshold *= 60;
+				}
+				if ($calc == 1) {
+					// $calc = "avg";
+					$amids = $alist [8];
+					$monitor_id = str_replace ( ";", ",", $amids );
+				}
+				$data = array (
+						"task_id" => $taskid,
+						"data_calc_func" => "avg",
+						"operator_type" => $a_operator,
+						"threshold" => $threshold,
+						"data_times" => $atimes,
+						"index_id" => $a_itemid,
+						"monitor_id" => $monitor_id,
+						"is_monitor_avg" => 0 
+				);
+				
+				// $data['monitor_id'] = $mid;
+				$flag = $triggerModel->add ( $data );
+			}
+			if ($flag == 0) {
+				$this->error ( "ERROR4" );
+			}
+		}
+		
+		$this->success ( "保存成功", U ( "Task/tasklist" ) );
+	}
 	public function httptaskadd() {
 		if (! $this->is_login ()) {
 			exit ( "请登录" );
 		}
-
-		//var_dump($_POST);
-		//exit();
+		
+		// var_dump($_POST);
+		// exit();
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 1;
 		$taskModel = D ( 'jk_task' );
@@ -230,7 +380,7 @@ class TaskController extends BaseController {
 		$serverip = I ( 'post.serverip' );
 		
 		// 数据验证（简单）
-		if ( $mids == "") {
+		if ($mids == "") {
 			$this->error ( "监控点不能为空" );
 		}
 		if (! isset ( $title ) || $title == "") {
@@ -244,10 +394,10 @@ class TaskController extends BaseController {
 		$mid = $mids;
 		$label = "";
 		// for($i = 0; $i < count ( $mids ); $i ++) {
-		// 	if ($i > 0) {
-		// 		$mid = $mid . ",";
-		// 	}
-		// 	$mid = $mid . ":" . $mids [$i] . ":";
+		// if ($i > 0) {
+		// $mid = $mid . ",";
+		// }
+		// $mid = $mid . ":" . $mids [$i] . ":";
 		// }
 		
 		for($i = 0; $i < count ( $labels ); $i ++) {
@@ -321,10 +471,10 @@ class TaskController extends BaseController {
 					"serverip" => $serverip 
 			);
 			
-			$n=$taskDetailsAdvModel->where ( array (
-						"taskid" => $taskid 
-				) )->count();
-			if ($update && $n>0) {
+			$n = $taskDetailsAdvModel->where ( array (
+					"taskid" => $taskid 
+			) )->count ();
+			if ($update && $n > 0) {
 				$r = $taskDetailsAdvModel->where ( array (
 						"taskid" => $taskid 
 				) )->save ( $data );
@@ -368,7 +518,6 @@ class TaskController extends BaseController {
 						"operator_type" => $a_operator,
 						"threshold" => $threshold,
 						"data_times" => $atimes,
-						"httphead" => $httphead,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
 						"is_monitor_avg" => 0 
