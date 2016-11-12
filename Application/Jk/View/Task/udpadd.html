@@ -146,27 +146,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<div class="form-group">
 										<label for="input6" class="col-sm-2 control-label">udp请求内容格式：</label>
 										<div class="col-sm-10">
-											<input type="radio" name="resptype" id="optionsRadios2" value="option2" checked>Binary格式&nbsp;&nbsp;&nbsp;
-											<input type="radio" name="resptype" id="optionsRadios2" value="option2">文本格式
+											<input type="radio" name="resptype" id="" value="0" <if condition="($taskdetail.resptype eq '0')">checked</if><empty name="taskadvdata.reqtype">checked</empty>>Binary格式&nbsp;&nbsp;&nbsp;
+											<input type="radio" name="resptype" id="" value="1" <if condition="($taskdetail.resptype eq '1')">checked</if>>文本格式
 										</div>
 									</div> 
 									<div class="form-group">
 										<label for="input6" class="col-sm-2 control-label">udp请求内容：</label>
 										<div class="col-sm-10">
-											<textarea id="input6" name="resp" class="form-control" rows="3"></textarea>
+											<textarea id="input6" name="resp" class="form-control" rows="3">{$taskdetail.resp}</textarea>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="input6" class="col-sm-2 control-label">匹配响应内容格式：</label>
 										<div class="col-sm-10">
-											<input type="radio" name="matchtype" id="optionsRadios2" value="option2" checked>Binary格式&nbsp;&nbsp;&nbsp;
-											<input type="radio" name="matchtype" id="optionsRadios2" value="option2">文本格式
+											<input type="radio" name="matchtype" id="" value="0" <if condition="($taskdetail.matchtype eq '0')">checked</if><empty name="taskadvdata.reqtype">checked</empty>>Binary格式&nbsp;&nbsp;&nbsp;
+											<input type="radio" name="matchtype" id="" value="1" <if condition="($taskdetail.matchtype eq '1')">checked</if>>文本格式
 										</div>
 									</div> 		
 									<div class="form-group">
 										<label for="input6" class="col-sm-2 control-label">匹配响应内容：</label>
 										<div class="col-sm-10">
-											<textarea id="input6" name="matchresp" class="form-control" rows="3"></textarea>
+											<textarea id="input6" name="matchresp" class="form-control" rows="3">{$taskdetail.matchresp}</textarea>
 										</div>
 									</div> 									
 									<div class="form-group">
@@ -348,7 +348,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<div class="form-group amidsdiv">
 								<label for="firstname" class="col-sm-3 control-label">监控点选择：</label>
 								<div class="col-sm-9 ">
-									<select class="form-control select2 amids"
+									<select class="form-control select2 amids" id="amids"
 											multiple="multiple" name="amids[]" data-placeholder="点击选择标签" style="width: 100%;">
 										<option value="1">标签1</option>
 										<option value="2">标签2</option>
@@ -555,7 +555,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 		if(calc == 1){
 			var n = 0;
-			$(".mids").find("option:selected").each(function(){
+			$(".amids").find("option:selected").each(function(){
 				//console.log($(this).text());
 			    //console.log($(this).val());
 			    if(n>0){
@@ -577,7 +577,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		temp[7] = op_text;
 		temp[8] = amids;
 
-
 		alarmlist[index] = temp;
 
 		$('#addalarm').modal('hide');
@@ -588,6 +587,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		//console.log(alarmlist);
 		$(".amidsdiv").css('display', 'none');
 		$("#form2")[0].reset();
+
+
 	}
 
 	function savefrom() {
@@ -605,8 +606,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		var title=$("input[name='title']").val(); 
 		var target=$("input[name='target']").val();
 		var port=$("input[name='port']").val();
-		//var username=$("input[name='username']").val();
-		//var password=$("input[name='password']").val();
+		var resp=$("input[name='resp']").val();
+		var matchresp=$("input[name='matchresp']").val();
 
 		if(title == ''){
 			layer.msg('任务名称不能为空');
@@ -614,6 +615,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		    layer.msg('监控地址不能为空');
 		}else if(port == ''){
 			layer.msg('端口号不能为空');
+		}else if(resp == ''){
+			layer.msg('请求内容不能为空');
+		}else if(matchresp == ''){
+			layer.msg('匹配响应内容不能为空');
 		}else if(pointlist.length == 0){
 			layer.msg('监控点不能为空');
 		}else{

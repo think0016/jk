@@ -97,6 +97,7 @@ $("input[name='cmpoint']").click(function(event) {
 
 function savepoint() {
 	//var n = 0;
+	pointlist = new Array();
 	$("input[name='cmpoint']:checked").each(function(index, el) {
 		var temp = new Array();
 		temp[0] = $(this).val();
@@ -149,4 +150,5 @@ $("input[name='cmpoint']:checked").each(function(index, el) {
 	pointlist[index] = temp;
 	
 });
+
 midinfo();

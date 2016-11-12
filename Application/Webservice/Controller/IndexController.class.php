@@ -459,6 +459,7 @@ class IndexController extends BaseController {
 	
 		if ($taskdetail) {
 			$return ['target'] = $taskdetail ['target'];
+			$return ['port'] = $taskdetail ['port'];
 		}
 	
 		$return ['type'] = "tcp"; // 普通任务
@@ -486,6 +487,12 @@ class IndexController extends BaseController {
 	
 		if ($taskdetail) {
 			$return ['target'] = $taskdetail ['target'];
+			$return ['port'] = $taskdetail ['port'];
+			$return ['resptype'] = $taskdetail ['resptype'];
+			$return ['resp'] = $taskdetail ['resp'];
+			$return ['matchtype'] = $taskdetail ['matchtype'];
+			$return ['matchresp'] = $taskdetail ['matchresp'];
+			
 		}
 	
 		$return ['type'] = "udp"; // 普通任务

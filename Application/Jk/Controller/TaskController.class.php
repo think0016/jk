@@ -214,6 +214,10 @@ class TaskController extends BaseController {
 				// tcp任务
 				$this->display ( 'tcpadd' );
 				break;
+			case 9 :
+				// udp任务
+				$this->display ( 'udpadd' );
+				break;
 		}
 	}
 	public function pingtaskadd() {
@@ -869,13 +873,12 @@ class TaskController extends BaseController {
 		
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
-	
 	public function udptaskadd() {
 		if (! $this->is_login ()) {
 			exit ( "请登录" );
 		}
-		print_r ( $_POST );
-		exit ();
+// 		print_r ( $_POST );
+// 		exit ();
 		
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 9; // UDP 类型
@@ -896,6 +899,10 @@ class TaskController extends BaseController {
 		$labels = I ( 'post.labels' );
 		$frequency = I ( 'post.frequency' );
 		$adv = I ( 'post.adv' );
+		$resptype = I ( 'post.resptype' );
+		$resp = I ( 'post.resp' );
+		$matchtype = I ( 'post.matchtype' );
+		$matchresp = I ( 'post.matchresp' );
 		$port = I ( 'post.port' );
 		
 		// 数据验证（简单）
@@ -972,6 +979,10 @@ class TaskController extends BaseController {
 					"sid" => $sid,
 					"taskid" => $taskid,
 					"port" => $port,
+					"resp" => $resp,
+					"matchtype" => $matchtype,
+					"matchresp" => $matchresp,
+					"resptype" => $resptype,
 					"target" => $target 
 			);
 			$ssid = $taskDetailsModel->add ( $data );
