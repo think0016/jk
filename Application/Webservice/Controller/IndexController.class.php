@@ -51,8 +51,8 @@ class IndexController extends BaseController {
 		$debug = TRUE;
 		
 		// 获取监控点信息
-		//$ip = "120.52.96.49";
 		$ip = get_client_ip ();
+		//$ip = "120.52.96.49";
 		$taskitem = array ();
 		
 		$pointmodel = D ( "jk_monitorypoint" );
@@ -429,9 +429,12 @@ class IndexController extends BaseController {
 	
 		if ($taskdetail) {
 			$return ['target'] = $taskdetail ['target'];
+			$return ['port'] = $taskdetail ['port'];
+			$return ['username'] = $taskdetail ['username'];
+			$return ['password'] = $taskdetail ['password'];
 		}
 	
-		$return ['type'] = "ping"; // 普通任务
+		$return ['type'] = "ftp"; // 普通任务
 	
 		return $return;
 	}
@@ -458,7 +461,7 @@ class IndexController extends BaseController {
 			$return ['target'] = $taskdetail ['target'];
 		}
 	
-		$return ['type'] = "ping"; // 普通任务
+		$return ['type'] = "tcp"; // 普通任务
 	
 		return $return;
 	}
@@ -485,7 +488,7 @@ class IndexController extends BaseController {
 			$return ['target'] = $taskdetail ['target'];
 		}
 	
-		$return ['type'] = "ping"; // 普通任务
+		$return ['type'] = "udp"; // 普通任务
 	
 		return $return;
 	}
