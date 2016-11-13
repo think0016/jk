@@ -46,11 +46,27 @@ class BaseController extends Controller {
 	}
 	public function UpdateRrdBysh($filename, $dotime, $ds_name, $data, $taskid, $step) {
 		$c = "sh /var/www/ce/cmd/create_rrd.sh " . $filename .".rrd". " " . $dotime . " " . $ds_name . " " . $data. " " . $taskid. " " . $step;
-		wlog("[UpdateRrdBysh]".$c);
+		//wlog("[UpdateRrdBysh]".$c);
 		system($c,$status);
 		return $status;
 	}
 /**
  * Rrd操作END
  */
+	
+// 	public function wlasttime($mid,$time) {
+// 		$taskModel = D("jk_task");
+		
+// 	}
+	
+	public function rlasttime($mid,$timedata) {
+		$return = time();
+		if($timedata != ""){
+			$arr = unserialize($timedata);
+			if(isset($arr[$mid]) && $arr[$mid]!=""){
+				$return = $arr[$mid];
+			}
+		}
+		return $return;
+	}
 }

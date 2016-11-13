@@ -113,11 +113,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<!-- Horizontal Form -->
 						<div class="box box-info">
 							<div class="box-header with-border">
-								<h3 class="box-title">UDP监控任务设置</h3>
+								<h3 class="box-title">DNS监控任务设置</h3>
 							</div>
 							<!-- /.box-header -->
 							<!-- form start -->
-							<form action="__APP__/Task/udptaskadd" class="form-horizontal"  method="post" id="form1">
+							<form action="__APP__/Task/dnstaskadd" class="form-horizontal"  method="post" id="form1">
 								<div id="hiddens">
 									<input type="hidden" name="mids" value="{$task.mids}">
 									<input type="hidden" name="tid" value="{$task.id}">
@@ -132,43 +132,93 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											<input type="text" name="title" class="form-control" id="input1" placeholder="任务名称" value="{$task.title}"></div>
 									</div>
 									<div class="form-group">
-										<label for="input2" class="col-sm-2 control-label">udp监控地址：</label>
+										<label for="input2" class="col-sm-2 control-label">dns域名：</label>
 
 										<div class="col-sm-10">
 											<input type="text" name="target" class="form-control" id="input2" placeholder="http监控地址" value="{$taskdetail.target}"></div>
 									</div>
 									<div class="form-group">
-										<label for="input2" class="col-sm-2 control-label">udp端口：</label>
-
+										<label for="input6" class="col-sm-2 control-label">DNS查询类型：</label>
 										<div class="col-sm-10">
-											<input type="text" name="port" class="form-control" id="input2" placeholder="http监控地址" value="{$taskdetail.port}"></div>
-									</div>
-									<div class="form-group">
-										<label for="input6" class="col-sm-2 control-label">udp请求内容格式：</label>
-										<div class="col-sm-10">
-											<input type="radio" name="resptype" id="" value="0" <if condition="($taskdetail.resptype eq '0')">checked</if><empty name="taskdetail.reqtype">checked</empty>>Binary格式&nbsp;&nbsp;&nbsp;
-											<input type="radio" name="resptype" id="" value="1" <if condition="($taskdetail.resptype eq '1')">checked</if>>文本格式
+											<input type="radio" name="dnstype" id="" value="0" <if condition="($taskdetail.dnstype eq 0)">checked</if>
+											<empty name="taskdetail.dnstype">checked</empty>>A&nbsp;&nbsp;&nbsp;
+											<input type="radio" name="dnstype" id="" value="1" <if condition="($taskdetail.dnstype eq 1)">checked</if>>MX&nbsp;&nbsp;&nbsp;
+											<input type="radio" name="dnstype" id="" value="2" <if condition="($taskdetail.dnstype eq 2)">checked</if>>NS&nbsp;&nbsp;&nbsp;
+											<input type="radio" name="dnstype" id="" value="3" <if condition="($taskdetail.dnstype eq 3)">checked</if>>CNAME&nbsp;&nbsp;&nbsp;
+											<input type="radio" name="dnstype" id="" value="4" <if condition="($taskdetail.dnstype eq 4)">checked</if>>TXT&nbsp;&nbsp;&nbsp;
+											<input type="radio" name="dnstype" id="" value="5" <if condition="($taskdetail.dnstype eq 5)">checked</if>>ANY&nbsp;&nbsp;&nbsp;
 										</div>
 									</div> 
-									<div class="form-group">
-										<label for="input6" class="col-sm-2 control-label">udp请求内容：</label>
-										<div class="col-sm-10">
-											<textarea id="input6" name="resp" class="form-control" rows="3">{$taskdetail.resp}</textarea>
+
+									<switch name="cbip" >
+									<case value="1">
+										<div class="form-group ip1">
+											<label for="input6" class="col-sm-2 control-label">匹配<span class="ip11">IP</span>地址：</label>
+											<div class="col-sm-6">
+												<input type="checkbox" name="cbip" value="1" checked="">指定<span class="ip11">IP</span>地址
+											</div>
+											<div class="col-sm-4"><button type="button" id="addip" class="btn btn-default pull-left">添加<span class="ip11">IP</span></button></div>
 										</div>
-									</div>
-									<div class="form-group">
-										<label for="input6" class="col-sm-2 control-label">匹配响应内容格式：</label>
-										<div class="col-sm-10">
-											<input type="radio" name="matchtype" id="" value="0" <if condition="($taskdetail.matchtype eq '0')">checked</if><empty name="taskadvdata.reqtype">checked</empty>>Binary格式&nbsp;&nbsp;&nbsp;
-											<input type="radio" name="matchtype" id="" value="1" <if condition="($taskdetail.matchtype eq '1')">checked</if>>文本格式
+									</case>
+									<default />
+										<div class="form-group ip1">
+											<label for="input6" class="col-sm-2 control-label">匹配<span class="ip11">IP</span>地址：</label>
+											<div class="col-sm-6">
+												<input type="checkbox" name="cbip" value="1">指定<span class="ip11">IP</span>地址
+											</div>
+											<div class="col-sm-4"><button type="button" id="addip" class="btn btn-default pull-left" style="display: none;">添加<span class="ip11">IP</span></button></div>
 										</div>
-									</div> 		
-									<div class="form-group">
-										<label for="input6" class="col-sm-2 control-label">匹配响应内容：</label>
-										<div class="col-sm-10">
-											<textarea id="input6" name="matchresp" class="form-control" rows="3">{$taskdetail.matchresp}</textarea>
+									</switch>
+<!-- 									<div class="form-group">
+										<label for="input6" class="col-sm-2 control-label"></label>
+										<div class="col-sm-6">
+											<input type="text" name="ip[]" class="form-control" id="input1" placeholder="" value=""></div>
+										<div class="col-sm-4"><button type="button" class="btn btn-danger pull-left">删除</button></div>
+									</div> -->
+									<foreach name="iparr" item="vo" >
+										<div class="form-group ipitem">
+											<label for="input6" class="col-sm-2 control-label"></label>
+											<div class="col-sm-6">
+												<input type="text" name="ip[]" class="form-control" id="input1" placeholder="" value="{$vo}"></div>
+											<div class="col-sm-4">
+												<button type="button" class="btn btn-danger pull-left delip">删除</button>
+											</div>
 										</div>
-									</div> 									
+									</foreach>
+
+									<switch name="cbserver" >
+									<case value="1">
+										<div class="form-group dnss">
+											<label for="input6" class="col-sm-2 control-label">指定DNS服务器：</label>
+											<div class="col-sm-6">
+												<input type="checkbox" name="cbserver" value="1" checked>指定DNS服务器
+											</div>
+											<div class="col-sm-4"></div>
+										</div>
+										<div class="form-group serverdiv"">
+											<label for="input6" class="col-sm-2 control-label">DNS服务器：</label>
+											<div class="col-sm-6">
+												<input type="text" name="server" class="form-control" id="input1" placeholder="DNS服务器" value="{$taskdetail.server}"></div>
+											<div class="col-sm-4"></div>
+										</div>
+									</case>
+									<default />
+										<div class="form-group dnss">
+											<label for="input6" class="col-sm-2 control-label">指定DNS服务器：</label>
+											<div class="col-sm-6">
+												<input type="checkbox" name="cbserver" value="1">指定DNS服务器
+											</div>
+											<div class="col-sm-4"></div>
+										</div>
+										<div class="form-group serverdiv" style="display: none;">
+											<label for="input6" class="col-sm-2 control-label">DNS服务器：</label>
+											<div class="col-sm-6">
+												<input type="text" name="server" class="form-control" id="input1" placeholder="DNS服务器" value=""></div>
+											<div class="col-sm-4"></div>
+										</div>
+									</switch>
+
+
 									<div class="form-group">
 										<label for="input2" class="col-sm-2 control-label">监控点：</label>
 
@@ -605,20 +655,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		//验证表单
 		var title=$("input[name='title']").val(); 
 		var target=$("input[name='target']").val();
-		var port=$("input[name='port']").val();
-		var resp=$("input[name='resp']").val();
-		var matchresp=$("input[name='matchresp']").val();
 
 		if(title == ''){
 			layer.msg('任务名称不能为空');
 		}else if(target == ''){
 		    layer.msg('监控地址不能为空');
-		}else if(port == ''){
-			layer.msg('端口号不能为空');
-		}else if(resp == ''){
-			layer.msg('请求内容不能为空');
-		}else if(matchresp == ''){
-			layer.msg('匹配响应内容不能为空');
 		}else if(pointlist.length == 0){
 			layer.msg('监控点不能为空');
 		}else{
@@ -670,6 +711,81 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		adv_show();	
 	}
 	
+	//dns表单控制
+	var ipnum = 0;
+
+	$("input[name='dnstype']").click(function(event) {
+		/* Act on the event */
+		var dnstype = $(this).val();
+		dnstypezh(dnstype);
+
+	});
+
+	dnstypezh($("input[name='dnstype']:checked").val());
+	function dnstypezh(dnstype){
+		switch(dnstype){
+			case '0':
+				$(".ip1").css('display', 'block');
+				$(".ip11").text('IP');
+				break;
+			case '2':
+				$(".ip1").css('display', 'block');
+				$(".ip11").text('域名');
+				break;
+			default:
+				$(".ip1").css('display', 'none');
+				$("input[name='cbip']").removeAttr("checked");
+				$('#addip').css('display', 'none');
+				$('.ipitem').remove();
+				break;
+		}
+	}
+
+	$("input[name='cbip']").click(function(event) {
+		/* Act on the event */
+		if($("input[name='cbip']").is(':checked')) {
+			$('#addip').css('display', 'block');
+			html = createipdiv();
+			$(".dnss").before(html);
+			$(".delip").on("click",function(){
+	   	  		$(this).parent().parent().remove();
+	    	});
+		}else{
+			$('#addip').css('display', 'none');
+			$('.ipitem').remove();
+		}
+	});
+
+	$("#addip").click(function(event) {
+		/* Act on the event */
+		html = createipdiv();
+		$(".dnss").before(html);
+		$(".delip").on("click",function(){
+   	  		$(this).parent().parent().remove();
+    	});
+	});
+
+	$(".delip").click(function(event) {
+		/* Act on the event */
+		$(this).parent().parent().remove();
+	});
+	function createipdiv() {
+		var html = "<div class=\"form-group ipitem\"><label for=\"input6\" class=\"col-sm-2 control-label\"></label><div class=\"col-sm-6\"><input type=\"text\" name=\"ip[]\" class=\"form-control\" id=\"input1\" placeholder=\"\" value=\"\"></div><div class=\"col-sm-4\"><button type=\"button\" class=\"btn btn-danger pull-left delip\">删除</button></div></div>";
+		return html;
+	}
+
+	$("input[name='cbserver']").click(function(event) {
+		/* Act on the event */
+		if($("input[name='cbserver']").is(':checked')) {
+			$('.serverdiv').css('display', 'block');
+		}else{
+			$('.serverdiv').css('display', 'none');
+			$('.ipitem').remove();
+		}
+	});
+	if($("input[name='cbserver']").is(':checked')) {
+			$('.serverdiv').css('display', 'block');
+	}
 
 	</script>
 </body>
