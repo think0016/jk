@@ -131,7 +131,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       <div class="btn-group">
                         <a href="__APP__/Task/update/tid/{$vo.id}" class="btn btn-xs btn-default">修改</a>
                         <a href="" class="btn btn-xs btn-default" onclick="del({$vo.id});">删除</a>
-                        <a href="" class="btn btn-xs btn-default">详情</a>
+                        <switch name="vo.name">
+                        <case value="http"><a href="__APP__/HttpView/index.html" class="btn btn-xs btn-default">详情</a></case>
+                        <default />
+                        <a href="#" class="btn btn-xs btn-default">详情</a>
+                        </switch>
+                        
                       </div>
                     </td>
                   </tr>

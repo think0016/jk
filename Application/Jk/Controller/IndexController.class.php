@@ -12,11 +12,11 @@ class IndexController extends BaseController {
     }
     
     public function test() {
-    	$this->display();
+    	redirect(U('/Index/testx'), 0, '页面跳转中...');
     }
     
     public function testx() {
-    	print_r($_POST);
+    	echo "aaa";
     }
     
 }
