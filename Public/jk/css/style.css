@@ -12,10 +12,12 @@
     padding: 0px;
     display: block;
 }
+
 .divider1 {
     height: 1px;
     background-color: #DFDFDF;
 }
+
 .divider {
     height: 10px;
 }

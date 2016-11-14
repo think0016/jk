@@ -8,11 +8,10 @@ class HttpViewController extends MonitorController {
 		
 		$taskid = I('get.taskid');
 		
-		
 		$this->assignbase();
 		
 		$this->display();
 	}
-
+	
 	
 }
