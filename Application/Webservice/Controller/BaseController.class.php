@@ -46,7 +46,7 @@ class BaseController extends Controller {
 	}
 	public function UpdateRrdBysh($filename, $dotime, $ds_name, $data, $taskid, $step) {
 		$c = "sh /var/www/ce/cmd/create_rrd.sh " . $filename .".rrd". " " . $dotime . " " . $ds_name . " " . $data. " " . $taskid. " " . $step;
-		//wlog("[UpdateRrdBysh]".$c);
+// 		wlog("[UpdateRrdBysh]".$c);
 		system($c,$status);
 		return $status;
 	}
@@ -61,12 +61,13 @@ class BaseController extends Controller {
 	
 	public function rlasttime($mid,$timedata) {
 		$return = time();
-		if($timedata != ""){
+		if($timedata != "" && isset($timedata)){
 			$arr = unserialize($timedata);
 			if(isset($arr[$mid]) && $arr[$mid]!=""){
 				$return = $arr[$mid];
 			}
 		}
+// 		wlog("mid:".$mid."     rlasttime:".$return);
 		return $return;
 	}
 }

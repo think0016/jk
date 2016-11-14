@@ -47,12 +47,14 @@ class IndexController extends BaseController {
 		}
 	}
 	public function getwebtask() {
-		
 		$debug = TRUE;
 		
 		// 获取监控点信息
 		$ip = get_client_ip ();
-		$ip = "120.52.96.49";
+		if(C('wsdebug')==1){
+			$ip = "120.52.96.49";
+		}
+		
 		$taskitem = array ();
 		
 		$pointmodel = D ( "jk_monitorypoint" );
@@ -60,8 +62,8 @@ class IndexController extends BaseController {
 				'status' => 1,
 				'ip' => $ip 
 		) )->find ();
-		$mid = $point['id'];
-		if (! $point ) {
+		$mid = $point ['id'];
+		if (! $point) {
 			wlog ( "NO POINT BY " . $ip );
 			exit ( "NO POINT BY " . $ip );
 		}
@@ -77,7 +79,7 @@ class IndexController extends BaseController {
 		$tasklist = $taskmodel->where ( $map )->select ();
 		foreach ( $tasklist as $k => $taskval ) {
 			
-			$taskval['mid'] = $mid;
+			$taskval ['mid'] = $mid;
 			$sid = $taskval ['sid'];
 			$tid = $taskval ['id'];
 			
@@ -122,7 +124,7 @@ class IndexController extends BaseController {
 			$taskitem [] = $task;
 			
 			// LOG
-			// wlog ( "获取ssid=" . $ssid . "任务" );
+			wlog ( "mid".$mid."  获取tid=" . $tid . "任务" );
 		}
 		
 		$return ["count"] = count ( $taskitem );
@@ -248,7 +250,6 @@ class IndexController extends BaseController {
 		echo $this->CreateRrd ( "aaaa", 300, "asas" );
 		echo "INDEX";
 	}
-	
 	private function savedata($post) {
 		$return = array ();
 		$taskid = $post ['taskid'];
@@ -268,21 +269,23 @@ class IndexController extends BaseController {
 			exit ();
 		}
 		// 添加lasttime
-		$lasttime1 = $tasklist['lasttime'];
-		$lasttime_arr = array();
-		if($lasttime1 != ""){
-			$temp = unserialize($lasttime1);
-			if($temp){
+		$lasttime1 = $tasklist ['lasttime'];
+		$lasttime_arr = array ();
+		if ($lasttime1 != "" && isset($lasttime1)) {
+			$temp = unserialize ( $lasttime1 );
+			if ($temp) {
 				$lasttime_arr = $temp;
 			}
-		}		
-		$lasttime_arr[$mid]=$lasttime;
-		$lasttime =serialize($lasttime_arr);		
+		}
+		$lasttime_arr [$mid] = $lasttime;
+		$lasttime1 = serialize ( $lasttime_arr );
 		$taskModel->where ( array (
 				"id" => $taskid 
 		) )->save ( array (
-				"lasttime" => $lasttime 
+				"lasttime" => $lasttime1
 		) );
+		
+		wlog("[savelasttime:]".$lasttime);
 		
 		$uid = $tasklist ["uid"];
 		$sid = $tasklist ["sid"];
@@ -309,7 +312,6 @@ class IndexController extends BaseController {
 		
 		return count ( $return );
 	}
-	
 	private function saveappdata($post) {
 		$return = 0;
 		$now = date ( "Y-m-d H:i:s" );
@@ -363,7 +365,7 @@ class IndexController extends BaseController {
 		$isadv = $taskval ['isadv'];
 		$frequency = $taskval ['frequency'];
 		$lasttime = $taskval ['lasttime'];
-		$lasttime = $this->rlasttime($taskval ['mid'], $lasttime);
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
 		
 		$return ['id'] = $tid;
 		$return ['frequency'] = $frequency;
@@ -406,10 +408,10 @@ class IndexController extends BaseController {
 		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
 		// $ssid = $taskval ['ssid'];
 		$tid = $taskval ['id'];
-		//$isadv = $taskval ['isadv'];
+		// $isadv = $taskval ['isadv'];
 		$frequency = $taskval ['frequency'];
 		$lasttime = $taskval ['lasttime'];
-		$lasttime = $this->rlasttime($taskval ['mid'], $lasttime);
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
 		
 		$return ['id'] = $tid;
 		$return ['frequency'] = $frequency;
@@ -426,123 +428,125 @@ class IndexController extends BaseController {
 		
 		return $return;
 	}
-	
 	private function getftptask($taskval) {
 		$sid = 6;
 		$return = array ();
-	
+		
 		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
 		// $ssid = $taskval ['ssid'];
 		$tid = $taskval ['id'];
-		//$isadv = $taskval ['isadv'];
+		// $isadv = $taskval ['isadv'];
 		$frequency = $taskval ['frequency'];
 		$lasttime = $taskval ['lasttime'];
-		$lasttime = $this->rlasttime($taskval ['mid'], $lasttime);
-	
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+		
 		$return ['id'] = $tid;
 		$return ['frequency'] = $frequency;
 		$return ['lasttime'] = $lasttime;
 		$taskdetail = $taskdetailsModel->where ( array (
-				"taskid" => $tid
+				"taskid" => $tid 
 		) )->find ();
-	
+		
 		if ($taskdetail) {
 			$return ['target'] = $taskdetail ['target'];
 			$return ['port'] = $taskdetail ['port'];
 			$return ['username'] = $taskdetail ['username'];
 			$return ['password'] = $taskdetail ['password'];
 		}
-	
+		
 		$return ['type'] = "ftp"; // 普通任务
-	
+		
 		return $return;
 	}
-	
 	private function gettcptask($taskval) {
 		$sid = 8;
 		$return = array ();
-	
+		
 		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
 		// $ssid = $taskval ['ssid'];
 		$tid = $taskval ['id'];
-		//$isadv = $taskval ['isadv'];
+		// $isadv = $taskval ['isadv'];
 		$frequency = $taskval ['frequency'];
 		$lasttime = $taskval ['lasttime'];
-		$lasttime = $this->rlasttime($taskval ['mid'], $lasttime);
-	
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+		
 		$return ['id'] = $tid;
 		$return ['frequency'] = $frequency;
 		$return ['lasttime'] = $lasttime;
 		$taskdetail = $taskdetailsModel->where ( array (
-				"taskid" => $tid
+				"taskid" => $tid 
 		) )->find ();
-	
+		
 		if ($taskdetail) {
 			$return ['target'] = $taskdetail ['target'];
+			$return ['port'] = $taskdetail ['port'];
 		}
-	
+		
 		$return ['type'] = "tcp"; // 普通任务
-	
+		
 		return $return;
 	}
-	
 	private function getudptask($taskval) {
 		$sid = 9;
 		$return = array ();
-	
+		
 		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
 		// $ssid = $taskval ['ssid'];
 		$tid = $taskval ['id'];
-		//$isadv = $taskval ['isadv'];
+		// $isadv = $taskval ['isadv'];
 		$frequency = $taskval ['frequency'];
 		$lasttime = $taskval ['lasttime'];
-		$lasttime = $this->rlasttime($taskval ['mid'], $lasttime);
-	
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+		
 		$return ['id'] = $tid;
 		$return ['frequency'] = $frequency;
 		$return ['lasttime'] = $lasttime;
 		$taskdetail = $taskdetailsModel->where ( array (
-				"taskid" => $tid
+				"taskid" => $tid 
 		) )->find ();
-	
+		
 		if ($taskdetail) {
 			$return ['target'] = $taskdetail ['target'];
+			$return ['port'] = $taskdetail ['port'];
+			$return ['resptype'] = $taskdetail ['resptype'];
+			$return ['resp'] = $taskdetail ['resp'];
+			$return ['matchtype'] = $taskdetail ['matchtype'];
+			$return ['matchresp'] = $taskdetail ['matchresp'];
 		}
-	
+		
 		$return ['type'] = "udp"; // 普通任务
-	
+		
 		return $return;
 	}
-	
 	private function getdnstask($taskval) {
 		$sid = 13;
 		$return = array ();
-	
+		
 		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
 		// $ssid = $taskval ['ssid'];
 		$tid = $taskval ['id'];
-		//$isadv = $taskval ['isadv'];
+		// $isadv = $taskval ['isadv'];
 		$frequency = $taskval ['frequency'];
 		$lasttime = $taskval ['lasttime'];
-		$lasttime = $this->rlasttime($taskval ['mid'], $lasttime);
-	
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+		
 		$return ['id'] = $tid;
 		$return ['frequency'] = $frequency;
 		$return ['lasttime'] = $lasttime;
 		$taskdetail = $taskdetailsModel->where ( array (
-				"taskid" => $tid
+				"taskid" => $tid 
 		) )->find ();
-	
+		
 		if ($taskdetail) {
 			$return ['target'] = $taskdetail ['target'];
-// 			$return ['domain'] = $taskdetail ['domain'];
+			// $return ['domain'] = $taskdetail ['domain'];
 			$return ['dnstype'] = $taskdetail ['dnstype'];
 			$return ['server'] = $taskdetail ['server'];
 			$return ['ip'] = $taskdetail ['ip'];
 		}
-	
+		
 		$return ['type'] = "dns"; // 普通任务
-	
+		
 		return $return;
 	}
 }
