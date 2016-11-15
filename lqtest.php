@@ -6,6 +6,7 @@ $a=array(
 );
 
 //有一个修改
+$stime = strtotime(date("Y-m-d"));
+$etime= date("Y-m-d",strtotime("-1 weeks"));
 
-
-echo json_encode($a);
+echo $stime;

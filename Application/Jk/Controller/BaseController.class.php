@@ -59,7 +59,7 @@ class BaseController extends Controller {
 		$map ["status"] = 1;
 		if ($param !== "") {
 			if ($c == 0) {
-				$map ["mid"] = $param;
+				$map ["id"] = $param;
 				return $model->where ( $map )->find ();
 			} else if ($c == 1) {
 				$map ["ip"] = $param;

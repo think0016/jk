@@ -41,7 +41,7 @@ class BaseController extends Controller {
 			return "ERROR:update:" . $c;
 		}
 	}
-	public function format_rddname($tid, $uid, $mid, $sid, $ssid, $itemid,$step) {
+	public function format_rddname($tid, $uid, $mid, $sid, $ssid, $itemid) {
 		return $tid . "_" . $uid . "_" . $mid . "_" . $sid . "_" . $ssid . "_" . $itemid;
 	}
 	public function UpdateRrdBysh($filename, $dotime, $ds_name, $data, $taskid, $step) {

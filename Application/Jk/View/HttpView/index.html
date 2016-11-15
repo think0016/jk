@@ -145,15 +145,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<!-- /.box-tools -->
 							</div>
 							<!-- /.box-header -->
-							<div class="box-body" style="min-height: 130px;">
+							<div class="box-body" style="min-height: 150px;">
 								<div class="col-md-12">
 									<dl class="dl-horizontal" >
 										<dt>监控对象&nbsp;&nbsp;</dt>
-										<dd>http://www.hnsi.cn</dd>
+										<dd>{$taskdetails.target}</dd>
 										<dt>监控类型&nbsp;&nbsp;</dt>
-										<dd>aaa</dd>
+										<dd>http</dd>
 										<dt>监控状态&nbsp;&nbsp;</dt>
-										<dd>aaa</dd>
+										<dd><switch name="task.status" ><case value="1">开启</case><case value="2">停止</case></switch></dd>
 										<dt>操作&nbsp;&nbsp;</dt>
 										<dd>
 											<a href="" class="btn btn-default btn-xs">修改配置</a>
@@ -179,7 +179,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<!-- /.box-tools -->
 						</div>
 						<!-- /.box-header -->
-						<div class="box-body"  style="min-height: 130px;">
+						<div class="box-body"  style="min-height: 150px;">
 							<table class="table table-bordered">
 								<tr>
 									<th style="width: 10px">#</th>
