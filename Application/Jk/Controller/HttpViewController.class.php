@@ -66,6 +66,7 @@ class HttpViewController extends MonitorController {
 		
 		$result1 = array (); // 地区最慢
 		$result2 = array (); // 运营商最慢
+		$cn=array();//计数器
 		foreach ( $mids_arr as $val ) {
 			$mid = str_replace ( ":", "", $val );
 			$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
@@ -76,27 +77,35 @@ class HttpViewController extends MonitorController {
 			
 			$province = $list ['province'];
 			if (isset ( $result1 [$operator] )) {
-				$result1 [$province] = ($rs [0] + $result1 [$province]) / 2;
+				$result1 [$province] = $rs [0] + $result1 [$province];
+				$cn[0][$province] = $cn[0][$province]+1;
 			} else {
 				$result1 [$province] = $rs [0];
-			}
-			$operator = $list ['operator'];
-			if (isset ( $result2 [$operator] )) {
-				$result2 [$operator] = ($rs [0] + $result2 [$operator]) / 2;
-			} else {
-				$result2 [$operator] = $rs [0];
+				$cn[0][$province] = 1;
 			}
 			
-			// $marr =array();
-			// foreach ($rs as $val){
-			// $temp = explode(" ",$val);
-			// $temp[0] = date("Y-m-d H:i:s",$temp[0]);
-			// $marr[] = $temp;
-			// }
-			// $result[$mid][]=$marr;
+			$operator = $list ['operator'];
+			if (isset ( $result2 [$operator] )) {
+				$result2 [$operator] = $rs [0] + $result2 [$operator];
+				$cn[1][$operator] = $cn[1][$operator]+1;
+			} else {
+				$result2 [$operator] = $rs [0];
+				$cn[1][$operator] = 1;
+			}		
+			
+			
 		};
-		print_r ( $result1 );
-		print_r ( $result2 );
+		//算平均
+		foreach ($result1 as $k=> $v){
+			$result1[$k]=($v/$cn[0][$k]);
+		}
+		foreach ($result2 as $k=> $v){
+			$result2[$k]=($v/$cn[1][$k]);
+		}
+		//排序
+		arsort($result1);
+		arsort($result2);
+		
 		exit ();
 		$this->assignbase ();
 		$this->assign ( "task", $task );
