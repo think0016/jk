@@ -24,13 +24,25 @@ function wlog($data){
 }
 
 //读RRD数据
-function rrd_get($filename,$sdate,$edate,$step=300){
-	$stime=strtotime($sdate);
-	$etime=strtotime($edate);
+// function rrd_get($filename,$sdate,$edate,$step=300){
+// 	$stime=strtotime($sdate);
+// 	$etime=strtotime($edate);
 	
-	//$c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime."  -e ".$etime;
-	$c="sh /var/www/ce/rrd_get.sh ".$filename." ".$stime." ".$etime." ".$step;
-	exec($c,$output);
-	return $output;
+// 	//$c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime."  -e ".$etime;
+// 	$c="sh /var/www/ce/rrd_get.sh ".$filename." ".$stime." ".$etime." ".$step;
+// 	exec($c,$output);
+// 	return $output;
+// }
+
+
+function changeTimeType($seconds){
+	if ($seconds>3600){
+		$hours = intval($seconds/3600);
+		$minutes = $seconds/600;
+		$time = $hours."小时".gmstrftime('%M分%S秒', $minutes);
+	}else{
+		$time = gmstrftime('%H小时%M分%S秒', $seconds);
+	}
+	return $time;
 }
 ?>

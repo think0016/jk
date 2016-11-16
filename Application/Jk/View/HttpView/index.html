@@ -33,6 +33,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
+	<script type="text/javascript">
+		var rooturl = '__APP__';
+		var tid = {$taskdetails.taskid};
+		var sdate = '{$sdate}';
+		var edate = '{$edate}';
+		var mapdata = "{$mapdata}";
+		var item = '{$itemid}';
+		var step = {$step};
+		var alarmsnum = {$alarmsnum};
+	</script>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini ">
@@ -153,7 +163,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<dt>监控类型&nbsp;&nbsp;</dt>
 										<dd>http</dd>
 										<dt>监控状态&nbsp;&nbsp;</dt>
-										<dd><switch name="task.status" ><case value="1">开启</case><case value="2">停止</case></switch></dd>
+										<dd>
+											<switch name="task.status" >
+												<case value="1">开启</case>
+												<case value="2">停止</case>
+											</switch>
+										</dd>
 										<dt>操作&nbsp;&nbsp;</dt>
 										<dd>
 											<a href="" class="btn btn-default btn-xs">修改配置</a>
@@ -189,7 +204,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<th>当前状态</th>
 									<th>操作</th>
 								</tr>
-								<tr>
+								<volist name="alarmdata" id="vo" offset="0" length='2'>
+									<tr>
+										<td>{$i}.</td>
+										<td>{$vo.stime}</td>
+										<td>{$vo.msg}</td>
+										<td>{$vo.ltime}</td>
+										<td>{$vo.status}</td>
+										
+										<td>
+											<div class="btn-group">
+												<a class="btn btn-default btn-xs">查看</a>
+												<a class="btn btn-default btn-xs">处理</a>
+											</div>
+										</td>
+									</tr>
+								</volist>
+<!-- 								<tr>
 									<td>1.</td>
 									<td>Update software</td>
 									<td>100ms</td>
@@ -201,20 +232,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											<a class="btn btn-default btn-xs">处理</a>
 										</div>
 									</td>
-								</tr>
-								<tr>
-									<td>2.</td>
-									<td>Clean database</td>
-									<td>100ms</td>
-									<td>100ms</td>
-									<td>100ms</td>
-									<td>
-										<div class="btn-group">
-											<a class="btn btn-default btn-xs">查看</a>
-											<a class="btn btn-default btn-xs">处理</a>
-										</div>
-									</td>
-								</tr>
+								</tr> -->
 
 							</table>
 						</div>
@@ -243,15 +261,52 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<div class="box box-solid">
 								<div class="box-tools pull-left ">
 									<div class="btn-group">
-										<a class="btn btn-default btn-sm active">响应时间</a>
-										<a class="btn btn-default btn-sm ">可用性</a>
+										<switch name="itemid">
+											<case value="2">
+												<a class="btn btn-default btn-sm active">响应时间</a>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status">可用性</a>
+											</case>
+											<case value="8">
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime">响应时间</a>
+												<a class="btn btn-default btn-sm active">可用性</a>
+											</case>
+										</switch>
 									</div>
 								</div>
 								<div class="box-tools pull-right">
 									<div class="btn-group">
-										<a class="btn btn-default btn-sm active">每日</a>
-										<a class="btn btn-default btn-sm">每周</a>
-										<a class="btn btn-default btn-sm">每月</a>
+										<if condition="$itemid eq 2">
+											<if condition="$sel eq 'yd'">
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime">今日</a>
+												<a class="btn btn-default btn-sm active">昨日</a>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime/sel/w">上周</a>
+												<elseif condition="$sel eq 'w'"/>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime">今日</a>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime/sel/yd">昨日</a>
+												<a class="btn btn-default btn-sm active">上周</a>
+												<else/>
+												<a class="btn btn-default btn-sm active">今日</a>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime/sel/yd">昨日</a>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime/sel/w">上周</a>
+
+											</if>
+											<elseif condition="$itemid eq 8"/>
+											<if condition="$sel eq 'yd'">
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status">今日</a>
+												<a class="btn btn-default btn-sm active">昨日</a>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status/sel/w">上周</a>
+												<elseif condition="$sel eq 'w'"/>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status">今日</a>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status/sel/yd">昨日</a>
+												<a class="btn btn-default btn-sm active">上周</a>
+												<else/>
+												<a class="btn btn-default btn-sm active">今日</a>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status/sel/yd">昨日</a>
+												<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status/sel/w">上周</a>
+
+											</if>
+										</if>
+
 									</div>
 								</div>
 
@@ -265,7 +320,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<div class="divider"></div>
 							<div class="box box-solid">
 								<!-- /.box-header -->
-								<div class="box-body">所有地区平均：1111ms</div>
+								<div class="box-body">所有地区平均：{$total_avg}{$unit}</div>
 								<!-- /.box-body -->
 
 							</div>
@@ -281,30 +336,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<div class="box-body">
 									<table class="table table-bordered">
 										<tr>
-											<th style="width: 10px">名次</th>
+											<th style="width: 50px">名次</th>
 											<th>省份</th>
 											<th>响应时间</th>
 										</tr>
-										<tr>
-											<td>1.</td>
-											<td>Update software</td>
-											<td>100ms</td>
-										</tr>
-										<tr>
-											<td>2.</td>
-											<td>Clean database</td>
-											<td>100ms</td>
-										</tr>
-										<tr>
-											<td>2.</td>
-											<td>Clean database</td>
-											<td>100ms</td>
-										</tr>
-										<tr>
-											<td>2.</td>
-											<td>Clean database</td>
-											<td>100ms</td>
-										</tr>
+										<volist name="result1" id="vo" offset="0" length='4'>
+											<tr>
+												<td>{$i}.</td>
+												<td>{$vo.name}</td>
+												<td>{$vo.value}{$unit}</td>
+											</tr>
+										</volist>
 									</table>
 								</div>
 								<!-- /.box-body -->
@@ -341,30 +383,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<div class="box-body">
 								<table class="table table-bordered">
 									<tr>
-										<th style="width: 10px">名次</th>
-										<th>省份</th>
+										<th style="width: 50px">名次</th>
+										<th>运营商</th>
 										<th>响应时间</th>
 									</tr>
-									<tr>
-										<td>1.</td>
-										<td>Update software</td>
-										<td>100ms</td>
-									</tr>
-									<tr>
-										<td>1.</td>
-										<td>Update software</td>
-										<td>100ms</td>
-									</tr>
-									<tr>
-										<td>1.</td>
-										<td>Update software</td>
-										<td>100ms</td>
-									</tr>
-									<tr>
-										<td>1.</td>
-										<td>Update software</td>
-										<td>100ms</td>
-									</tr>
+									<volist name="result2" id="vo" offset="0" length='3'>
+										<tr>
+											<td>{$i}.</td>
+											<td>{$vo[0]}</td>
+											<td>{$vo[1]}{$unit}</td>
+										</tr>
+									</volist>
 								</table>
 							</div>
 							<!-- /.box-body -->
@@ -464,6 +493,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
      user experience. Slimscroll is required when using the
      fixed layout. -->
 <load href="__PUBLIC__/jk/js/monitor/httpview.js" />
-<script type="text/javascript"></script>
+<script type="text/javascript">$('#Notifications').text(alarmsnum);</script>
 </body>
 </html>
