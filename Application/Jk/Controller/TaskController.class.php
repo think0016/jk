@@ -398,8 +398,8 @@ class TaskController extends BaseController {
 			exit ( "请登录" );
 		}
 		
-		// var_dump($_POST);
-		// exit();
+		var_dump($_POST);
+		exit();
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 1;
 		$taskModel = D ( 'jk_task' );

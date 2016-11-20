@@ -327,6 +327,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<div class="modal-body">
 		<!-- modal start -->
 		<form class="form-horizontal" role="form" id="form2">
+		<input type="hidden" name="alermindex" value="-1">
 			<div class="form-group">
 				<label for="firstname" class="col-sm-3 control-label">监控指标名称：</label>
 				<div class="col-sm-9">
@@ -377,13 +378,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			</div>
 			<div class="form-group amidsdiv">
 				<label for="firstname" class="col-sm-3 control-label">监控点选择：</label>
-				<div class="col-sm-9 ">
-					<select class="form-control select2 amids"
-											multiple="multiple" name="amids[]" data-placeholder="点击选择标签" style="width: 100%;">
-						<option value="1">标签1</option>
-						<option value="2">标签2</option>
-						<option value="3">标签3</option>
-					</select>
+				<div class="col-sm-9 amids">
+				
+					
 				</div>
 			</div>
 			<div class="form-group">
@@ -518,12 +515,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		if(aitem==1){
 
 			$('.amids').empty();
-
+			
 			for (var i = 0; i < pointlist.length; i++) {
 
 				var v1=pointlist[i][0];
 				var v2=pointlist[i][1];
-		    	var html="<option value=\""+v1+"\">"+v2+"</option>";
+		 //    	var html="<option value=\""+v1+"\">"+v2+"</option>";
+		 		var html="<input type=\"checkbox\" name=\"amids\" value=\""+v1+"\">"+v2
 		    	$('.amids').append(html);
 
 			}
@@ -562,7 +560,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	});
 	
 
-	//原外置js
+	//告警策略提交保存
 	var alarmlist = new Array();
 	function savealarm() {
 		var item_text = $("#item_id option:selected").text();
@@ -617,9 +615,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		//console.log("alarmlist");
 		//console.log(alarmlist);
 		$(".amidsdiv").css('display', 'none');
-		$("#form2")[0].reset();
+		//$("#form2")[0].reset();
 	}
 
+	//提交任务保存
 	function savefrom() {
 		var num = alarmlist.length;
 		$("input[name='alarm_num']").val(alarmlist.length);
@@ -659,7 +658,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 	function createtr(arr,index) {
 		var html = "<tr id=\"atr"+index+"\">";
-		html += "<td>" + arr[6] + "</td><td>" + arr[7] + "</td><td>" + arr[2] + arr[3] + "</td><td>" + arr[5] + "</td><td><span class=\"badge bg-green\">开启</span></td><td><div class=\"btn-group\"><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"\">修改</button><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"delalarm("+index+","+"0"+");\">删除</button></div></td>";
+		html += "<td>" + arr[6] + "</td><td>" + arr[7] + "</td><td>" + arr[2] + arr[3] + "</td><td>" + arr[5] + "</td><td><span class=\"badge bg-green\">开启</span></td><td><div class=\"btn-group\"><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"updatealarm("+index+","+"0"+");\">修改</button><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"delalarm("+index+","+"0"+");\">删除</button></div></td>";
 		html += "</tr>";
 		return html;
 	}
@@ -686,10 +685,50 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		}
 	}
 
+	function updatealarm(index,type){
+		if(type==0){
+			//不用AJAX
+			console.log(alarmlist[index]);
+			//清空表单
+			var temp = alarmlist[index];
+
+			if(temp[6] == '当前响应时间'){
+				$("input[name='alermindex']").val(index);
+				$("#item_id").val(temp[0]);
+				$("#op1").val(temp[1]);
+				$("input[name='threshold1']").val(temp[2]);
+				$("#unit").val(temp[3]);
+				$("#calc").val(temp[4]);
+				$("#atimes").val(temp[5]);
+
+				if(temp[4] == 1){
+					$('.amids').empty();
+
+  
+					amidsdiv.css('display', 'block');
+				}
+			}else if(temp[6] =='当日可用率'){
+
+			}
+
+			$('#addalarm').modal('show');
+		}else{
+
+		}
+	}
+
 	if(is_adv==1){
 		adv_show();	
 	}
 	
+    $('#addalarm').on('hidden.bs.modal',
+    function() {
+    	//console.log("close");
+    	$("#form2")[0].reset();
+    	$("input[name='alermindex']").val(-1);
+        //$("#form2")[0].reset();
+    })
+
 
 	</script>
 </body>
