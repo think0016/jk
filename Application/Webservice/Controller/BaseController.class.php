@@ -5,9 +5,11 @@ namespace Webservice\Controller;
 use Think\Controller;
 
 class BaseController extends Controller {
+
 	public function index() {
+
 	}
-	
+
 	/**
 	 * Rrd操作
 	 */
@@ -21,17 +23,18 @@ class BaseController extends Controller {
 		}
 		return $flag;
 	}
+
 	public function UpdateRrd($name, $ds_name, $data) {
 		$flag = 0;
 		$filename = C ( "rrd_dir" ) . $name . ".rrd";
-		
+
 		if (! file_exists ( $filename )) {
 			$r = $this->CreateRrd ( $name, '300', $ds_name );
 			if ($r != 1) {
 				return "error:create";
 			}
 		}
-		
+
 		$data = time () . ":" . $data;
 		$c = "/usr/bin/rrdtool update  $filename  --template  $ds_name  $data";
 		system ( $c, $status );
@@ -41,33 +44,31 @@ class BaseController extends Controller {
 			return "ERROR:update:" . $c;
 		}
 	}
+
 	public function format_rddname($tid, $uid, $mid, $sid, $ssid, $itemid) {
 		return $tid . "_" . $uid . "_" . $mid . "_" . $sid . "_" . $ssid . "_" . $itemid;
 	}
+
 	public function UpdateRrdBysh($filename, $dotime, $ds_name, $data, $taskid, $step) {
-		$c = "sh /var/www/ce/cmd/create_rrd.sh " . $filename .".rrd". " " . $dotime . " " . $ds_name . " " . $data. " " . $taskid. " " . $step;
-// 		wlog("[UpdateRrdBysh]".$c);
-		system($c,$status);
+		$c = "sh /var/www/ce/cmd/create_rrd.sh " . $filename . ".rrd" . " " . $dotime . " " . $ds_name . " " . $data . " " . $taskid . " " . $step;
+		// wlog("[UpdateRrdBysh]".$c);
+		system ( $c, $status );
 		return $status;
 	}
-/**
- * Rrd操作END
- */
-	
-// 	public function wlasttime($mid,$time) {
-// 		$taskModel = D("jk_task");
-		
-// 	}
-	
-	public function rlasttime($mid,$timedata) {
-		$return = time();
-		if($timedata != "" && isset($timedata)){
-			$arr = unserialize($timedata);
-			if(isset($arr[$mid]) && $arr[$mid]!=""){
-				$return = $arr[$mid];
+
+	/**
+	 * Rrd操作END
+	 */
+	public function rlasttime($mid, $timedata) {
+		$return = time ();
+		if ($timedata != "" && isset ( $timedata )) {
+			$arr = unserialize ( $timedata );
+			if (isset ( $arr [$mid] ) && $arr [$mid] != "") {
+				$return = $arr [$mid];
 			}
 		}
-// 		wlog("mid:".$mid."     rlasttime:".$return);
+		// wlog("mid:".$mid." rlasttime:".$return);
 		return $return;
 	}
+
 }

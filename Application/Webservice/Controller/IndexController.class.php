@@ -3,16 +3,20 @@
 namespace Webservice\Controller;
 
 class IndexController extends BaseController {
+	
 	public function postwebtask() {
 		$type = $_POST ["type"];
-		
+		wlog ( "(postwebtask)[".$type."]");
 		$r = 0;
 		if ($type == "appcrash" || $type == "appmem" || $type == "appnet") {
-			// wlog ( "(app)POST:" . serialize ( $_POST ) );
+			if($type == "appnet"){
+				//wlog ( "(APPNET)POST:" . serialize ( $_POST ) );
+			}
+			
 			$r = $this->saveappdata ( $_POST ); // 存APP数据
 		} else {
 			
-			wlog ( "(postwebtask)POST:" . serialize ( $_POST ) );
+			//wlog ( "(postwebtask)POST:" . serialize ( $_POST ) );
 			// exit("测试停止");
 			
 			// 获取监控点信息
@@ -46,6 +50,7 @@ class IndexController extends BaseController {
 			echo json_encode ( $msg );
 		}
 	}
+	
 	public function getwebtask() {
 		$debug = TRUE;
 		
@@ -124,7 +129,7 @@ class IndexController extends BaseController {
 			$taskitem [] = $task;
 			
 			// LOG
-			wlog ( "mid".$mid."  获取tid=" . $tid . "任务" );
+// 			wlog ( "mid".$mid."  获取tid=" . $tid . "任务" );
 		}
 		
 		$return ["count"] = count ( $taskitem );
@@ -250,6 +255,7 @@ class IndexController extends BaseController {
 		echo $this->CreateRrd ( "aaaa", 300, "asas" );
 		echo "INDEX";
 	}
+	
 	private function savedata($post) {
 		$return = array ();
 		$taskid = $post ['taskid'];
@@ -284,8 +290,6 @@ class IndexController extends BaseController {
 		) )->save ( array (
 				"lasttime" => $lasttime1
 		) );
-		
-		wlog("[savelasttime:]".$lasttime);
 		
 		$uid = $tasklist ["uid"];
 		$sid = $tasklist ["sid"];
@@ -518,6 +522,7 @@ class IndexController extends BaseController {
 		
 		return $return;
 	}
+	
 	private function getdnstask($taskval) {
 		$sid = 13;
 		$return = array ();
