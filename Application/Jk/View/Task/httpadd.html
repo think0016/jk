@@ -281,7 +281,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</td>
 								<td>
 									<div class="btn-group">
-										<button type="button" class="btn btn-xs btn-info">修改</button>
+										<button type="button" class="btn btn-xs btn-info" onclick="updatealarm({$vo.id},1)">修改</button>
 										<button type="button" class="btn btn-xs btn-info" onclick="delalarm({$vo.id},1)">删除</button>
 									</div>
 								</td>
@@ -300,7 +300,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		</div>
 		<!-- /.box-body -->
 		<div class="box-footer">
-			<button type="button" class="btn btn-info pull-right" onclick="savefrom();">保存</button>
+			<button type="button" class="btn btn-info pull-right" onclick="saveform();">保存</button>
 		</div>
 		<!-- /.box-footer -->
 	</form>
@@ -328,6 +328,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<!-- modal start -->
 		<form class="form-horizontal" role="form" id="form2">
 		<input type="hidden" name="alermindex" value="-1">
+		<input type="hidden" name="alermajax" value="0">
 			<div class="form-group">
 				<label for="firstname" class="col-sm-3 control-label">监控指标名称：</label>
 				<div class="col-sm-9">
@@ -451,285 +452,395 @@ scratch. This page gets rid of all links and provides the needed markup only.
      user experience. Slimscroll is required when using the
      fixed layout. -->
 <script type="text/javascript">
-	var is_adv = {$task.isadv|default=0};
-	/* SELECT2 */
-	$(".select2").select2();
+var sid = {$task.sid|default = 0};
+var is_adv = {$task.isadv|default = 0};
+/* SELECT2 */
+$(".select2").select2();
 
-	/* BOOTSTRAP SLIDER */
-	$('#ex1').slider({
-		formatter: function(value) {
-			return value + '分钟';
+/* BOOTSTRAP SLIDER */
+$('#ex1').slider({
+	formatter: function(value) {
+		return value + '分钟';
+	}
+});
+$('#ex1').on("slide", function(slideEvt) {
+	$(".ext1v").text((slideEvt.value + '分钟'));
+});
+
+/* 操作 */
+function adv_show() {
+	var adv = $("input[name='adv']").val();
+	if (adv == 0) {
+		$("input[name='adv']").val(1);
+		$('.adv').css("display", "block");
+		if ($("input[name='reqtype']:checked").val() == 'head') {
+			$('.adv_post').css('display', 'none');
+			$('.adv_m1').css('display', 'none');
+			$('.adv_m2').css('display', 'none');
+		} else if ($("input[name='reqtype']:checked").val() == 'get') {
+			$('.adv_post').css('display', 'none');
+			//$('.adv_m1').css('display', 'block');
+			//$('.adv_m2').css('display', 'block');
 		}
-	});
-	$('#ex1').on("slide", function(slideEvt) {
-		$(".ext1v").text((slideEvt.value + '分钟'));
-	});
-	
-	/* 操作 */
-	function adv_show() {
-		var adv=$("input[name='adv']").val();
-		if(adv == 0){
-			$("input[name='adv']").val(1);
-			$('.adv').css("display", "block");
-			if($("input[name='reqtype']:checked").val() == 'head'){
-				$('.adv_post').css('display', 'none');
-				$('.adv_m1').css('display', 'none');
-				$('.adv_m2').css('display', 'none');
-			}else if($("input[name='reqtype']:checked").val() == 'get'){
-				$('.adv_post').css('display', 'none');
-				//$('.adv_m1').css('display', 'block');
-				//$('.adv_m2').css('display', 'block');
-			}
-		}else{
-			$("input[name='adv']").val(0);
-			$('.adv').css("display", "none");
+	} else {
+		$("input[name='adv']").val(0);
+		$('.adv').css("display", "none");
+	}
+}
+
+
+$("input[name='reqtype']").click(function() {
+	var m = $(this).val();
+	var mp = $('.adv_post');
+	var m1 = $('.adv_m1');
+	var m2 = $('.adv_m2');
+	if (m == 'get') {
+		mp.css('display', 'none');
+		m1.css('display', 'block');
+		m2.css('display', 'block');
+	} else if (m == 'post') {
+		mp.css('display', 'block');
+		m1.css('display', 'block');
+		m2.css('display', 'block');
+	} else if (m == 'head') {
+		mp.css('display', 'none');
+		m1.css('display', 'none');
+		m2.css('display', 'none');
+	}
+	//console.log($(this).val());
+});
+
+$('.amidsdiv').css('display', 'none');
+$("#calc").change(function() {
+	var aitem = $("#calc").find("option:selected").val();
+	var amidsdiv = $(".amidsdiv");
+	if (aitem == 1) {
+
+		$('.amids').empty();
+
+		for (var i = 0; i < pointlist.length; i++) {
+
+			var v1 = pointlist[i][0];
+			var v2 = pointlist[i][1];
+			//    	var html="<option value=\""+v1+"\">"+v2+"</option>";
+			var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\">" + v2
+			$('.amids').append(html);
+
 		}
+
+
+		// $(".mids").find("option:selected").each(function(){
+		// //console.log($(this).text());
+		//    //console.log($(this).val());
+		//    var html="<option value=\""+$(this).val()+"\">"+$(this).text()+"</option>";
+		//    $('.amids').append(html);
+		//  	});
+
+		amidsdiv.css('display', 'block');
+
+
+	} else {
+		$('.amids').empty();
+		amidsdiv.css('display', 'none');
 	}
 
+});
 
-	$("input[name='reqtype']").click(function(){
-		var m = $(this).val();
-		var mp = $('.adv_post');
-		var m1 = $('.adv_m1');
-		var m2 = $('.adv_m2');
-		if(m=='get'){
-			mp.css('display', 'none');
-			m1.css('display', 'block');
-			m2.css('display', 'block');
-		}else if(m == 'post'){
-			mp.css('display', 'block');
-			m1.css('display', 'block');
-			m2.css('display', 'block');
-		}else if(m == 'head'){
-			mp.css('display', 'none');
-			m1.css('display', 'none');
-			m2.css('display', 'none');
-		}
-		//console.log($(this).val());
-	});
 
-	$('.amidsdiv').css('display', 'none');
-	$("#calc").change(function(){
-		var aitem = $("#calc").find("option:selected").val();
-		var amidsdiv = $(".amidsdiv");
-		if(aitem==1){
+$('.alarmv2').css('display', 'none');
+$("#item_id").change(function() {
+	var aitem = $("#item_id").find("option:selected").text();
+	var a1 = $('.alarmv1');
+	var a2 = $('.alarmv2');
+	if (aitem == '当日可用率') {
+		a1.css('display', 'none');
+		a2.css('display', 'block');
+	} else if (aitem == '当前响应时间') {
+		a2.css('display', 'none');
+		a1.css('display', 'block');
+	}
+});
 
-			$('.amids').empty();
-			
-			for (var i = 0; i < pointlist.length; i++) {
 
-				var v1=pointlist[i][0];
-				var v2=pointlist[i][1];
-		 //    	var html="<option value=\""+v1+"\">"+v2+"</option>";
-		 		var html="<input type=\"checkbox\" name=\"amids\" value=\""+v1+"\">"+v2
-		    	$('.amids').append(html);
+//告警策略提交保存
+var alarmlist = new Array();
 
+function savealarm() {
+	var item_text = $("#item_id option:selected").text();
+	var item_id = $("#item_id option:selected").val();
+	var op = $("#op1 option:selected").val();
+	var op_text = $("#op1 option:selected").text();
+	var threshold = $("#threshold1").val();
+	var unit = $("#unit option:selected").val();
+	var calc = $("#calc option:selected").val();
+	var atimes = $("#atimes option:selected").val();
+	var amids = "";
+
+	var aitem = $("#item_id").find("option:selected").text();
+	if (aitem == '当日可用率') {
+		op = $("#op2 option:selected").val();
+		op_text = $("#op2 option:selected").text();
+		threshold = $("#threshold2").val();
+		unit = '%';
+	}
+
+	if (calc == 1) {
+		var n = 0;
+		$("input[name='amidsopt']:checked").each(function() {
+			//console.log($(this).text());
+			//console.log($(this).val());
+			if (n > 0) {
+				amids = amids + ";";
 			}
+			amids = amids + $(this).val();
+			n++;
+		});
+	}
 
+	var temp = new Array();
+	temp[0] = item_id;
+	temp[1] = op;
+	temp[2] = threshold;
+	temp[3] = unit;
+	temp[4] = calc;
+	temp[5] = atimes;
+	temp[6] = item_text;
+	temp[7] = op_text;
+	temp[8] = amids;
 
-			// $(".mids").find("option:selected").each(function(){
-			// //console.log($(this).text());
-		 //    //console.log($(this).val());
-		 //    var html="<option value=\""+$(this).val()+"\">"+$(this).text()+"</option>";
-		 //    $('.amids').append(html);
-		 //  	});
-
-			amidsdiv.css('display', 'block');
-
-
+	var index = $("input[name='alermindex']").val();
+	var isajax = $("input[name='alermajax']").val();
+	if (index >= 0) {
+		if(isajax == 0){
+			$(("#atr" + index)).remove();
+			alarmlist[index] = temp;
 		}else{
-			$('.amids').empty();
-			amidsdiv.css('display', 'none');
+			$(("#atrx" + index)).remove();
+			delalarm(index,1);
+			index = alarmlist.length;
+			alarmlist[index] = temp;
 		}
-
-	});
-
-
-	$('.alarmv2').css('display', 'none');
-	$("#item_id").change(function(){
-		var aitem=$("#item_id").find("option:selected").text();
-		var a1 = $('.alarmv1');
-		var a2 = $('.alarmv2');
-		if(aitem=='当日可用率'){
-			a1.css('display', 'none');
-			a2.css('display', 'block');
-		}else if(aitem == '当前响应时间'){
-			a2.css('display', 'none');
-			a1.css('display', 'block');
-		}
-	});
-	
-
-	//告警策略提交保存
-	var alarmlist = new Array();
-	function savealarm() {
-		var item_text = $("#item_id option:selected").text();
-		var item_id = $("#item_id option:selected").val();
-		var op = $("#op1 option:selected").val();
-		var op_text = $("#op1 option:selected").text();
-		var threshold = $("#threshold1").val();
-		var unit = $("#unit option:selected").val();
-		var calc = $("#calc option:selected").val();
-		var atimes = $("#atimes option:selected").val();
-		var amids ="";
-
-		var aitem = $("#item_id").find("option:selected").text();
-		if (aitem == '当日可用率') {
-			op = $("#op2 option:selected").val();
-			op_text = $("#op2 option:selected").text();
-			threshold = $("#threshold2").val();
-			unit = '%';
-		}
-
-		if(calc == 1){
-			var n = 0;
-			$(".amids").find("option:selected").each(function(){
-				//console.log($(this).text());
-			    //console.log($(this).val());
-			    if(n>0){
-			    	amids = amids + ";";
-			    }
-			    amids = amids + $(this).val();
-			    n++;
-			});
-		}
-		var index = alarmlist.length;
-		var temp = new Array();
-		temp[0] = item_id;
-		temp[1] = op;
-		temp[2] = threshold;
-		temp[3] = unit;
-		temp[4] = calc;
-		temp[5] = atimes;
-		temp[6] = item_text;
-		temp[7] = op_text;
-		temp[8] = amids;
-
-
+	} else {
+		index = alarmlist.length;
 		alarmlist[index] = temp;
 
-		$('#addalarm').modal('hide');
-		$('#addalarm').modal('hide');
-		var tr = createtr(temp,index);
-		$('#alarm_table').append(tr);
-		//console.log("alarmlist");
-		//console.log(alarmlist);
-		$(".amidsdiv").css('display', 'none');
-		//$("#form2")[0].reset();
 	}
+	$('#addalarm').modal('hide');
+	var tr = createtr(temp, index);
+	$('#alarm_table').append(tr);
+	//console.log("alarmlist");
+	//console.log(alarmlist);
+	$(".amidsdiv").css('display', 'none');
+	//$("#form2")[0].reset();
+}
 
-	//提交任务保存
-	function savefrom() {
-		var num = alarmlist.length;
-		$("input[name='alarm_num']").val(alarmlist.length);
-		for (var i = 0; i < alarmlist.length; i++) {
-			var temp = alarmlist[i];
-			var name = "a" + i;
-			var input = "<input type=\"hidden\" name=\"" + name + "\" value=\"0\"></div>";
-			$('#hiddens').append(input);
-			var s = "input[name='" + name + "']";
-			$(s).val(temp);
-		}
-		//验证表单
-		var title=$("input[name='title']").val(); 
-		var target=$("input[name='target']").val();
+//提交任务保存
+function saveform() {
+	var num = alarmlist.length;
+	$("input[name='alarm_num']").val(alarmlist.length);
+	for (var i = 0; i < alarmlist.length; i++) {
+		var temp = alarmlist[i];
+		var name = "a" + i;
+		var input = "<input type=\"hidden\" name=\"" + name + "\" value=\"0\"></div>";
+		$('#hiddens').append(input);
+		var s = "input[name='" + name + "']";
+		$(s).val(temp);
+	}
+	//验证表单
+	var title = $("input[name='title']").val();
+	var target = $("input[name='target']").val();
 
-		if(title == ''){
-			layer.msg('任务名称不能为空');
-		}else if(target == ''){
-			layer.msg('监控地址不能为空');
-		}else if(pointlist.length == 0){
-			layer.msg('监控点不能为空');
-		}else{
-			var mids = "";
-			for (var i = 0; i < pointlist.length; i++) {
-				if(i > 0 ){
-					mids = mids + ",:" + pointlist[i][0] + ":";
-				}else{
-					mids = mids + ":" + pointlist[i][0] + ":";
-				}
+	if (title == '') {
+		layer.msg('任务名称不能为空');
+	} else if (target == '') {
+		layer.msg('监控地址不能为空');
+	} else if (pointlist.length == 0) {
+		layer.msg('监控点不能为空');
+	} else {
+		var mids = "";
+		for (var i = 0; i < pointlist.length; i++) {
+			if (i > 0) {
+				mids = mids + ",:" + pointlist[i][0] + ":";
+			} else {
+				mids = mids + ":" + pointlist[i][0] + ":";
 			}
-			$("input[name='mids']").val(mids);
-			$('#form1')[0].submit();
 		}
-
-		
+		$("input[name='mids']").val(mids);
+		$('#form1')[0].submit();
 	}
 
-	function createtr(arr,index) {
-		var html = "<tr id=\"atr"+index+"\">";
-		html += "<td>" + arr[6] + "</td><td>" + arr[7] + "</td><td>" + arr[2] + arr[3] + "</td><td>" + arr[5] + "</td><td><span class=\"badge bg-green\">开启</span></td><td><div class=\"btn-group\"><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"updatealarm("+index+","+"0"+");\">修改</button><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"delalarm("+index+","+"0"+");\">删除</button></div></td>";
-		html += "</tr>";
-		return html;
-	}
 
-	function delalarm(index,type){
-		if(type==0){
-			//不用AJAX
-			console.log("DEL:"+index);
-			alarmlist[index]="del";
-			$(("#atr"+index)).remove();
-		}else{
-			var delurl = '__APP__/Task/delalarm';
-			$.post(delurl, {
-					aid: index
-				},
-				function(data, status) {
-					if (data == 1) {
+}
+
+function createtr(arr, index) {
+	var html = "<tr id=\"atr" + index + "\">";
+	html += "<td>" + arr[6] + "</td><td>" + arr[7] + "</td><td>" + arr[2] + arr[3] + "</td><td>" + arr[5] + "</td><td><span class=\"badge bg-green\">开启</span></td><td><div class=\"btn-group\"><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"updatealarm(" + index + "," + "0" + ");\">修改</button><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"delalarm(" + index + "," + "0" + ");\">删除</button></div></td>";
+	html += "</tr>";
+	return html;
+}
+
+function delalarm(index, type) {
+	if (type == 0) {
+		//不用AJAX
+		console.log("DEL:" + index);
+		alarmlist[index] = "del";
+		$(("#atr" + index)).remove();
+	} else {
+		var delurl = '__APP__/Task/delalarm';
+		$.post(delurl, {
+				aid: index
+			},
+			function(data, status) {				
+				if (data == 1) {
+					if(type == 2){
 						alert('操作成功');
-						$(("#atrx"+index)).remove();
-					} else {
+					}					
+					$(("#atrx" + index)).remove();
+				} else {
+					if(type == 2){
 						alert('操作失败');
-					}
-				});
-		}
-	}
-
-	function updatealarm(index,type){
-		if(type==0){
-			//不用AJAX
-			console.log(alarmlist[index]);
-			//清空表单
-			var temp = alarmlist[index];
-
-			if(temp[6] == '当前响应时间'){
-				$("input[name='alermindex']").val(index);
-				$("#item_id").val(temp[0]);
-				$("#op1").val(temp[1]);
-				$("input[name='threshold1']").val(temp[2]);
-				$("#unit").val(temp[3]);
-				$("#calc").val(temp[4]);
-				$("#atimes").val(temp[5]);
-
-				if(temp[4] == 1){
-					$('.amids').empty();
-
-  
-					amidsdiv.css('display', 'block');
+					}	
 				}
-			}else if(temp[6] =='当日可用率'){
+			});
+	}
+}
 
+function updatealarm(index, type) {
+	if (type == 0) {
+		//不用AJAX
+		console.log(alarmlist[index]);
+		//清空表单
+		var temp = alarmlist[index];
+
+		if (temp[6] == '当前响应时间') {
+			$("input[name='alermindex']").val(index);
+			$("#item_id").val(temp[0]);
+			$("#op1").val(temp[1]);
+			$("#threshold1").val(temp[2]);
+			$("#unit").val(temp[3]);
+			$("#calc").val(temp[4]);
+			$("#atimes").val(temp[5]);
+
+			if (temp[4] == 1) {
+				$('.amids').empty();
+
+				var tempopt = temp[8].split(';');
+				for (var i = 0; i < pointlist.length; i++) {
+					var v1 = pointlist[i][0];
+					var v2 = pointlist[i][1];
+					var c = "";
+					console.log(tempopt.length);
+					for (var n = 0; n < tempopt.length; n++) {
+						if (tempopt[n] == v1) {
+							c = "checked";
+						}
+					}
+
+					var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
+					$('.amids').append(html);
+				}
+
+				$(".amidsdiv").css('display', 'block');
 			}
+		} else if (temp[6] == '当日可用率') {
+			$("input[name='alermindex']").val(index);
+			$("#item_id").val(temp[0]);
+			$("#op2").val(temp[1]);
+			$("#threshold2").val(temp[2]);
+			$("#unit").val(temp[3]);
+			$("#calc").val(temp[4]);
+			$("#atimes").val(temp[5]);
 
-			$('#addalarm').modal('show');
-		}else{
+			if (temp[4] == 1) {
+				$('.amids').empty();
 
+				var tempopt = temp[8].split(';');
+				for (var i = 0; i < pointlist.length; i++) {
+					var v1 = pointlist[i][0];
+					var v2 = pointlist[i][1];
+					var c = "";
+					console.log(tempopt.length);
+					for (var n = 0; n < tempopt.length; n++) {
+						if (tempopt[n] == v1) {
+							c = "checked";
+						}
+					}
+
+					var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
+					$('.amids').append(html);
+				}
+
+				$(".amidsdiv").css('display', 'block');
+			}
 		}
+
+		//$('#addalarm').modal('show');
+	} else {
+		//用AJAX
+		var updateurl = '__APP__/Task/updatealarm';
+		$.post(updateurl, {
+				aid: index,
+				sid: sid
+			},
+			function(data, status) {
+				var d = jQuery.parseJSON(data);
+				console.log(d.data);
+				if (d.status == 1) {
+					if (d.data.comment == '当前响应时间') {
+						$("#op1").val(d.data.operator_type);
+						$("#threshold1").val(d.data.threshold);
+
+					} else if (d.data.comment == '当日可用率') {
+						$("#op2").val(d.data.operator_type);
+						$("#threshold2").val(d.data.threshold);
+					}
+						$("input[name='alermajax']").val(1);
+						$("input[name='alermindex']").val(d.data.id);
+						$("#item_id").val(d.data.index_id);
+						$("#unit").val(d.data.iunit);
+						$("#atimes").val(d.data.data_times);
+						$("#calc").val(1);
+
+						$('.amids').empty();
+
+						var tempopt = d.data.monitor_id.split(',');
+						for (var i = 0; i < pointlist.length; i++) {
+							var v1 = pointlist[i][0];
+							var v2 = pointlist[i][1];
+							var c = "";
+							for (var n = 0; n < tempopt.length; n++) {
+								if (tempopt[n] == v1) {
+									c = "checked";
+								}
+							}
+
+							var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
+							$('.amids').append(html);
+						}
+
+						$(".amidsdiv").css('display', 'block');
+					//$(("#atrx"+index)).remove();
+				} else {
+					alert('系统错误');
+				}
+			});
 	}
+	$('#addalarm').modal('show');
+}
 
-	if(is_adv==1){
-		adv_show();	
-	}
-	
-    $('#addalarm').on('hidden.bs.modal',
-    function() {
-    	//console.log("close");
-    	$("#form2")[0].reset();
-    	$("input[name='alermindex']").val(-1);
-        //$("#form2")[0].reset();
-    })
+if (is_adv == 1) {
+	adv_show();
+}
 
+$('#addalarm').on('hidden.bs.modal',
+	function() {
+		//console.log("close");
+		$("#form2")[0].reset();
+		$("input[name='alermindex']").val(-1);
+		$("input[name='alermajax']").val(0);
+		//$("#form2")[0].reset();
+	})
 
-	</script>
+</script>
 </body>
 </html>

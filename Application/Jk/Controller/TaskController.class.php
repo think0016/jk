@@ -99,6 +99,39 @@ class TaskController extends BaseController {
 			;
 		}
 	}
+
+	public function updatealarm() {
+		$r = $this->is_login ( 0 );
+		
+		if (! $r) {
+			exit ( "请登录后操作" );
+		}
+		$aid = I ( "post.aid" );
+		$sid = I ( "post.sid" );
+		if ($aid == "" || $sid == "" ) {
+			// $this->error("请求错误");
+			exit ( "请求错误" );
+		}
+		
+		// print_r($_POST);
+		// exit();
+		$taskModel = D ( "jk_trigger_ruls" );
+		$alarm =array();
+		//if($sid == '1'){
+
+		$taskitemtable = "jk_taskitem_".$sid;
+		$alarm = $taskModel->where ( array (
+		"jk_trigger_ruls.id" => $aid
+		) )->join($taskitemtable.' ON jk_trigger_ruls.index_id = '.$taskitemtable.'.itemid')->find();
+		//}
+
+		$return = array();
+		$return['status'] = 1;
+		$return['data'] = $alarm;
+		echo json_encode($return);
+
+	}
+
 	public function delalarm() {
 		$r = $this->is_login ( 0 );
 		
@@ -398,8 +431,8 @@ class TaskController extends BaseController {
 			exit ( "请登录" );
 		}
 		
-		var_dump($_POST);
-		exit();
+		//var_dump($_POST);
+		//exit();
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 1;
 		$taskModel = D ( 'jk_task' );
