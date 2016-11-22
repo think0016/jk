@@ -265,6 +265,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<div class="modal-body">
 						<!-- modal start -->
 						<form class="form-horizontal" role="form" id="form2">
+								<input type="hidden" name="alermindex" value="-1">
+								<input type="hidden" name="alermajax" value="0">
 							<div class="form-group">
 								<label for="firstname" class="col-sm-3 control-label">监控指标名称：</label>
 								<div class="col-sm-9">
@@ -315,13 +317,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							</div>
 							<div class="form-group amidsdiv">
 								<label for="firstname" class="col-sm-3 control-label">监控点选择：</label>
-								<div class="col-sm-9 ">
-									<select class="form-control select2 amids"
-											multiple="multiple" name="amids[]" data-placeholder="点击选择标签" style="width: 100%;">
-										<option value="1">标签1</option>
-										<option value="2">标签2</option>
-										<option value="3">标签3</option>
-									</select>
+								<div class="col-sm-9 amids">
+									
 								</div>
 							</div>
 							<div class="form-group">
@@ -392,6 +389,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
      user experience. Slimscroll is required when using the
      fixed layout. -->
 <script type="text/javascript">
+	var sid = {$task.sid|default = 0};
 	var is_adv = {$task.isadv|default=0};
 	/* SELECT2 */
 	$(".select2").select2();
@@ -533,7 +531,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			    n++;
 			});
 		}
-		var index = alarmlist.length;
+		//var index = alarmlist.length;
 		var temp = new Array();
 		temp[0] = item_id;
 		temp[1] = op;
@@ -546,16 +544,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		temp[8] = amids;
 
 
-		alarmlist[index] = temp;
+		var index = $("input[name='alermindex']").val();
+		var isajax = $("input[name='alermajax']").val();
+		if (index >= 0) {
+			if(isajax == 0){
+				$(("#atr" + index)).remove();
+				alarmlist[index] = temp;
+			}else{
+				$(("#atrx" + index)).remove();
+				delalarm(index,1);
+				index = alarmlist.length;
+				alarmlist[index] = temp;
+			}
+		} else {
+			index = alarmlist.length;
+			alarmlist[index] = temp;
 
+		}
 		$('#addalarm').modal('hide');
-		$('#addalarm').modal('hide');
-		var tr = createtr(temp,index);
+		var tr = createtr(temp, index);
 		$('#alarm_table').append(tr);
 		//console.log("alarmlist");
 		//console.log(alarmlist);
 		$(".amidsdiv").css('display', 'none');
-		$("#form2")[0].reset();
+		//$("#form2")[0].reset();
 	}
 
 	function savefrom() {
@@ -615,18 +627,155 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				},
 				function(data, status) {
 					if (data == 1) {
-						alert('操作成功');
-						$(("#atrx"+index)).remove();
+						if(type == 2){
+							alert('操作成功');
+						}					
+						$(("#atrx" + index)).remove();
 					} else {
-						alert('操作失败');
+						if(type == 2){
+							alert('操作失败');
+						}	
 					}
 				});
 		}
 	}
 
-	if(is_adv==1){
-		adv_show();	
+	function updatealarm(index, type) {
+		if (type == 0) {
+			//不用AJAX
+			console.log(alarmlist[index]);
+			//清空表单
+			var temp = alarmlist[index];
+
+			if (temp[6] == '当前响应时间') {
+				$("input[name='alermindex']").val(index);
+				$("#item_id").val(temp[0]);
+				$("#op1").val(temp[1]);
+				$("#threshold1").val(temp[2]);
+				$("#unit").val(temp[3]);
+				$("#calc").val(temp[4]);
+				$("#atimes").val(temp[5]);
+
+				if (temp[4] == 1) {
+					$('.amids').empty();
+
+					var tempopt = temp[8].split(';');
+					for (var i = 0; i < pointlist.length; i++) {
+						var v1 = pointlist[i][0];
+						var v2 = pointlist[i][1];
+						var c = "";
+						console.log(tempopt.length);
+						for (var n = 0; n < tempopt.length; n++) {
+							if (tempopt[n] == v1) {
+								c = "checked";
+							}
+						}
+
+						var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
+						$('.amids').append(html);
+					}
+
+					$(".amidsdiv").css('display', 'block');
+				}
+			} else if (temp[6] == '当日可用率' || temp[6] == '当日丢包率') {
+				$("input[name='alermindex']").val(index);
+				$("#item_id").val(temp[0]);
+				$("#op2").val(temp[1]);
+				$("#threshold2").val(temp[2]);
+				$("#unit").val(temp[3]);
+				$("#calc").val(temp[4]);
+				$("#atimes").val(temp[5]);
+
+				if (temp[4] == 1) {
+					$('.amids').empty();
+
+					var tempopt = temp[8].split(';');
+					for (var i = 0; i < pointlist.length; i++) {
+						var v1 = pointlist[i][0];
+						var v2 = pointlist[i][1];
+						var c = "";
+						console.log(tempopt.length);
+						for (var n = 0; n < tempopt.length; n++) {
+							if (tempopt[n] == v1) {
+								c = "checked";
+							}
+						}
+
+						var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
+						$('.amids').append(html);
+					}
+
+					$(".amidsdiv").css('display', 'block');
+				}
+			}
+
+			//$('#addalarm').modal('show');
+		} else {
+			//用AJAX
+			var updateurl = '__APP__/Task/updatealarm';
+			$.post(updateurl, {
+					aid: index,
+					sid: sid
+				},
+				function(data, status) {
+					var d = jQuery.parseJSON(data);
+					console.log(d.data);
+					if (d.status == 1) {
+						if (d.data.comment == '当前响应时间') {
+							$("#op1").val(d.data.operator_type);
+							$("#threshold1").val(d.data.threshold);
+
+						} else if (d.data.comment == '当日可用率' || d.data.comment =='当日丢包率') {
+							$("#op2").val(d.data.operator_type);
+							$("#threshold2").val(d.data.threshold);
+						}
+							$("input[name='alermajax']").val(1);
+							$("input[name='alermindex']").val(d.data.id);
+							$("#item_id").val(d.data.index_id);
+							$("#unit").val(d.data.iunit);
+							$("#atimes").val(d.data.data_times);
+							$("#calc").val(1);
+
+							$('.amids').empty();
+
+							var tempopt = d.data.monitor_id.split(',');
+							for (var i = 0; i < pointlist.length; i++) {
+								var v1 = pointlist[i][0];
+								var v2 = pointlist[i][1];
+								var c = "";
+								for (var n = 0; n < tempopt.length; n++) {
+									if (tempopt[n] == v1) {
+										c = "checked";
+									}
+								}
+
+								var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
+								$('.amids').append(html);
+							}
+
+							$(".amidsdiv").css('display', 'block');
+						//$(("#atrx"+index)).remove();
+					} else {
+						alert('系统错误');
+					}
+				});
+		}
+		$('#addalarm').modal('show');
 	}
+
+	if (is_adv == 1) {
+		adv_show();
+	}
+
+	$('#addalarm').on('hidden.bs.modal',
+		function() {
+			//console.log("close");
+			$("#form2")[0].reset();
+			$("input[name='alermindex']").val(-1);
+			$("input[name='alermajax']").val(0);
+			//$("#form2")[0].reset();
+		})
+
 	
 
 	</script>
