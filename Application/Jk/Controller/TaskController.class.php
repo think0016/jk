@@ -11,6 +11,7 @@ class TaskController extends BaseController {
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
 		$this->display ();
 	}
+	
 	public function tasklist() {
 		
 		// 检查登录情况
@@ -25,7 +26,7 @@ class TaskController extends BaseController {
 		$this->assign ( "tasklist", $tasklist );
 		$this->display ();
 	}
-		
+	
 	public function create() {
 		$this->is_login ( 1 );
 		
@@ -72,6 +73,7 @@ class TaskController extends BaseController {
 				break;
 		}
 	}
+	
 	public function delete() {
 		$r = $this->is_login ( 0 );
 		
@@ -96,7 +98,6 @@ class TaskController extends BaseController {
 			echo "1";
 		} else {
 			echo "2";
-			;
 		}
 	}
 
