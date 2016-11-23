@@ -12,6 +12,7 @@ class HttpViewController extends MonitorController {
 			"8" => '%',
 			"2" => '毫秒' 
 	);
+	
 	public function index() {
 		// 检查登录情况
 		$this->is_login ( 1 );
@@ -215,6 +216,20 @@ class HttpViewController extends MonitorController {
 		$this->display ();
 	}
 
+	/**
+	 * 响应时间INDEX
+	 */
+	public function ctindex(){
+		$this->display ();
+	}
+	
+	/**
+	 * 可用率INDEX
+	 */
+	public function stindex(){
+	
+	}
+	
 	public function getlinedatax() {
 		if (! $this->is_login ( 0 )) {
 			exit ( "ERROR1" );
