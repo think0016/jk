@@ -302,7 +302,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 												</td>
 												<td>
 													<div class="btn-group">
-														<button type="button" class="btn btn-xs btn-info">修改</button>
+														<button type="button" class="btn btn-xs btn-info" onclick="updatealarm({$vo.id},1)">修改</button>
 														<button type="button" class="btn btn-xs btn-info" onclick="delalarm({$vo.id},1)">删除</button>
 													</div>
 												</td>
@@ -688,9 +688,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		
 	}
 
-	function createtr(arr,index) {
-		var html = "<tr id=\"atr"+index+"\">";
-		html += "<td>" + arr[6] + "</td><td>" + arr[7] + "</td><td>" + arr[2] + arr[3] + "</td><td>" + arr[5] + "</td><td><span class=\"badge bg-green\">开启</span></td><td><div class=\"btn-group\"><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"\">修改</button><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"delalarm("+index+","+"0"+");\">删除</button></div></td>";
+	function createtr(arr, index) {
+		var html = "<tr id=\"atr" + index + "\">";
+		html += "<td>" + arr[6] + "</td><td>" + arr[7] + "</td><td>" + arr[2] + arr[3] + "</td><td>" + arr[5] + "</td><td><span class=\"badge bg-green\">开启</span></td><td><div class=\"btn-group\"><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"updatealarm(" + index + "," + "0" + ");\">修改</button><button type=\"button\" class=\"btn btn-xs btn-info\" onclick=\"delalarm(" + index + "," + "0" + ");\">删除</button></div></td>";
 		html += "</tr>";
 		return html;
 	}
@@ -758,7 +758,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 					$(".amidsdiv").css('display', 'block');
 				}
-			} else if (temp[6] == '当日可用率') {
+			} else if (temp[6] == '当日可用率' || temp[6]=='当前丢包率') {
 				$("input[name='alermindex']").val(index);
 				$("#item_id").val(temp[0]);
 				$("#op2").val(temp[1]);
@@ -806,7 +806,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							$("#op1").val(d.data.operator_type);
 							$("#threshold1").val(d.data.threshold);
 
-						} else if (d.data.comment == '当日可用率') {
+						} else if (d.data.comment == '当日可用率' || d.data.comment == '当前丢包率') {
 							$("#op2").val(d.data.operator_type);
 							$("#threshold2").val(d.data.threshold);
 						}
