@@ -1,4 +1,61 @@
-$(function() {
+//$(function() {
+	var mymap = echarts.init(document.getElementById('map'));
+
+	var mapdata = $.parseJSON(mapdata);
+	var mapitem = "";
+	var mformatter = '';
+	var maxv = 0;
+	var subtext = "";
+	if (item == "2") {
+		mapitem = "响应时间";
+		mformatter = '平均{a}:{c}毫秒';
+		maxv = 3000;
+		subtext = "响应时间";
+	} else if (item == "8") {
+		mapitem = "可用率";
+		mformatter = '平均{a}:{c}%';
+		maxv = 100;
+		subtext = "可用性";
+	}
+
+	option1 = {
+		title : {
+			text : '实时监控状态图',
+			subtext : subtext,
+			left : 'center'
+		},
+		tooltip : {
+			trigger : 'item',
+			formatter : mformatter
+		},
+		visualMap : {
+			min : 0,
+			max : maxv,
+			left : 'left',
+			top : 'bottom',
+			text : [ '高', '低' ], // 文本，默认为数值文本
+			calculable : true
+		},
+		series : [ {
+			name : mapitem,
+			type : 'map',
+			mapType : 'china',
+			roam : false,
+			label : {
+				normal : {
+					show : true
+				},
+				emphasis : {
+					show : true
+				}
+			},
+			data : mapdata
+		} ]
+	};
+
+	mymap.setOption(option1);
+
+	
 
 	//Date range as a button
 	$('#daterange-btn').daterangepicker({
@@ -36,10 +93,12 @@ $(function() {
 	);
 
 	$('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
-		console.log(picker.startDate.format('YYYY-MM-DD'));
-		console.log(picker.endDate.format('YYYY-MM-DD'));
-		
-		
+		//console.log(picker.startDate.format('YYYY-MM-DD'));
+		//console.log(picker.endDate.format('YYYY-MM-DD'));
+		var sdate = picker.startDate.format('YYYY-MM-DD');
+		var edate = picker.endDate.format('YYYY-MM-DD');
+		var url = rooturl + "/HttpView/ctindex/"+"tid/"+tid+"/sdate/"+sdate+"/edate/"+edate;
+		window.location.href = url;
 	});
 
-});
+//});

@@ -12,7 +12,6 @@ class HttpViewController extends MonitorController {
 			"8" => '%',
 			"2" => '毫秒' 
 	);
-	
 	public function index() {
 		// 检查登录情况
 		$this->is_login ( 1 );
@@ -61,7 +60,7 @@ class HttpViewController extends MonitorController {
 		}
 		if ($itemid == "") {
 			$itemid = "connecttime"; // 默认响应时间
-			// $itemid = "status"; // 默认响应时间
+				                         // $itemid = "status"; // 默认响应时间
 		}
 		$mids = $task ['mids'];
 		$uid = $task ['uid'];
@@ -183,7 +182,7 @@ class HttpViewController extends MonitorController {
 				$ltime = "";
 				if ($i == 0) {
 					$ltime = abs ( time () - $alarmslist [$i] ['times'] );
-				}else{
+				} else {
 					$i2 = $i - 1;
 					$ltime = abs ( $alarmslist [$i2] ['times'] - $alarmslist [$i] ['times'] );
 				}
@@ -215,19 +214,27 @@ class HttpViewController extends MonitorController {
 		$this->assign ( "alarmsnum", $alarmsnum );
 		$this->display ();
 	}
-
+	
 	/**
 	 * 响应时间INDEX
 	 */
-	public function ctindex(){
-		
+	public function ctindex() {
 		$taskid = I ( 'get.tid' );
-		$sdate = I ( 'get.sdate' );
-		$edate = I ( 'get.edate' );
+		$stime = I ( 'get.sdate' );
+		$etime = I ( 'get.edate' );
 		
 		if ($taskid == "") {
 			$this->error ( "参数错误1" );
 		}
+		
+// 		if ($stime == "" || $etime == "") {
+// 			$stime = date ( "Y-m-d 00:00:00" );
+// 			$etime = date ( "Y-m-d H:i:s" );
+// 		}
+		
+		$setime = $this->timeinterval($stime, $etime);
+		$stime = $setime[0];
+		$etime = $setime[1];
 		
 		$taskModel = D ( 'jk_task' );
 		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
@@ -235,7 +242,7 @@ class HttpViewController extends MonitorController {
 		
 		$task = $taskModel->where ( array (
 				"id" => $taskid,
-				"is_del" => 0
+				"is_del" => 0 
 		) )->find ();
 		
 		if (! $task) {
@@ -243,12 +250,93 @@ class HttpViewController extends MonitorController {
 		}
 		
 		$taskdetails = $taskdetailsModel->where ( array (
-				"taskid" => $taskid
+				"taskid" => $taskid 
 		) )->find ();
 		$taskdetailsadv = $taskdetailsAdvModel->where ( array (
-				"taskid" => $taskid
+				"taskid" => $taskid 
 		) )->find ();
 		
+		// 最慢排名表单
+		
+		$step = 3600;
+		$mids = $task ['mids'];
+		$uid = $task ['uid'];
+		$mids_arr = explode ( ",", $mids );
+		$ssid = $task ['ssid'];
+		$itemid = $this->showitem ["connecttime"];
+		
+		$result1 = array (); // 地区最慢
+		$result2 = array (); // 运营商最慢
+		$cn = array (); // 计数器
+		$total = 0;
+		$n = 0;
+		foreach ( $mids_arr as $val ) {
+			$n ++;
+			$mid = str_replace ( ":", "", $val );
+			if ($itemid == 8) {
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid, 1 );
+			} else {
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
+			}
+			
+			$rs = $this->rrd_avg ( $rrdfilename, $stime, $etime, $step );
+			$list = $this->getMonitoryPoint ( $mid );
+			$total += $rs [0];
+			
+			$province = $list ['province'];
+			if (isset ( $result1 [$operator] )) {
+				$result1 [$province] = $rs [0] + $result1 [$province];
+				$cn [0] [$province] = $cn [0] [$province] + 1;
+			} else {
+				$result1 [$province] = $rs [0];
+				$cn [0] [$province] = 1;
+			}
+			
+			$operator = $list ['operator'];
+			if (isset ( $result2 [$operator] )) {
+				$result2 [$operator] = $rs [0] + $result2 [$operator];
+				$cn [1] [$operator] = $cn [1] [$operator] + 1;
+			} else {
+				$result2 [$operator] = $rs [0];
+				$cn [1] [$operator] = 1;
+			}
+		}
+		
+		// 算平均
+		foreach ( $result1 as $k => $v ) {
+			$result1 [$k] = ( int ) ($v / $cn [0] [$k]);
+		}
+		foreach ( $result2 as $k => $v ) {
+			$result2 [$k] = ( int ) ($v / $cn [1] [$k]);
+		}
+		
+		// 排序
+		arsort ( $result1 );
+		arsort ( $result2 );
+		foreach ( $result1 as $k => $v ) {
+			$temp ['name'] = $k;
+			$temp ['value'] = $v;
+			$result1 [] = $temp;
+			unset ( $result1 [$k] );
+		}
+		foreach ( $result2 as $k => $v ) {
+			$temp [0] = $k;
+			$temp [1] = $v;
+			$result2 [] = $temp;
+			unset ( $result2 [$k] );
+		}
+		$mapdata = addslashes ( json_encode ( $result1 ) );
+		
+		$this->assignbase ();
+		$this->assign ( "task", $task );
+		$this->assign ( "taskdetails", $taskdetails );
+		$this->assign ( "taskdetailsadv", $taskdetailsadv );
+		$this->assign ( "result1", $result1 );
+		$this->assign ( "result2", $result2 );
+		$this->assign ( "mapdata", $mapdata );
+		$this->assign ( "sdate", $stime );
+		$this->assign ( "edate", $etime );
+		$this->assign ( "itemid", $this->showitem ['connecttime'] );
 		
 		$this->display ();
 	}
@@ -256,9 +344,9 @@ class HttpViewController extends MonitorController {
 	/**
 	 * 可用率INDEX
 	 */
-	public function stindex(){
-	
+	public function stindex() {
 	}
+	
 	
 	public function getlinedatax() {
 		if (! $this->is_login ( 0 )) {
