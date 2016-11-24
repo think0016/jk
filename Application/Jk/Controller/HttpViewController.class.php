@@ -61,7 +61,7 @@ class HttpViewController extends MonitorController {
 		}
 		if ($itemid == "") {
 			$itemid = "connecttime"; // 默认响应时间
-				                         // $itemid = "status"; // 默认响应时间
+			// $itemid = "status"; // 默认响应时间
 		}
 		$mids = $task ['mids'];
 		$uid = $task ['uid'];
@@ -220,6 +220,36 @@ class HttpViewController extends MonitorController {
 	 * 响应时间INDEX
 	 */
 	public function ctindex(){
+		
+		$taskid = I ( 'get.tid' );
+		$sdate = I ( 'get.sdate' );
+		$edate = I ( 'get.edate' );
+		
+		if ($taskid == "") {
+			$this->error ( "参数错误1" );
+		}
+		
+		$taskModel = D ( 'jk_task' );
+		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
+		$taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
+		
+		$task = $taskModel->where ( array (
+				"id" => $taskid,
+				"is_del" => 0
+		) )->find ();
+		
+		if (! $task) {
+			$this->error ( "参数错误2" );
+		}
+		
+		$taskdetails = $taskdetailsModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+		$taskdetailsadv = $taskdetailsAdvModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+		
+		
 		$this->display ();
 	}
 	
