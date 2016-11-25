@@ -263,56 +263,92 @@ class HttpViewController extends MonitorController {
 		$uid = $task ['uid'];
 		$mids_arr = explode ( ",", $mids );
 		$ssid = $task ['ssid'];
-		$itemid = $this->showitem ["connecttime"];
-		
+		//$itemid = $this->showitem ["connecttime"];
+		$item_arr = array(
+			"2"=>"响应时间",
+			"4"=>"下载时间",
+			"5"=>"总时间",
+			"6"=>"下载速度",
+			"7"=>"解析时间",
+			"9"=>"文件大小"
+		);
+
+
 		$result1 = array (); // 地区最慢
 		$result2 = array (); // 运营商最慢
 		$cn = array (); // 计数器
-		$total = 0;
+		$total = array ();
 		$n = 0;
 		foreach ( $mids_arr as $val ) {
 			$n ++;
 			$mid = str_replace ( ":", "", $val );
-			if ($itemid == 8) {
-				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid, 1 );
-			} else {
-				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
-			}
-			
-			$rs = $this->rrd_avg ( $rrdfilename, $stime, $etime, $step );
 			$list = $this->getMonitoryPoint ( $mid );
-			$total += $rs [0];
-			
 			$province = $list ['province'];
-			if (isset ( $result1 [$operator] )) {
-				$result1 [$province] = $rs [0] + $result1 [$province];
-				$cn [0] [$province] = $cn [0] [$province] + 1;
-			} else {
-				$result1 [$province] = $rs [0];
-				$cn [0] [$province] = 1;
-			}
-			
 			$operator = $list ['operator'];
-			if (isset ( $result2 [$operator] )) {
-				$result2 [$operator] = $rs [0] + $result2 [$operator];
-				$cn [1] [$operator] = $cn [1] [$operator] + 1;
-			} else {
-				$result2 [$operator] = $rs [0];
-				$cn [1] [$operator] = 1;
+
+
+			//$temp = array();
+			$item_arr_num = 0; 
+			foreach ($item_arr as $itemid => $itemname) {
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
+
+				$rs = $this->rrd_avg ( $rrdfilename, $stime, $etime, $step );
+
+				$total[$itemid] += $rs [0];
+
+				//监控次数(稍后添加)
+				// if($item_arr_num == 0){
+				// 	$rs1 = $this->rrd_avg ( $rrdfilename, $stime, $etime, $step );
+				// 	$total["监控次数"] += count($rs1);
+
+				// }
+
+				//$province = $list ['province'];
+				if (isset ( $result1 [$operator] )) {
+					$result1 [$province][$itemid] = $rs [0] + $result1 [$province][$itemid];
+					$cn [0] [$province][$itemid] = $cn [0] [$province][$itemid] + 1;
+				} else {
+					$result1 [$province][$itemid] = $rs [0];
+					$cn [0] [$province][$itemid] = 1;
+				}
+				
+				//$operator = $list ['operator'];
+				if (isset ( $result2 [$operator][$itemid] )) {
+					$result2 [$operator][$itemid] = $rs [0] + $result2 [$operator][$itemid];
+					$cn [1] [$operator][$itemid] = $cn [1] [$operator][$itemid] + 1;
+				} else {
+					$result2 [$operator][$itemid] = $rs [0];
+					$cn [1] [$operator][$itemid] = 1;
+				}
 			}
+
+
 		}
 		
 		// 算平均
 		foreach ( $result1 as $k => $v ) {
-			$result1 [$k] = ( int ) ($v / $cn [0] [$k]);
+			$temp = $result1 [$k];
+			foreach ($temp as $itemid => $itemvalue) {
+				$temp[$itemid] = ( int ) ($itemvalue / $cn [0] [$k][$itemid]);
+			}
 		}
 		foreach ( $result2 as $k => $v ) {
-			$result2 [$k] = ( int ) ($v / $cn [1] [$k]);
+			$temp = $result2 [$k];
+			foreach ($temp as $itemid => $itemvalue) {
+				$temp[$itemid] = ( int ) ($itemvalue / $cn [0] [$k][$itemid]);
+			}
 		}
-		
+		foreach ($total as $key => $value) {
+			$total[$key] = (int)($value/$n);
+		}
+
+		print_r($result1);
+		print_r($total);
+		exit();
+
 		// 排序
-		arsort ( $result1 );
-		arsort ( $result2 );
+		//arsort ( $result1 );
+		//arsort ( $result2 );
 		foreach ( $result1 as $k => $v ) {
 			$temp ['name'] = $k;
 			$temp ['value'] = $v;
