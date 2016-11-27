@@ -92,12 +92,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<ul class="sidebar-menu">
 					<li class="header">HEADER</li>
 					<!-- Optionally, you can add icons to the links -->
-					<li class="active">
+					<li>
 						<a href="__APP__/HttpView/index/tid/{$taskdetails.taskid}"> <i class="fa fa-link"></i>
 							<span>概览</span>
 						</a>
 					</li>
-					<li>
+					<li class="active">
 						<a href="__APP__/HttpView/ctindex/tid/{$taskdetails.taskid}"> <i class="fa fa-link"></i>
 							<span>响应时间</span>
 						</a>
@@ -198,36 +198,45 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="row">
 				<div class="col-md-12">
 					<div class="box">
-						<div class="box-header with-border">
-							<h3 class="box-title">概要统计</h3>
-							<div class="box-tools pull-right">
-								<!-- Buttons, labels, and many other things can be placed here! -->
-								<!-- Here is a label for example -->
-								<!-- <span class="label label-primary">Label</span>
-							-->
-						</div>
-						<!-- /.box-tools -->
-					</div>
 					<!-- /.box-header -->
 					<div class="box-body">
-						<!-- <div id="line" style="height: 400px;"></div>
-					-->
-				</div>
+						<div class="col-md-12">
+							<div class="box-tools pull-left ">
+								<div class="btn-group">
+									<a class="btn btn-default btn-sm" id='opbtn' onclick="drewline(1,'po');">运营商</a>
+									<a class="btn btn-default btn-sm" id='prbtn' onclick="drewline(2,'po');">省份</a>
+								</div>
+							</div>
+							<div class="box-tools pull-right ">
+								<div class="btn-group">
+									<a class="btn btn-default btn-sm active" id='llbtn' onclick="drewline(1,'lb');">趋势图</a>
+									<a class="btn btn-default btn-sm" id='bbbtn' onclick="drewline(2,'lb');">汇总图</a>
+								</div>
+							</div>
+						</div>
+						<div class="clear"></div>
+						<div class="divider20"></div>
+						<div class="col-md-12">
+							<div id="line" style="height: 400px;"></div> 
+						</div>
+						 
+					
+					</div>
 				<!-- /.box-body -->
 				<!-- <div class="box-footer">The footer of the box</div>
 			-->
 			<!-- box-footer -->
-		</div>
+					</div>
 		<!-- /.box -->
-	</div>
+				</div>
 
-</div>
+			</div>
 
 <div class="row">
 	<div class="col-md-12">
 		<div class="box">
 			<div class="box-header with-border">
-				<h3 class="box-title">按地区排名（最慢）</h3>
+				<h3 class="box-title">按省份</h3>
 
 				<!-- /.box-tools -->
 			</div>
@@ -242,32 +251,43 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<th>内容下载时间</th>
 						<th>下载速度</th>
 						<th>文件大小</th>
-						<th>监控次数</th>
 						<th>总时间</th>
 					</tr>
+					<volist name="result1" id="vo">
 					<tr>
-						<td>1.</td>
-						<td>Update software</td>
-						<td>1000</td>
-						<td>1000</td>
-						<td>1000</td>
-						<td>1000</td>
-						<td>1000</td>
-						<td>1000</td>
-						<td>1000</td>
+						<td>{$i}</td>
+						<td>{$vo.name}</td>
+						<td>{$vo[value][2]}</td>
+						<td>{$vo[value][7]}</td>
+						<td>{$vo[value][4]}</td>
+						<td>{$vo[value][6]}</td>
+						<td>{$vo[value][9]}</td>
+						<td>{$vo[value][5]}</td>
+					</tr>
+					</volist>
+
+					<tr>
+						<td> </td>
+						<td>平均/总计</td>
+						<td>{$result_tongji['p'][2]}</td>
+						<td>{$result_tongji['p'][7]}</td>
+						<td>{$result_tongji['p'][4]}</td>
+						<td>{$result_tongji['p'][6]}</td>
+						<td>{$result_tongji['p'][9]}</td>
+						<td>{$result_tongji['p'][5]}</td>
 					</tr>
 
 				</table>
 			</div>
 			<!-- /.box-body -->
 			<div class="box-footer clearfix">
-				<ul class="pagination pagination-sm no-margin pull-right">
+<!-- 				<ul class="pagination pagination-sm no-margin pull-right">
 					<li><a href="#">&laquo;</a></li>
 					<li><a href="#">1</a></li>
 					<li><a href="#">2</a></li>
 					<li><a href="#">3</a></li>
 					<li><a href="#">&raquo;</a></li>
-				</ul>
+				</ul> -->
 			</div>
 		</div>
 		<!-- /.box -->
@@ -279,7 +299,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<div class="col-md-12">
 		<div class="box">
 			<div class="box-header with-border">
-				<h3 class="box-title">运营商详情</h3>
+				<h3 class="box-title">按运营商</h3>
 
 				<!-- /.box-tools -->
 			</div>
@@ -294,32 +314,41 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<th>内容下载时间</th>
 						<th>下载速度</th>
 						<th>文件大小</th>
-						<th>监控次数</th>
 						<th>总时间</th>
 					</tr>
+					<volist name="result2" id="vo">
 					<tr>
-						<td>1.</td>
-						<td>Update software</td>
-						<td>1000</td>
-						<td>1000</td>
-						<td>1000</td>
-						<td>1000</td>
-						<td>1000</td>
-						<td>1000</td>
-						<td>1000</td>
+						<td>{$i}</td>
+						<td>{$vo.name}</td>
+						<td>{$vo[value][2]}</td>
+						<td>{$vo[value][7]}</td>
+						<td>{$vo[value][4]}</td>
+						<td>{$vo[value][6]}</td>
+						<td>{$vo[value][9]}</td>
+						<td>{$vo[value][5]}</td>
 					</tr>
-
+					</volist>
+					<tr>
+						<td> </td>
+						<td>平均/总计</td>
+						<td>{$result_tongji['o'][2]}</td>
+						<td>{$result_tongji['o'][7]}</td>
+						<td>{$result_tongji['o'][4]}</td>
+						<td>{$result_tongji['o'][6]}</td>
+						<td>{$result_tongji['o'][9]}</td>
+						<td>{$result_tongji['o'][5]}</td>
+					</tr>
 				</table>
 			</div>
 			<!-- /.box-body -->
 			<div class="box-footer clearfix">
-				<ul class="pagination pagination-sm no-margin pull-right">
+<!-- 				<ul class="pagination pagination-sm no-margin pull-right">
 					<li><a href="#">&laquo;</a></li>
 					<li><a href="#">1</a></li>
 					<li><a href="#">2</a></li>
 					<li><a href="#">3</a></li>
 					<li><a href="#">&raquo;</a></li>
-				</ul>
+				</ul> -->
 			</div>
 		</div>
 		<!-- /.box -->

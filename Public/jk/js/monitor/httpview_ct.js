@@ -1,6 +1,11 @@
 //$(function() {
 	var mymap = echarts.init(document.getElementById('map'));
+	//var myline = echarts.init(document.getElementById('line'));
+	var lb = 1;
+	var po = 1;
+	//Line
 
+	//MAP
 	var mapdata = $.parseJSON(mapdata);
 	var mapitem = "";
 	var mformatter = '';
@@ -56,7 +61,7 @@
 	mymap.setOption(option1);
 
 	
-
+    
 	//Date range as a button
 	$('#daterange-btn').daterangepicker({
 			maxDate: moment(), //最大时间   
@@ -101,4 +106,122 @@
 		window.location.href = url;
 	});
 
+	function drewline(param,type){
+
+		if(type == 'lb'){
+			lb = param;
+			if(param == 1){
+				$('#llbtn').addClass('active');
+				$('#bbbtn').removeClass('active');
+			}else{
+				$('#bbbtn').addClass('active');
+				$('#llbtn').removeClass('active');
+			}
+		}else{
+			po = param;
+			if(po == 1){
+				$('#opbtn').addClass('active');
+				$('#prbtn').removeClass('active');
+			}else{
+				$('#prbtn').addClass('active');
+				$('#opbtn').removeClass('active');
+			}
+		}
+
+
+		var myline = echarts.init(document.getElementById('line'));
+		var posturl = rooturl + '/HttpView/getlinedata.html';
+		if(lb==2){
+			var posturl = rooturl + '/HttpView/getbardata.html';
+		}
+		$.post(posturl, {
+			tid : tid,
+			sdate : sdate,
+			edate : edate,
+			po : po,
+			itemid : 2,
+			step : 3600
+		}, function(data, textStatus, xhr) {
+			/* optional stuff to do after success */
+
+			var linedata = $.parseJSON(data);
+			var option2 = {};
+			if(lb == 2){
+				option2 = {
+			    tooltip : {
+			        trigger: 'axis',
+			        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+			            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+			        }
+			    },
+			    legend: {
+			        data: linedata.legend
+			    },
+			    grid: {
+			        left: '3%',
+			        right: '4%',
+			        bottom: '3%',
+			        containLabel: true
+			    },
+			    xAxis:  {
+			        type: 'value'
+			    },
+			    yAxis: {
+			        type: 'category',
+			        data: linedata.xv
+			    },
+			    series: linedata.series
+			};
+			}else{
+				option2 = {
+					title : {
+						text : '响应时间折线图'
+					},
+					tooltip : {
+						trigger : 'axis'
+					},
+					legend : {
+						data : linedata.legend
+					},
+					toolbox : {
+						feature : {
+							saveAsImage : {}
+						}
+					},
+					xAxis : {
+						type : 'category',
+						boundaryGap : false,
+						interval : 100,
+						data : linedata.xv
+					},					
+					yAxis : [ {
+						name : '响应时间(ms)',
+						type : 'value',						
+						axisLine : {
+						// show:false
+						}
+					} ],
+					series : linedata.series
+				};
+			}
+
+			
+			myline.setOption(option2);
+		});
+	};
+
+
+drewline(1,'po');
+		// 	$.post(posturl, {
+		// 	tid : tid,
+		// 	sdate : sdate,
+		// 	edate : edate,
+		// 	po : 1,
+		// 	itemid : 2,
+		// 	lb : 1,
+		// 	step : 3600
+		// }, function(data, textStatus, xhr) {
+		// 	/* optional stuff to do after success */
+			
+		// });
 //});
