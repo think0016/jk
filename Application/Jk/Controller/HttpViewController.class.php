@@ -666,9 +666,9 @@ class HttpViewController extends MonitorController {
 			
 			$temp ['name'] = $iv['name'];
 			$temp ['type'] = 'bar';
-			$temp ['label'] = array("normal"=>array("show"=>true,"position"=>'insideRight'));
+			$temp ['label'] = array("normal"=>array("show"=>true,"position"=>"insideRight"));
 			$temp ['stack'] = '总量';
-			$temp ['data'] = $yv;
+			$temp ['data'] = $yv;			
 			$series[]=$temp;
 			$ii++;
 		}
@@ -676,7 +676,6 @@ class HttpViewController extends MonitorController {
 		$return ['legend'] = $legend;
 		$return ['xv'] = $xv;
 		$return ['series'] = $series;
-		//print_r($return);
 		echo json_encode ( $return );
 	}
 }
