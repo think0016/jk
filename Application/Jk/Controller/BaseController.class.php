@@ -10,7 +10,7 @@ class BaseController extends Controller {
      */
 
     function _initialize() {
-        $this->is_login();
+        $this->is_login(1);
     }
 
     /**
