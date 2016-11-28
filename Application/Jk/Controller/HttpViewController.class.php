@@ -12,6 +12,10 @@ class HttpViewController extends MonitorController {
 			"8" => '%',
 			"2" => '毫秒' 
 	);
+
+	// function __construct() {
+ //        $this->is_login();
+ //    }
 	public function index() {
 		// 检查登录情况
 		$this->is_login ( 1 );
@@ -544,6 +548,9 @@ class HttpViewController extends MonitorController {
 			
 			$temp ['name'] = $mname;
 			$temp ['type'] = 'line';
+			$temp ['smooth'] = true;
+			//smoothMonotone
+			$temp ['smoothMonotone'] = "x";
 			$temp ['data'] = $yv;
 			
 			$series [] = $temp;
@@ -661,7 +668,8 @@ class HttpViewController extends MonitorController {
 				$yv[] = (int)($rs1/count($filename));
 			}
 			
-			//$yvx[] = ((int)array_sum($yv)/count($yv));
+			$yv_avg = (int)(array_sum($yv)/count($yv));
+			array_unshift($yv,$yv_avg);
 			//$series[0]['data']=$yvx;
 			
 			$temp ['name'] = $iv['name'];
@@ -673,6 +681,7 @@ class HttpViewController extends MonitorController {
 			$ii++;
 		}
 
+		array_unshift($xv,"平均");//加上平均列
 		$return ['legend'] = $legend;
 		$return ['xv'] = $xv;
 		$return ['series'] = $series;

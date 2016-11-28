@@ -113,11 +113,13 @@ $.post(posturl, {
 				name : '响应时间',
 				yAxisIndex : 0,
 				type : 'line',
+				smooth : true,
 				data : linedata.yv1
 			}, {
 				name : '可用率',
 				yAxisIndex : 1,
 				type : 'line',
+				smooth : true,
 				data : linedata.yv2
 			} ]
 		};

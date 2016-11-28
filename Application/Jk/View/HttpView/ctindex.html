@@ -20,6 +20,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<load href="__PUBLIC__/plugins/other/ionicons.min.css" />
 	<!-- daterange picker -->
 	<load href="__PUBLIC__/plugins/daterangepicker/daterangepicker.css" />
+	<!-- dataTables -->
+	<load href="__PUBLIC__/plugins/datatables/dataTables.bootstrap.css" />
 	<!-- Theme style -->
 	<load href="__PUBLIC__/dist/css/admincore.css" />
 	<!-- layui -->
@@ -198,157 +200,190 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="row">
 				<div class="col-md-12">
 					<div class="box">
+						<!-- /.box-header -->
+						<div class="box-body">
+							<div class="col-md-12">
+								<div class="box-tools pull-left ">
+									<div class="btn-group">
+										<a class="btn btn-default btn-sm" id='opbtn' onclick="drewline(1,'po');">运营商</a>
+										<a class="btn btn-default btn-sm" id='prbtn' onclick="drewline(2,'po');">省份</a>
+									</div>
+								</div>
+								<div class="box-tools pull-right ">
+									<div class="btn-group">
+										<a class="btn btn-default btn-sm active" id='llbtn' onclick="drewline(1,'lb');">趋势图</a>
+										<a class="btn btn-default btn-sm" id='bbbtn' onclick="drewline(2,'lb');">汇总图</a>
+									</div>
+								</div>
+							</div>
+							<div class="clear"></div>
+							<div class="divider20"></div>
+							<div class="col-md-12">
+								<div id="line" style="height: 400px;"></div>
+							</div>
+
+						</div>
+						<!-- /.box-body -->
+						<!-- <div class="box-footer">The footer of the box</div>
+					-->
+					<!-- box-footer -->
+				</div>
+				<!-- /.box -->
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="box">
+					<div class="box-header with-border">
+						<h3 class="box-title">按省份</h3>
+
+						<!-- /.box-tools -->
+					</div>
 					<!-- /.box-header -->
 					<div class="box-body">
-						<div class="col-md-12">
-							<div class="box-tools pull-left ">
-								<div class="btn-group">
-									<a class="btn btn-default btn-sm" id='opbtn' onclick="drewline(1,'po');">运营商</a>
-									<a class="btn btn-default btn-sm" id='prbtn' onclick="drewline(2,'po');">省份</a>
-								</div>
-							</div>
-							<div class="box-tools pull-right ">
-								<div class="btn-group">
-									<a class="btn btn-default btn-sm active" id='llbtn' onclick="drewline(1,'lb');">趋势图</a>
-									<a class="btn btn-default btn-sm" id='bbbtn' onclick="drewline(2,'lb');">汇总图</a>
-								</div>
-							</div>
-						</div>
-						<div class="clear"></div>
-						<div class="divider20"></div>
-						<div class="col-md-12">
-							<div id="line" style="height: 400px;"></div> 
-						</div>
-						 
-					
+
+						<table id="provincetable" class="potable table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>省份</th>
+									<th>连接建立时间（ms）</th>
+									<th>解析时间（ms）</th>
+									<th>内容下载时间</th>
+									<th>下载速度</th>
+									<th>文件大小</th>
+									<th>总时间</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<volist name="result1" id="vo">
+									<tr>
+										<td>{$i}</td>
+										<td>{$vo.name}</td>
+										<td>{$vo[value][2]}</td>
+										<td>{$vo[value][7]}</td>
+										<td>{$vo[value][4]}</td>
+										<td>{$vo[value][6]}</td>
+										<td>{$vo[value][9]}</td>
+										<td>{$vo[value][5]}</td>
+									</tr>
+								</volist>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td></td>
+									<td>平均/总计</td>
+									<td>{$result_tongji['p'][2]}</td>
+									<td>{$result_tongji['p'][7]}</td>
+									<td>{$result_tongji['p'][4]}</td>
+									<td>{$result_tongji['p'][6]}</td>
+									<td>{$result_tongji['p'][9]}</td>
+									<td>{$result_tongji['p'][5]}</td>
+								</tr>
+							</tfoot>
+						</table>
 					</div>
-				<!-- /.box-body -->
-				<!-- <div class="box-footer">The footer of the box</div>
-			-->
-			<!-- box-footer -->
-					</div>
-		<!-- /.box -->
+					<!-- /.box-body -->
+					<div class="box-footer clearfix">
+						<!-- 				<ul class="pagination pagination-sm no-margin pull-right">
+						<li>
+							<a href="#">&laquo;</a>
+						</li>
+						<li>
+							<a href="#">1</a>
+						</li>
+						<li>
+							<a href="#">2</a>
+						</li>
+						<li>
+							<a href="#">3</a>
+						</li>
+						<li>
+							<a href="#">&raquo;</a>
+						</li>
+					</ul>
+					-->
 				</div>
-
 			</div>
-
-<div class="row">
-	<div class="col-md-12">
-		<div class="box">
-			<div class="box-header with-border">
-				<h3 class="box-title">按省份</h3>
-
-				<!-- /.box-tools -->
-			</div>
-			<!-- /.box-header -->
-			<div class="box-body">
-				<table class="table table-bordered">
-					<tr>
-						<th>#</th>
-						<th>省份</th>
-						<th>连接建立时间（ms）</th>
-						<th>解析时间（ms）</th>
-						<th>内容下载时间</th>
-						<th>下载速度</th>
-						<th>文件大小</th>
-						<th>总时间</th>
-					</tr>
-					<volist name="result1" id="vo">
-					<tr>
-						<td>{$i}</td>
-						<td>{$vo.name}</td>
-						<td>{$vo[value][2]}</td>
-						<td>{$vo[value][7]}</td>
-						<td>{$vo[value][4]}</td>
-						<td>{$vo[value][6]}</td>
-						<td>{$vo[value][9]}</td>
-						<td>{$vo[value][5]}</td>
-					</tr>
-					</volist>
-
-					<tr>
-						<td> </td>
-						<td>平均/总计</td>
-						<td>{$result_tongji['p'][2]}</td>
-						<td>{$result_tongji['p'][7]}</td>
-						<td>{$result_tongji['p'][4]}</td>
-						<td>{$result_tongji['p'][6]}</td>
-						<td>{$result_tongji['p'][9]}</td>
-						<td>{$result_tongji['p'][5]}</td>
-					</tr>
-
-				</table>
-			</div>
-			<!-- /.box-body -->
-			<div class="box-footer clearfix">
-<!-- 				<ul class="pagination pagination-sm no-margin pull-right">
-					<li><a href="#">&laquo;</a></li>
-					<li><a href="#">1</a></li>
-					<li><a href="#">2</a></li>
-					<li><a href="#">3</a></li>
-					<li><a href="#">&raquo;</a></li>
-				</ul> -->
-			</div>
+			<!-- /.box -->
 		</div>
-		<!-- /.box -->
+
 	</div>
 
-</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="box-header with-border">
+					<h3 class="box-title">按运营商</h3>
 
-<div class="row">
-	<div class="col-md-12">
-		<div class="box">
-			<div class="box-header with-border">
-				<h3 class="box-title">按运营商</h3>
-
-				<!-- /.box-tools -->
-			</div>
-			<!-- /.box-header -->
-			<div class="box-body">
-				<table class="table table-bordered">
-					<tr>
-						<th>#</th>
-						<th>运营商</th>
-						<th>连接建立时间（ms）</th>
-						<th>解析时间（ms）</th>
-						<th>内容下载时间</th>
-						<th>下载速度</th>
-						<th>文件大小</th>
-						<th>总时间</th>
-					</tr>
-					<volist name="result2" id="vo">
-					<tr>
-						<td>{$i}</td>
-						<td>{$vo.name}</td>
-						<td>{$vo[value][2]}</td>
-						<td>{$vo[value][7]}</td>
-						<td>{$vo[value][4]}</td>
-						<td>{$vo[value][6]}</td>
-						<td>{$vo[value][9]}</td>
-						<td>{$vo[value][5]}</td>
-					</tr>
-					</volist>
-					<tr>
-						<td> </td>
-						<td>平均/总计</td>
-						<td>{$result_tongji['o'][2]}</td>
-						<td>{$result_tongji['o'][7]}</td>
-						<td>{$result_tongji['o'][4]}</td>
-						<td>{$result_tongji['o'][6]}</td>
-						<td>{$result_tongji['o'][9]}</td>
-						<td>{$result_tongji['o'][5]}</td>
-					</tr>
-				</table>
-			</div>
-			<!-- /.box-body -->
-			<div class="box-footer clearfix">
-<!-- 				<ul class="pagination pagination-sm no-margin pull-right">
-					<li><a href="#">&laquo;</a></li>
-					<li><a href="#">1</a></li>
-					<li><a href="#">2</a></li>
-					<li><a href="#">3</a></li>
-					<li><a href="#">&raquo;</a></li>
-				</ul> -->
+					<!-- /.box-tools -->
+				</div>
+				<!-- /.box-header -->
+				<div class="box-body">
+					<table class="potable table table-bordered table-hover">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>省份</th>
+								<th>连接建立时间（ms）</th>
+								<th>解析时间（ms）</th>
+								<th>内容下载时间</th>
+								<th>下载速度</th>
+								<th>文件大小</th>
+								<th>总时间</th>
+							</tr>
+						</thead>
+						<tbody>
+							<volist name="result2" id="vo">
+								<tr>
+									<td>{$i}</td>
+									<td>{$vo.name}</td>
+									<td>{$vo[value][2]}</td>
+									<td>{$vo[value][7]}</td>
+									<td>{$vo[value][4]}</td>
+									<td>{$vo[value][6]}</td>
+									<td>{$vo[value][9]}</td>
+									<td>{$vo[value][5]}</td>
+								</tr>
+							</volist>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td></td>
+								<td>平均/总计</td>
+								<td>{$result_tongji['o'][2]}</td>
+								<td>{$result_tongji['o'][7]}</td>
+								<td>{$result_tongji['o'][4]}</td>
+								<td>{$result_tongji['o'][6]}</td>
+								<td>{$result_tongji['o'][9]}</td>
+								<td>{$result_tongji['o'][5]}</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+				<!-- /.box-body -->
+				<div class="box-footer clearfix">
+					<!-- 				<ul class="pagination pagination-sm no-margin pull-right">
+					<li>
+						<a href="#">&laquo;</a>
+					</li>
+					<li>
+						<a href="#">1</a>
+					</li>
+					<li>
+						<a href="#">2</a>
+					</li>
+					<li>
+						<a href="#">3</a>
+					</li>
+					<li>
+						<a href="#">&raquo;</a>
+					</li>
+				</ul>
+				-->
 			</div>
 		</div>
 		<!-- /.box -->
@@ -382,11 +417,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <load href="__PUBLIC__/plugins/echarts/echarts.js" />
 <load href="__PUBLIC__/plugins/echarts/china.js" />
 <!-- date-range-picker -->
-<script src="__PUBLIC__/plugins/momentjs/moment.js"></script>
+<load href="__PUBLIC__/plugins/momentjs/moment.js" />
 <load href="__PUBLIC__/plugins/daterangepicker/daterangepicker.js" />
 <!-- layui -->
 <!-- <load href="__PUBLIC__/plugins/layui/layui.js" />
 -->
+<!-- dataTables -->
+<load href="__PUBLIC__/plugins/datatables/jquery.dataTables.min.js" />
+<load href="__PUBLIC__/plugins/datatables/dataTables.bootstrap.min.js" />
 <!-- AdminLTE App -->
 <load href="__PUBLIC__/dist/js/app.min.js" />
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
@@ -394,6 +432,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
      user experience. Slimscroll is required when using the
      fixed layout. -->
 <load href="__PUBLIC__/jk/js/monitor/httpview_ct.js" />
-<script type="text/javascript">//$('#Notifications').text(alarmsnum);</script>
+<script type="text/javascript">//$('#Notifications').text(alarmsnum);
+  $(function () {
+
+  });
+</script>
 </body>
 </html>
