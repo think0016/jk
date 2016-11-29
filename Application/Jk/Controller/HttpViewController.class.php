@@ -393,12 +393,16 @@ class HttpViewController extends MonitorController {
 		$this->is_login ( 1 );
 		
 		$taskid = I ( 'get.tid' );
-		$sel = I ( 'get.sel' );
-		$itemid = I ( 'get.itemid' );
+		$stime = I ( 'get.sdate' );
+		$etime = I ( 'get.edate' );
 		
 		if ($taskid == "") {
 			$this->error ( "参数错误1" );
 		}
+		
+		$setime = $this->timeinterval ( $stime, $etime );
+		$stime = $setime [0];
+		$etime = $setime [1];
 		
 		// $sid = 1;
 		// $pointModel = D ( 'jk_monitorypoint' );
@@ -423,21 +427,9 @@ class HttpViewController extends MonitorController {
 		) )->find ();
 		
 		// 最慢排名表单
-		$stime = date ( "Y-m-d 00:00:00" );
-		$etime = date ( "Y-m-d H:i:s" );
 		$step = 3600;
-		if ($sel == "w") { // 上周
-			$stime = date ( "Y-m-d", strtotime ( "-1 weeks" ) );
-			// $step = 3600 * 24;
-		} else if ($sel == "yd") { // 昨天
-			$stime = date ( "Y-m-d", strtotime ( "-1 day" ) );
-			$etime = date ( "Y-m-d" );
-			// $step = 3600 * 24;
-		}
-		if ($itemid == "") {
-			$itemid = "connecttime"; // 默认响应时间
-				                         // $itemid = "status"; // 默认响应时间
-		}
+
+		$itemid = "status"; // 默认响应时间
 		$mids = $task ['mids'];
 		$uid = $task ['uid'];
 		$mids_arr = explode ( ",", $mids );
@@ -585,11 +577,19 @@ class HttpViewController extends MonitorController {
 		$this->assign ( "itemid", $itemid );
 		$this->assign ( "unit", $this->showitemunit [$itemid] );
 		$this->assign ( "step", $step );
-		$this->assign ( "sel", $sel );
 		$this->assign ( "alarmdata", $alarmdatas );
 		$this->assign ( "alarmsnum", $alarmsnum );
 		$this->display ();
 		
+	}
+	
+	/**
+	 * 告警记录INDEX
+	 */
+	public function alarmindex() {
+		$this->is_login ( 1 );
+		
+		$this->display ();
 	}
 	public function getlinedatax() {
 		if (! $this->is_login ( 0 )) {

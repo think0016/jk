@@ -97,9 +97,9 @@ class MonitorController extends BaseController {
 			if ($yesterday == $edate) {
 				$edate = date ( "Y-m-d" );
 			}
-			if ($yesterday == $sdate) {
-				$sdate = date ( "Y-m-d" );
-			}
+// 			if ($yesterday == $sdate) {
+// 				$sdate = date ( "Y-m-d" );
+// 			}
 			$arr[] = $sdate;
 			$arr[] = $edate;
 		}

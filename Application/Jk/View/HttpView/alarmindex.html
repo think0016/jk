@@ -147,178 +147,89 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 				<!-- Your Page Content Here -->
 
-<div class="row">
-<div class="col-md-12">
-	<div class="box">
-		<!-- /.box-header -->
-		<div class="box-body">
-			<div class="col-md-12">
-				<div class="box box-solid">
-					<div class="box-tools pull-left "></div>
-					<div class="box-tools pull-right">
-						<button type="button" class="btn btn-default pull-right btn-sm" id="daterange-btn">
-							<span>
-								<i class="fa fa-calendar"></i>
-								时期范围
-							</span>
-							<i class="fa fa-caret-down"></i>
-						</button>
-					</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box">
+							<div class="box-header with-border">
+								<h3 class="box-title">告警信息</h3>
+								<div class="box-tools pull-right">
+									<!-- Buttons, labels, and many other things can be placed here! -->
+									<!-- Here is a label for example -->
+								</div>
+								<!-- /.box-tools -->
+							</div>
+							<!-- /.box-header -->
+							<div class="box-body">
+								<table class="table table-bordered">
+									<tr>
+										<th style="width: 10px">#</th>
+										<th>告警时间</th>
+										<th>事件信息</th>
+										<th>持续时间</th>
+										<th>当前状态</th>
+										<th>操作</th>
+									</tr>
 
-				</div>
-			</div>
-			<div class="col-md-7">
-				<div class="divider20"></div>
-				<div id="map" style="height: 600px;"></div>
-			</div>
-			<div class="col-md-5">
-				<div class="divider"></div>
-				<div class="box box-solid">
-					<!-- /.box-header -->
-					<div class="box-body">所有地区平均：{$total_avg}{$unit}</div>
-					<!-- /.box-body -->
+									<tr>
+										<td>1.</td>
+										<td>2016-11-29 15:55:35</td>
+										<td>时延大于590毫秒</td>
+										<td></td>
+										<td>
+											<span class="label label-info">恢复</span>
+										</td>
 
-				</div>
+										<td>
+											<div class="btn-group">
+												<a class="btn btn-default btn-xs">查看</a>
+												<a class="btn btn-default btn-xs">处理</a>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td>2.</td>
+										<td>2016-11-29 15:17:02</td>
+										<td>时延大于590毫秒</td>
+										<td>00小时38分33秒</td>
+										<td>
+											<span class="label label-warning">故障</span>
+										</td>
 
-				<div class="box">
-					<div class="box-header with-border">
-						<h3 class="box-title">按地区排名（最慢）</h3>
-						<div class="box-tools pull-right">
-							<!-- <a href="" class="btn btn-sm btn-default">查看全部</a> -->
-						</div>
-					</div>
-					<!-- /.box-header -->
-					<div class="box-body">
-						<table class="table table-bordered">
-							<tr>
-								<th style="width: 50px">名次</th>
-								<th>省份</th>
-								<th>响应时间</th>
-							</tr>
-							<volist name="result1" id="vo" offset="0" length='4'>
-								<tr>
-									<td>{$i}.</td>
-									<td>{$vo.name}</td>
-									<td>{$vo.value}{$unit}</td>
+										<td>
+											<div class="btn-group">
+												<a class="btn btn-default btn-xs">查看</a>
+												<a class="btn btn-default btn-xs">处理</a>
+											</div>
+										</td>
+									</tr>
+
+									<!-- 								<tr>
+									<td>1.</td>
+									<td>Update software</td>
+									<td>100ms</td>
+									<td>100ms</td>
+									<td>100ms</td>
+									<td>
+										<div class="btn-group">
+											<a class="btn btn-default btn-xs">查看</a>
+											<a class="btn btn-default btn-xs">处理</a>
+										</div>
+									</td>
 								</tr>
-							</volist>
-						</table>
-					</div>
-					<!-- /.box-body -->
-					<!-- 								<div class="box-footer clearfix">
-					<ul class="pagination pagination-sm no-margin pull-right">
-						<li>
-							<a href="#">&laquo;</a>
-						</li>
-						<li>
-							<a href="#">1</a>
-						</li>
-						<li>
-							<a href="#">2</a>
-						</li>
-						<li>
-							<a href="#">3</a>
-						</li>
-						<li>
-							<a href="#">&raquo;</a>
-						</li>
-					</ul>
+								-->
+							</table>
+						</div>
+						<!-- /.box-body -->
+						<!-- <div class="box-footer">The footer of the box</div>
+					-->
+					<!-- box-footer -->
 				</div>
-				-->
+				<!-- /.box -->
 			</div>
-			<!-- /.box -->
-			<div class="box">
-				<div class="box-header with-border">
-					<h3 class="box-title">运营商排名（最慢）</h3>
-					<div class="box-tools pull-right">
-						<!-- <a href="" class="btn btn-sm btn-default">查看全部</a> -->
-					</div>
-				</div>
-				<!-- /.box-header -->
-				<div class="box-body">
-					<table class="table table-bordered">
-						<tr>
-							<th style="width: 50px">名次</th>
-							<th>运营商</th>
-							<th>响应时间</th>
-						</tr>
-						<volist name="result2" id="vo" offset="0" length='3'>
-							<tr>
-								<td>{$i}.</td>
-								<td>{$vo[0]}</td>
-								<td>{$vo[1]}{$unit}</td>
-							</tr>
-						</volist>
-					</table>
-				</div>
-				<!-- /.box-body -->
-				<!-- 								<div class="box-footer clearfix">
-				<ul class="pagination pagination-sm no-margin pull-right">
-					<li>
-						<a href="#">&laquo;</a>
-					</li>
-					<li>
-						<a href="#">1</a>
-					</li>
-					<li>
-						<a href="#">2</a>
-					</li>
-					<li>
-						<a href="#">3</a>
-					</li>
-					<li>
-						<a href="#">&raquo;</a>
-					</li>
-				</ul>
-			</div>
-			-->
+
 		</div>
-		<!-- /.box -->
-	</div>
-
-</div>
-<!-- /.box-body -->
-<!-- <div class="box-footer">The footer of the box</div>
--->
-<!-- box-footer -->
-</div>
-<!-- /.box -->
-</div>
-
-</div>
-
-<div class="row">
-<div class="col-md-12">
-<div class="box">
-<!-- /.box-header -->
-<div class="box-body">
-<div class="col-md-12">
-	<div class="box-tools pull-left ">
-		<div class="btn-group">
-			<a class="btn btn-default btn-sm" id='opbtn' onclick="drewline(1,'po');">运营商</a>
-			<a class="btn btn-default btn-sm" id='prbtn' onclick="drewline(2,'po');">省份</a>
-		</div>
-	</div>
-	<div class="box-tools pull-right "></div>
-</div>
-<div class="clear"></div>
-<div class="divider20"></div>
-<div class="col-md-12">
-	<div id="line" style="height: 400px;"></div>
-</div>
-
-</div>
-<!-- /.box-body -->
-<!-- <div class="box-footer">The footer of the box</div>
--->
-<!-- box-footer -->
-</div>
-<!-- /.box -->
-</div>
-
-</div>
-</section>
-<!-- /.content -->
+	</section>
+	<!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
 
@@ -355,7 +266,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the
      fixed layout. -->
-<load href="__PUBLIC__/jk/js/monitor/httpview_st.js" />
+<!-- <load href="__PUBLIC__/jk/js/monitor/httpview_st.js" />
+-->
 <script type="text/javascript">//$('#Notifications').text(alarmsnum);</script>
 </body>
 </html>
