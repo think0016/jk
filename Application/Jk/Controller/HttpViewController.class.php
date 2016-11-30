@@ -18,9 +18,9 @@ class HttpViewController extends MonitorController {
 		$this->is_login ( 1 );
 		
 		$taskid = I ( 'get.tid' );
-		$sel = I ( 'get.sel' );
 		$itemid = I ( 'get.itemid' );
-		
+		$stime = I ( 'get.sdate' );
+		$etime = I ( 'get.edate' );
 		if ($taskid == "") {
 			$this->error ( "参数错误1" );
 		}
@@ -48,17 +48,10 @@ class HttpViewController extends MonitorController {
 		) )->find ();
 		
 		// 最慢排名表单
-		$stime = date ( "Y-m-d 00:00:00" );
-		$etime = date ( "Y-m-d H:i:s" );
+		$setime = $this->timeinterval ( $stime, $etime );
+		$stime = $setime [0];
+		$etime = $setime [1];
 		$step = 3600;
-		if ($sel == "w") { // 上周
-			$stime = date ( "Y-m-d", strtotime ( "-1 weeks" ) );
-			// $step = 3600 * 24;
-		} else if ($sel == "yd") { // 昨天
-			$stime = date ( "Y-m-d", strtotime ( "-1 day" ) );
-			$etime = date ( "Y-m-d" );
-			// $step = 3600 * 24;
-		}
 		if ($itemid == "") {
 			$itemid = "connecttime"; // 默认响应时间
 				                         // $itemid = "status"; // 默认响应时间

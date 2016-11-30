@@ -63,6 +63,9 @@ mymap.setOption(option1);
 
 
 //Date range as a button
+var sdate1=sdate.split(" ");
+var edate1=edate.split(" ");
+$('#daterange-btn span').html(sdate1[0] + ' 至 ' + edate1[0]);
 $('#daterange-btn').daterangepicker({
 		maxDate: moment(), //最大时间   
 		showDropdowns: true,
@@ -93,7 +96,7 @@ $('#daterange-btn').daterangepicker({
 		endDate: moment()
 	},
 	function(start, end) {
-		$('#daterange-btn span').html(start.format('YYYY-MM-DD') + ' 至 ' + end.format('YYYY-MM-DD'));
+		//$('#daterange-btn span').html(start.format('YYYY-MM-DD') + ' 至 ' + end.format('YYYY-MM-DD'));
 	}
 );
 

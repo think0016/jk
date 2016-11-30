@@ -16,6 +16,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<load href="__PUBLIC__/plugins/font-awesome/css/font-awesome.min.css" />
 	<!-- Ionicons -->
 	<load href="__PUBLIC__/plugins/other/ionicons.min.css" />
+	<!-- daterange picker -->
+	<load href="__PUBLIC__/plugins/daterangepicker/daterangepicker.css" />
 	<!-- Theme style -->
 	<load href="__PUBLIC__/dist/css/admincore.css" />
 	<!-- layui -->
@@ -301,42 +303,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</switch>
 							</div>
 						</div>
-						<div class="box-tools pull-right">
-							<div class="btn-group">
-								<if condition="$itemid eq 2">
-									<if condition="$sel eq 'yd'">
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime">今日</a>
-										<a class="btn btn-default btn-sm active">昨日</a>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime/sel/w">上周</a>
-										<elseif condition="$sel eq 'w'"/>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime">今日</a>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime/sel/yd">昨日</a>
-										<a class="btn btn-default btn-sm active">上周</a>
-										<else/>
-										<a class="btn btn-default btn-sm active">今日</a>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime/sel/yd">昨日</a>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime/sel/w">上周</a>
-
-									</if>
-									<elseif condition="$itemid eq 8"/>
-									<if condition="$sel eq 'yd'">
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status">今日</a>
-										<a class="btn btn-default btn-sm active">昨日</a>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status/sel/w">上周</a>
-										<elseif condition="$sel eq 'w'"/>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status">今日</a>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status/sel/yd">昨日</a>
-										<a class="btn btn-default btn-sm active">上周</a>
-										<else/>
-										<a class="btn btn-default btn-sm active">今日</a>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status/sel/yd">昨日</a>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status/sel/w">上周</a>
-
-									</if>
-								</if>
-
-							</div>
-						</div>
+										<div class="box-tools pull-right">
+											<button type="button" class="btn btn-default pull-right btn-sm" id="daterange-btn">
+												<span>
+													<i class="fa fa-calendar"></i>
+													时期范围
+												</span>
+												<i class="fa fa-caret-down"></i>
+											</button>
+										</div>
 
 					</div>
 				</div>
@@ -512,8 +487,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- echarts -->
 <load href="__PUBLIC__/plugins/echarts/echarts.js" />
 <load href="__PUBLIC__/plugins/echarts/china.js" />
-<!-- layui -->
-<load href="__PUBLIC__/plugins/layui/layui.js" />
+<!-- date-range-picker -->
+<load href="__PUBLIC__/plugins/momentjs/moment.js" />
+<load href="__PUBLIC__/plugins/daterangepicker/daterangepicker.js" />
 <!-- AdminLTE App -->
 <load href="__PUBLIC__/dist/js/app.min.js" />
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
@@ -521,6 +497,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
      user experience. Slimscroll is required when using the
      fixed layout. -->
 <load href="__PUBLIC__/jk/js/monitor/httpview.js" />
-<script type="text/javascript">$('#Notifications').text(alarmsnum);</script>
+<script type="text/javascript">//$('#Notifications').text(alarmsnum);</script>
 </body>
 </html>

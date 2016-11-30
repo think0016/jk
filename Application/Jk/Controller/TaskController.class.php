@@ -12,6 +12,20 @@ class TaskController extends BaseController {
 		$this->display ();
 	}
 	
+	public function taskview(){
+		// 检查登录情况
+		$this->is_login ( 1 );
+		
+		$type = I('get.type');
+		$tid = I('get.tid');
+		
+		switch ($type){
+			case 'http':
+			redirect(U('/HttpView/index/tid/'.$tid));
+			break;
+		}
+	}
+	
 	public function tasklist() {
 		
 		// 检查登录情况
