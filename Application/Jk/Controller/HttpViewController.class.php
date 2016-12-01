@@ -582,6 +582,30 @@ class HttpViewController extends MonitorController {
 	public function alarmindex() {
 		$this->is_login ( 1 );
 		
+		$taskid = I ( 'get.tid' );
+		$itemid = I ( 'get.itemid' );
+		$stime = I ( 'get.sdate' );
+		$etime = I ( 'get.edate' );
+		if ($taskid == "") {
+			$this->error ( "参数错误1" );
+		}
+		
+		$taskModel = D ( 'jk_task' );
+		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
+		$taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
+		
+		$task = $taskModel->where ( array (
+				"id" => $taskid,
+				"is_del" => 0 
+		) )->find ();
+		
+		if (! $task) {
+			$this->error ( "参数错误2" );
+		}
+		
+		
+		$this->assignbase ();
+		$this->assign ( "task", $task );
 		$this->display ();
 	}
 	public function getlinedatax() {

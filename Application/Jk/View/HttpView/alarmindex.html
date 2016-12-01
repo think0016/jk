@@ -90,17 +90,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<li class="header">HEADER</li>
 					<!-- Optionally, you can add icons to the links -->
 					<li>
-						<a href="__APP__/HttpView/index/tid/{$taskdetails.taskid}"> <i class="fa fa-link"></i>
+						<a href="__APP__/HttpView/index/tid/{$task.id}"> <i class="fa fa-link"></i>
 							<span>概览</span>
 						</a>
 					</li>
 					<li>
-						<a href="__APP__/HttpView/ctindex/tid/{$taskdetails.taskid}"> <i class="fa fa-link"></i>
+						<a href="__APP__/HttpView/ctindex/tid/{$task.id}"> <i class="fa fa-link"></i>
 							<span>响应时间</span>
 						</a>
 					</li>
-					<li class="active">
-						<a href="__APP__/HttpView/stindex/tid/{$taskdetails.taskid}">
+					<li>
+						<a href="__APP__/HttpView/stindex/tid/{$task.id}">
 							<i class="fa fa-link"></i>
 							<span>可用性</span>
 						</a>
@@ -111,8 +111,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<span>历史快照</span>
 						</a>
 					</li>
-					<li>
-						<a href="#">
+					<li class="active">
+						<a href="__APP__/HttpView/alarmindex/tid/{$task.id}">
 							<i class="fa fa-link"></i>
 							<span>告警信息</span>
 						</a>
@@ -147,88 +147,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 				<!-- Your Page Content Here -->
 
-				<div class="row">
-					<div class="col-md-12">
-						<div class="box">
-							<div class="box-header with-border">
-								<h3 class="box-title">告警信息</h3>
-								<div class="box-tools pull-right">
-									<!-- Buttons, labels, and many other things can be placed here! -->
-									<!-- Here is a label for example -->
-								</div>
-								<!-- /.box-tools -->
-							</div>
-							<!-- /.box-header -->
-							<div class="box-body">
-								<table class="table table-bordered">
-									<tr>
-										<th style="width: 10px">#</th>
-										<th>告警时间</th>
-										<th>事件信息</th>
-										<th>持续时间</th>
-										<th>当前状态</th>
-										<th>操作</th>
-									</tr>
-
-									<tr>
-										<td>1.</td>
-										<td>2016-11-29 15:55:35</td>
-										<td>时延大于590毫秒</td>
-										<td></td>
-										<td>
-											<span class="label label-info">恢复</span>
-										</td>
-
-										<td>
-											<div class="btn-group">
-												<a class="btn btn-default btn-xs">查看</a>
-												<a class="btn btn-default btn-xs">处理</a>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td>2.</td>
-										<td>2016-11-29 15:17:02</td>
-										<td>时延大于590毫秒</td>
-										<td>00小时38分33秒</td>
-										<td>
-											<span class="label label-warning">故障</span>
-										</td>
-
-										<td>
-											<div class="btn-group">
-												<a class="btn btn-default btn-xs">查看</a>
-												<a class="btn btn-default btn-xs">处理</a>
-											</div>
-										</td>
-									</tr>
-
-									<!-- 								<tr>
-									<td>1.</td>
-									<td>Update software</td>
-									<td>100ms</td>
-									<td>100ms</td>
-									<td>100ms</td>
-									<td>
-										<div class="btn-group">
-											<a class="btn btn-default btn-xs">查看</a>
-											<a class="btn btn-default btn-xs">处理</a>
-										</div>
-									</td>
-								</tr>
-								-->
-							</table>
-						</div>
-						<!-- /.box-body -->
-						<!-- <div class="box-footer">The footer of the box</div>
-					-->
-					<!-- box-footer -->
-				</div>
-				<!-- /.box -->
-			</div>
-
-		</div>
-	</section>
+             </section>
 	<!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
