@@ -38,13 +38,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<![endif]-->
 	<script type="text/javascript">
 		var rooturl = '__APP__';
-		var tid = {$taskdetails.taskid};
+		var tid = {$task.id};
 		var sdate = '{$sdate}';
 		var edate = '{$edate}';
-		var mapdata = "{$mapdata}";
 		var item = '{$itemid}';
-		var step = 3600;
-		//var alarmsnum = {$alarmsnum};
 	</script>
 </head>
 
@@ -149,10 +146,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<div class="row">
 					<div class="col-md-12">
 						<div class="box">
-							<!-- /.box-header -->
 							<div class="box-body">
 								<div class="col-md-12">
-									<div class="box-tools pull-left "></div>
+									<div class="box-tools pull-left ">
+										<select class="form-control">
+											<option value="0">全部</option>
+											<volist name="triggerlist" id="list">
+												<option value="{$list.id}">{$list.alarmcomment}</option>
+											</volist>
+										</select>
+									</div>
 									<div class="box-tools pull-right ">
 										<button type="button" class="btn btn-default pull-right btn-sm" id="daterange-btn">
 											<span>
@@ -170,45 +173,38 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<table id="alarmtable" class="potable table table-bordered table-hover">
 										<thead>
 											<tr>
-												<th>#</th>
-												<th>省份</th>
-												<th>连接建立时间（ms）</th>
-												<th>解析时间（ms）</th>
-												<th>内容下载时间</th>
-												<th>下载速度</th>
-												<th>文件大小</th>
-												<th>总时间</th>
+												<th>序号</th>
+												<th>告警时间</th>
+												<th>监控任务名</th>
+												<th>监控对象</th>
+												<th>监控类型</th>
+												<th>事件信息</th>
+												<th>持续时间</th>
+												<th>当前状态</th>
 											</tr>
 										</thead>
-
 									</table>
-								</div>
-								<!-- 告警表格 end-->
+									<!-- 告警表格 end-->
+								</div>								
 							</div>
 
 						</div>
-						<!-- /.box-body -->
-						<!-- <div class="box-footer">The footer of the box</div>
-					-->
-					<!-- box-footer -->
 				</div>
-				<!-- /.box -->
 			</div>
-		</div>
-	</section>
-	<!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
+		</section>
+		<!-- /.content -->
+	</div>
+	<!-- /.content-wrapper -->
 
-<!-- Main Footer -->
-<include file="Public/main_footer" />
+	<!-- Main Footer -->
+	<include file="Public/main_footer" />
 
-<!-- Control Sidebar -->
+	<!-- Control Sidebar -->
 
-<!-- /.control-sidebar -->
-<!-- Add the sidebar's background. This div must be placed
+	<!-- /.control-sidebar -->
+	<!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
-<div class="control-sidebar-bg"></div>
+	<div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
 
@@ -235,6 +231,65 @@ scratch. This page gets rid of all links and provides the needed markup only.
      fixed layout. -->
 <!-- <load href="__PUBLIC__/jk/js/monitor/httpview_st.js" />
 -->
-<script type="text/javascript"></script>
+<script type="text/javascript">
+
+//Date range as a button
+//var sdate1=sdate.split(" ");
+//var edate1=edate.split(" ");
+$('#daterange-btn span').html(sdate1[0] + ' 至 ' + edate1[0]);
+$('#daterange-btn').daterangepicker({
+		maxDate: moment(), //最大时间   
+		showDropdowns: true,
+		timePicker: false, //是否显示小时和分钟 
+		dateLimit: {
+			days: 120
+		},
+		ranges: {
+			'今日': [moment().startOf('day'), moment()],
+			'昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
+			'最近一周': [moment().subtract('days', 6), moment()]
+		},
+		opens: 'right', //日期选择框的弹出位置  
+		format: 'YYYY-MM-DD', //控件中from和to 显示的日期格式  
+		locale: {
+			applyLabel: '确定',
+			cancelLabel: '取消',
+			fromLabel: '起始时间',
+			toLabel: '结束时间',
+			customRangeLabel: '自定义',
+			daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+			monthNames: ['一月', '二月', '三月', '四月', '五月', '六月',
+				'七月', '八月', '九月', '十月', '十一月', '十二月'
+			],
+			firstDay: 1
+		},
+		startDate: moment().subtract(29, 'days'),
+		endDate: moment()
+	},
+	function(start, end) {
+		$('#daterange-btn span').html(start.format('YYYY-MM-DD') + ' 至 ' + end.format('YYYY-MM-DD'));
+	}
+);
+
+$('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
+	//console.log(picker.startDate.format('YYYY-MM-DD'));
+	//console.log(picker.endDate.format('YYYY-MM-DD'));
+	var sdate = picker.startDate.format('YYYY-MM-DD');
+	var edate = picker.endDate.format('YYYY-MM-DD');
+	//var url = rooturl + "/HttpView/alarmindex/" + "tid/" + tid + "/sdate/" + sdate + "/edate/" + edate;
+	//window.location.href = url;
+	console.log(sdate+"  "+edate);
+});
+
+
+
+
+function createtable(){
+    $('#example').dataTable( {
+        "ajax": rooturl+"/data/arrays.txt"
+    } );
+}
+
+</script>
 </body>
 </html>

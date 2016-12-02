@@ -79,13 +79,18 @@ class MonitorController extends BaseController {
 		return $filename;
 	}
 	
+	/**
+	 * 计算时间间隔
+	 * 
+	 * @param unknown $param        	
+	 */
 	public function timeinterval($stime, $etime) {
 		$arr = array ();
 		if ($stime == "" || $etime == "") {
 			$sdate = date ( "Y-m-d 00:00:00" );
 			$edate = date ( "Y-m-d H:i:s" );
-			$arr[] = $sdate;
-			$arr[] = $edate;
+			$arr [] = $sdate;
+			$arr [] = $edate;
 		} else {
 			$sdate = $stime;
 			$edate = $etime;
@@ -97,12 +102,32 @@ class MonitorController extends BaseController {
 			if ($yesterday == $edate) {
 				$edate = date ( "Y-m-d" );
 			}
-// 			if ($yesterday == $sdate) {
-// 				$sdate = date ( "Y-m-d" );
-// 			}
-			$arr[] = $sdate;
-			$arr[] = $edate;
+			// if ($yesterday == $sdate) {
+			// $sdate = date ( "Y-m-d" );
+			// }
+			$arr [] = $sdate;
+			$arr [] = $edate;
 		}
 		return $arr;
+	}
+	
+	/**
+	 * 告警描述
+	 * 
+	 * @param unknown $param        	
+	 */
+	public function get_alarm_comment($threshold, $itemname, $iunit, $operator_type) {
+		$comment = "";
+		switch ($operator_type) {
+			case 'gt' :
+				$comment = $itemname . "大于" . $threshold . $iunit;
+				break;
+			case 'lt' :
+				$comment = $itemname . "小于" . $threshold . $iunit;
+				break;
+			default :
+				$comment = $itemname . "等于" . $threshold . $iunit;
+		}
+		return $comment;
 	}
 }

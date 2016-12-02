@@ -12,7 +12,6 @@ class HttpViewController extends MonitorController {
 			"8" => '%',
 			"2" => '毫秒' 
 	);
-
 	public function index() {
 		// 检查登录情况
 		$this->is_login ( 1 );
@@ -421,7 +420,7 @@ class HttpViewController extends MonitorController {
 		
 		// 最慢排名表单
 		$step = 3600;
-
+		
 		$itemid = "status"; // 默认响应时间
 		$mids = $task ['mids'];
 		$uid = $task ['uid'];
@@ -573,7 +572,6 @@ class HttpViewController extends MonitorController {
 		$this->assign ( "alarmdata", $alarmdatas );
 		$this->assign ( "alarmsnum", $alarmsnum );
 		$this->display ();
-		
 	}
 	
 	/**
@@ -593,7 +591,7 @@ class HttpViewController extends MonitorController {
 		$taskModel = D ( 'jk_task' );
 		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
 		$taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
-		
+		$triggerModel = D ( 'jk_trigger_ruls' );
 		$task = $taskModel->where ( array (
 				"id" => $taskid,
 				"is_del" => 0 
@@ -603,11 +601,28 @@ class HttpViewController extends MonitorController {
 			$this->error ( "参数错误2" );
 		}
 		
+		$triggerlist = $triggerModel
+		->join ( "jk_taskitem_" . $this->sid . " ON jk_trigger_ruls.index_id=" . "jk_taskitem_" . $this->sid . ".itemid" )
+		->where (array("jk_trigger_ruls.task_id"=>$taskid))->select();
 		
+		
+		for ($i = 0; $i < count($triggerlist); $i++) {
+			$triggerlist[$i]["alarmcomment"]=$this->get_alarm_comment($triggerlist[$i]["threshold"], $triggerlist[$i]["comment"], $triggerlist[$i]["iunit"], $triggerlist[$i]["operator_type"]);
+		}
+
 		$this->assignbase ();
+		$this->assign ( "sdate", $stime );
+		$this->assign ( "edate", $etime );
 		$this->assign ( "task", $task );
+		$this->assign ( "triggerlist", $triggerlist );
 		$this->display ();
 	}
+	
+	public function getalarmtabledata(){
+		if (! $this->is_login ( 0 )) {
+		}
+	}
+	
 	public function getlinedatax() {
 		if (! $this->is_login ( 0 )) {
 			exit ( "ERROR1" );
@@ -764,7 +779,7 @@ class HttpViewController extends MonitorController {
 			$temp ['name'] = $mname;
 			$temp ['type'] = 'line';
 			$temp ['smooth'] = true;
-			//smoothMonotone
+			// smoothMonotone
 			$temp ['smoothMonotone'] = "x";
 			$temp ['data'] = $yv;
 			
@@ -828,15 +843,14 @@ class HttpViewController extends MonitorController {
 		$legend = array (
 				$itemarr [0] ['name'],
 				$itemarr [1] ['name'],
-				$itemarr [2] ['name']
+				$itemarr [2] ['name'] 
 		);
 		
 		$ii = 0;
 		$series = array ();
 		$xv = array ();
-		//$yv_avg = array();
-		foreach ($itemarr as $iv)
-		{
+		// $yv_avg = array();
+		foreach ( $itemarr as $iv ) {
 			
 			$opclass = array (); // 先分类(同一类别可能有多个mid)
 			foreach ( $mids_arr as $k => $v ) {
@@ -848,55 +862,57 @@ class HttpViewController extends MonitorController {
 					$mname = $this->getMonitoryPoint ( $mid )['operator'];
 				}
 				$rrdfilename = "";
-				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid,$iv['id'] );
-
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $iv ['id'] );
 				
 				$opclass [$mname] [] = $rrdfilename;
 			}
 			
 			$yv = array ();
-			$temp = array();
+			$temp = array ();
 			
-			
-			if($ii==0){
-// 				$xv [] = "平均";
-// 				//$yv[] = ((int)array_sum($yv)/count($yv));
-// 				$temp ['name'] = $iv['name'];
-// 				$temp ['type'] = 'bar';
-// 				$temp ['label'] = array("normal"=>array("show"=>true,"position"=>'insideRight'));
-// 				$temp ['stack'] = '总量';
-// 				$temp ['data'] = $yv;
-// 				$series[]=$temp;
+			if ($ii == 0) {
+				// $xv [] = "平均";
+				// //$yv[] = ((int)array_sum($yv)/count($yv));
+				// $temp ['name'] = $iv['name'];
+				// $temp ['type'] = 'bar';
+				// $temp ['label'] = array("normal"=>array("show"=>true,"position"=>'insideRight'));
+				// $temp ['stack'] = '总量';
+				// $temp ['data'] = $yv;
+				// $series[]=$temp;
 			}
-			
 			
 			foreach ( $opclass as $mname => $filename ) {
 				$rs1 = 0;
-				foreach ($filename as $fname){
+				foreach ( $filename as $fname ) {
 					$rs1 += $this->rrd_avg ( $fname, $stime, $etime, $step )[0];
 				}
 				
-				if($ii==0){
+				if ($ii == 0) {
 					$xv [] = $mname;
 				}
 				
-				$yv[] = (int)($rs1/count($filename));
+				$yv [] = ( int ) ($rs1 / count ( $filename ));
 			}
 			
-			$yv_avg = (int)(array_sum($yv)/count($yv));
-			array_unshift($yv,$yv_avg);
-			//$series[0]['data']=$yvx;
+			$yv_avg = ( int ) (array_sum ( $yv ) / count ( $yv ));
+			array_unshift ( $yv, $yv_avg );
+			// $series[0]['data']=$yvx;
 			
-			$temp ['name'] = $iv['name'];
+			$temp ['name'] = $iv ['name'];
 			$temp ['type'] = 'bar';
-			$temp ['label'] = array("normal"=>array("show"=>true,"position"=>"insideRight"));
+			$temp ['label'] = array (
+					"normal" => array (
+							"show" => true,
+							"position" => "insideRight" 
+					) 
+			);
 			$temp ['stack'] = '总量';
-			$temp ['data'] = $yv;			
-			$series[]=$temp;
-			$ii++;
+			$temp ['data'] = $yv;
+			$series [] = $temp;
+			$ii ++;
 		}
-
-		array_unshift($xv,"平均");//加上平均列
+		
+		array_unshift ( $xv, "平均" ); // 加上平均列
 		$return ['legend'] = $legend;
 		$return ['xv'] = $xv;
 		$return ['series'] = $series;
