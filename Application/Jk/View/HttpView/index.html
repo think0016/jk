@@ -18,6 +18,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<load href="__PUBLIC__/plugins/other/ionicons.min.css" />
 	<!-- daterange picker -->
 	<load href="__PUBLIC__/plugins/daterangepicker/daterangepicker.css" />
+	<!-- dataTables -->
+	<load href="__PUBLIC__/plugins/datatables/dataTables.bootstrap.css" />
 	<!-- Theme style -->
 	<load href="__PUBLIC__/dist/css/admincore.css" />
 	<!-- layui -->
@@ -220,13 +222,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<div class="box-tools pull-right">
 							<!-- Buttons, labels, and many other things can be placed here! -->
 							<!-- Here is a label for example -->
+							<a href="__APP__/HttpView/alarmindex/tid/{$taskdetails.taskid}" class="btn btn-sm btn-default">查看全部</a>
 						</div>
 						<!-- /.box-tools -->
 					</div>
 					<!-- /.box-header -->
 					<div class="box-body">
-						<table class="table table-bordered">
-							<tr>
+						<table id="alarmtable" class="potable table table-bordered table-hover">
+							<thead><tr>
+								<th style="width: 10px">#</th>
+								<th>告警时间</th>
+								<th>事件信息</th>
+								<th>持续时间</th>
+								<th>当前状态</th>
+								<!-- <th>操作</th> -->
+							</tr>
+							</thead>  
+<!-- 							<tr>
 								<th style="width: 10px">#</th>
 								<th>告警时间</th>
 								<th>事件信息</th>
@@ -249,21 +261,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										</div>
 									</td>
 								</tr>
-							</volist>
-							<!-- 								<tr>
-							<td>1.</td>
-							<td>Update software</td>
-							<td>100ms</td>
-							<td>100ms</td>
-							<td>100ms</td>
-							<td>
-								<div class="btn-group">
-									<a class="btn btn-default btn-xs">查看</a>
-									<a class="btn btn-default btn-xs">处理</a>
-								</div>
-							</td>
-						</tr>
-						-->
+							</volist> -->
 					</table>
 				</div>
 				<!-- /.box-body -->
@@ -490,6 +488,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- date-range-picker -->
 <load href="__PUBLIC__/plugins/momentjs/moment.js" />
 <load href="__PUBLIC__/plugins/daterangepicker/daterangepicker.js" />
+<!-- dataTables -->
+<load href="__PUBLIC__/plugins/datatables/jquery.dataTables.min.js" />
+<load href="__PUBLIC__/plugins/datatables/dataTables.bootstrap.min.js" />
 <!-- AdminLTE App -->
 <load href="__PUBLIC__/dist/js/app.min.js" />
 <!-- Optionally, you can add Slimscroll and FastClick plugins.

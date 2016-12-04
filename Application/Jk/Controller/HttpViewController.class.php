@@ -202,7 +202,7 @@ class HttpViewController extends MonitorController {
 		$this->assign ( "itemid", $itemid );
 		$this->assign ( "unit", $this->showitemunit [$itemid] );
 		$this->assign ( "step", $step );
-		$this->assign ( "sel", $sel );
+		//$this->assign ( "sel", $sel );
 		$this->assign ( "alarmdata", $alarmdatas );
 		$this->assign ( "alarmsnum", $alarmsnum );
 		$this->display ();
@@ -581,12 +581,15 @@ class HttpViewController extends MonitorController {
 		$this->is_login ( 1 );
 		
 		$taskid = I ( 'get.tid' );
-		$itemid = I ( 'get.itemid' );
 		$stime = I ( 'get.sdate' );
 		$etime = I ( 'get.edate' );
 		if ($taskid == "") {
 			$this->error ( "参数错误1" );
 		}
+		
+		$setime = $this->timeinterval ( $stime, $etime , "w");
+		$stime = $setime [0];
+		$etime = $setime [1];
 		
 		$taskModel = D ( 'jk_task' );
 		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
@@ -601,15 +604,14 @@ class HttpViewController extends MonitorController {
 			$this->error ( "参数错误2" );
 		}
 		
-		$triggerlist = $triggerModel
-		->join ( "jk_taskitem_" . $this->sid . " ON jk_trigger_ruls.index_id=" . "jk_taskitem_" . $this->sid . ".itemid" )
-		->where (array("jk_trigger_ruls.task_id"=>$taskid))->select();
+		$triggerlist = $triggerModel->join ( "jk_taskitem_" . $this->sid . " ON jk_trigger_ruls.index_id=" . "jk_taskitem_" . $this->sid . ".itemid" )->where ( array (
+				"jk_trigger_ruls.task_id" => $taskid 
+		) )->select ();
 		
-		
-		for ($i = 0; $i < count($triggerlist); $i++) {
-			$triggerlist[$i]["alarmcomment"]=$this->get_alarm_comment($triggerlist[$i]["threshold"], $triggerlist[$i]["comment"], $triggerlist[$i]["iunit"], $triggerlist[$i]["operator_type"]);
+		for($i = 0; $i < count ( $triggerlist ); $i ++) {
+			$triggerlist [$i] ["alarmcomment"] = $this->get_alarm_comment ( $triggerlist [$i] ["threshold"], $triggerlist [$i] ["comment"], $triggerlist [$i] ["iunit"], $triggerlist [$i] ["operator_type"] );
 		}
-
+		
 		$this->assignbase ();
 		$this->assign ( "sdate", $stime );
 		$this->assign ( "edate", $etime );
@@ -618,11 +620,122 @@ class HttpViewController extends MonitorController {
 		$this->display ();
 	}
 	
-	public function getalarmtabledata(){
+	public function getalarmtabledata() {
 		if (! $this->is_login ( 0 )) {
 		}
+		
+		$taskid = I ( 'get.tid' );
+		$aid = I ( 'get.aid' );
+		$stime = I ( 'get.sdate' );
+		$etime = I ( 'get.edate' );
+		$limit = I ( 'get.limit' );
+		
+		if($limit=="" || $limit==0){
+			$limit = 1000;
+		}
+		
+		//$setime = $this->timeinterval ( $stime, $etime, "w" );
+		$setime = $this->timeinterval ( $stime, $etime  );
+		$stime = strtotime ( $setime [0] );
+		$etime = strtotime ( $setime [1] );
+		
+		$taskModel = D ( 'jk_task' );
+		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
+		// $taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
+		$triggerModel = D ( 'jk_trigger_ruls' );
+		
+		$task = $taskModel->where ( array (
+				"id" => $taskid,
+				"is_del" => 0 
+		) )->find ();
+		
+		if (! $task) {
+			$this->error ( "参数错误2" );
+		}
+		$taskdetails = $taskdetailsModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+		
+		
+		$triggerlist = array ();
+		if ($aid == 0 || $aid == "") { // 全部告警信息
+			$triggerlist = $triggerModel->join ( "jk_taskitem_" . $this->sid . " ON jk_trigger_ruls.index_id=" . "jk_taskitem_" . $this->sid . ".itemid" )->where ( array (
+					"jk_trigger_ruls.task_id" => $taskid 
+			) )->limit($limit)->select ();
+		} else {
+			$triggerlist = $triggerModel->join ( "jk_taskitem_" . $this->sid . " ON jk_trigger_ruls.index_id=" . "jk_taskitem_" . $this->sid . ".itemid" )->where ( array (
+					"jk_trigger_ruls.task_id" => $taskid,
+					"jk_trigger_ruls.id" => $aid 
+			) )->limit($limit)->select ();
+		}
+
+		for($i = 0; $i < count ( $triggerlist ); $i ++) {
+			$triggerlist [$i] ["alarmcomment"] = $this->get_alarm_comment ( $triggerlist [$i] ["threshold"], $triggerlist [$i] ["comment"], $triggerlist [$i] ["iunit"], $triggerlist [$i] ["operator_type"] );
+		}
+		
+		$result = array ();
+		
+		foreach ( $triggerlist as $val ) {
+			$map = array ();
+			$map ['jk_alarms_list.task_id'] = $taskid;
+			$map ['jk_alarms_list.times'] = array (
+					array (
+							"GT",
+							$stime 
+					),
+					array (
+							"LT",
+							$etime 
+					) 
+			);
+			$map ['jk_alarms_list.trigger_id'] = $val ['id'];
+			
+			$alarmsModel = D ( "jk_alarms_list" );
+			$alarmslist = $alarmsModel->where ( $map )->order ( 'jk_alarms_list.times desc' )->select ();
+			
+			// echo $alarmsModel->getLastSql();
+			
+			for($i = 0; $i < count ( $alarmslist ); $i ++) {
+				if ($alarmslist [$i] ['type'] == 0) {
+					$letime = time ();
+					if ($i > 0) {
+						$i2 = $i - 1;
+						$letime = $alarmslist [$i2] ['times'];
+					}
+					$alarmslist [$i] ['ltime'] = changeTimeType ( abs ( $letime - $alarmslist [$i] ['times'] ) );
+				}else{
+					$alarmslist [$i] ['ltime'] = '';
+				}
+				$alarmslist [$i] ['alarmcomment'] = $val ['alarmcomment'];
+				$alarmslist [$i] ['atime'] = date ( "Y年m月d日 H:i:s", $alarmslist [$i] ['times'] );
+				// $return [$alarmslist [$i] ['id']] = $alarmslist [$i];
+			}
+			
+			$result = array_merge ( $result, $alarmslist );
+		}
+		usort($result, array("HttpViewController","alarm_sort"));
+		
+		$return = array();
+
+		for ($i = 0; $i < count($result); $i++) {
+			$temp = array();
+			$temp[] = $i+1;
+			$temp[] = $result[$i]['atime'];//监控时间
+			$temp[] = $task['title'];//监控任务名
+			$temp[] = $taskdetails['target'];//监控对象
+			$temp[] = 'http';//监控类型
+			$temp[] = $result[$i]['alarmcomment'];//事件信息
+			$temp[] = $result[$i]['ltime'];//持续时间
+			if($result[$i]['type']==1){
+				$temp[] = '恢复';//持续时间
+			}else{
+				$temp[] = '故障';//持续时间
+			}
+			$return[] = $temp;
+		}
+		$return = array_slice($return,0,$limit);
+		echo json_encode($return);
 	}
-	
 	public function getlinedatax() {
 		if (! $this->is_login ( 0 )) {
 			exit ( "ERROR1" );
@@ -702,6 +815,7 @@ class HttpViewController extends MonitorController {
 		
 		echo json_encode ( $return );
 	}
+	
 	public function getlinedata() {
 		if (! $this->is_login ( 0 )) {
 			exit ( "ERROR1" );
@@ -793,6 +907,7 @@ class HttpViewController extends MonitorController {
 		
 		echo json_encode ( $return );
 	}
+	
 	public function getbardata() {
 		if (! $this->is_login ( 0 )) {
 			exit ( "ERROR1" );
@@ -917,5 +1032,11 @@ class HttpViewController extends MonitorController {
 		$return ['xv'] = $xv;
 		$return ['series'] = $series;
 		echo json_encode ( $return );
+	}
+	protected function alarm_sort($a, $b) {
+		if ($a['times'] == $b['times']) {
+			return 0;
+		}		
+		return ($a['times'] < $b['times']) ? 1 : - 1;
 	}
 }

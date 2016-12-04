@@ -105,7 +105,9 @@ class BaseController extends Controller {
 	 */
 	public function formatJSON($result, $status = 0) {
 		$return = array();
-		$return["status"]=$result;
+		$return["status"]=$status;
 		$return["result"]=$result;
+		
+		return json_encode($return);
 	}
 }

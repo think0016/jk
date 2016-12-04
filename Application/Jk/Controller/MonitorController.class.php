@@ -84,13 +84,20 @@ class MonitorController extends BaseController {
 	 * 
 	 * @param unknown $param        	
 	 */
-	public function timeinterval($stime, $etime) {
+	public function timeinterval($stime, $etime , $sel = "") {
 		$arr = array ();
 		if ($stime == "" || $etime == "") {
-			$sdate = date ( "Y-m-d 00:00:00" );
-			$edate = date ( "Y-m-d H:i:s" );
-			$arr [] = $sdate;
-			$arr [] = $edate;
+			if($sel == ""){
+				$sdate = date ( "Y-m-d 00:00:00" );
+				$edate = date ( "Y-m-d H:i:s" );
+				$arr [] = $sdate;
+				$arr [] = $edate;
+			}else if($sel == "w"){//一周前
+				$sdate = date ("Y-m-d 00:00:00", strtotime("-1 week") );
+				$edate = date ( "Y-m-d H:i:s" );
+				$arr [] = $sdate;
+				$arr [] = $edate;
+			}
 		} else {
 			$sdate = $stime;
 			$edate = $etime;

@@ -174,3 +174,50 @@ $('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
 	window.location.href = url;
 });
 
+
+function createtable(sdate,edate,aid){
+	var purl = rooturl + "/HttpView/getalarmtabledata/tid/" + tid+"/sdate/" + sdate + "/edate/" + edate + "/aid/" + aid +"/limit/2";
+
+	// if(table != ''){
+	// 	$('#alarmtable').dataTable().fnDestroy();
+	// }
+
+    table = $('#alarmtable').dataTable( {
+          "ajax": {
+              "url": purl,
+              //默认为data,这里定义为空，则只需要传不带属性的数据
+              "dataSrc": ""
+          },
+          	"pageLength":2,
+          	"paging": false,
+          	"info": false,
+			"lengthChange": false,
+			"searching": false,
+			"ordering": true,
+			"retrieve": true,
+			"autoWidth": false,
+			"columns": [
+              { "data": 0 },
+              { "data": 1 },
+              { "data": 5 },
+              { "data": 6 },
+              { "data": 7 }
+          ]
+			//,
+			// "language": {
+			// 	"lengthMenu": "每页 _MENU_ 条记录",
+			// 	"zeroRecords": "没有找到记录",
+			// 	"info": "第 _PAGE_ 页 ( 总共 _PAGES_ 页 )",
+			// 	"infoEmpty": "无记录",
+			// 	"infoFiltered": "(从 _MAX_ 条记录过滤)",
+			// 	"oPaginate": {
+			// 		"sFirst": "首页",
+			// 		"sPrevious": "上页",
+			// 		"sNext": "下页",
+			// 		"sLast": "末页"
+			// 	}
+			//}
+    } );
+}
+
+createtable(sdate1[0],edate1[0],0);
