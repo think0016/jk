@@ -233,6 +233,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <script type="text/javascript">
 //Date range as a button
+var appurl = rooturl + '/HttpView/';
 var table = '';
 var sdate1=sdate.split(" ");
 var edate1=edate.split(" ");
@@ -285,7 +286,7 @@ $('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
 });
 
 function createtable(sdate,edate,aid){
-	var purl = rooturl + "/HttpView/getalarmtabledata/tid/" + tid+"/sdate/" + sdate + "/edate/" + edate + "/aid/" + aid;
+	var purl = appurl+"getalarmtabledata/tid/" + tid+"/sdate/" + sdate + "/edate/" + edate + "/aid/" + aid;
 
 	if(table != ''){
 		$('#alarmtable').dataTable().fnDestroy();

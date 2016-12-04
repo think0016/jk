@@ -2,15 +2,16 @@
 
 namespace Jk\Controller;
 
-class HttpViewController extends MonitorController {
-	private $sid = 1;
+class PingViewController extends MonitorController {
+	private $sid = 3;
 	private $defaultitem = "connecttime";
 	private $showitem = array (
-			"status" => 8,
-			"connecttime" => 2 
+			"status" => 4,
+			//"connecttime" => 2,
+			"connecttime" => 2
 	);
 	private $showitemunit = array (
-			"8" => '%',
+			"4" => '%',
 			"2" => '毫秒' 
 	);
 	public function index() {
@@ -260,12 +261,7 @@ class HttpViewController extends MonitorController {
 		$ssid = $task ['ssid'];
 		// $itemid = $this->showitem ["connecttime"];
 		$item_arr = array (
-				"2" => "响应时间",
-				"4" => "下载时间",
-				"5" => "总时间",
-				"6" => "下载速度",
-				"7" => "解析时间",
-				"9" => "文件大小" 
+				"2" => "响应时间"
 		);
 		
 		$result1 = array (); // 地区最慢
@@ -782,19 +778,20 @@ class HttpViewController extends MonitorController {
 		$rrdfilename = array ();
 		foreach ( $mids_arr as $val ) {
 			$mid = str_replace ( ":", "", $val );
-			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, 2 );
+			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['connecttime'] );
 			$rrdfilename [] = $x;
 		}
 		
 		$rs1 = $this->rrd_get_m ( $rrdfilename, $stime, $etime, $step );
 		// var_dump($rsx);
+
 		
-		// 响应时间的
+		// 可用率
 		// 获取监控点集合
 		$rrdfilename = array ();
 		foreach ( $mids_arr as $val ) {
 			$mid = str_replace ( ":", "", $val );
-			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, 8, 1 );
+			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['status'], 1 );
 			$rrdfilename [] = $x;
 		}
 		$rs2 = $this->rrd_get_m ( $rrdfilename, $stime, $etime, $step );
@@ -815,6 +812,7 @@ class HttpViewController extends MonitorController {
 		$return ['yv1'] = $yv1;
 		$return ['yv2'] = $yv2;
 		
+
 		echo json_encode ( $return );
 	}
 	
@@ -864,9 +862,9 @@ class HttpViewController extends MonitorController {
 			}
 			$rrdfilename = "";
 			if ($itemid == $this->showitem['connecttime']) {
-				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, 2 );
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['connecttime'] );
 			} else if ($itemid == $this->showitem['status']) {
-				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, 8, 1 );
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['status'], 1 );
 			}
 			
 			$opclass [$mname] [] = $rrdfilename;

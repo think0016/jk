@@ -11,21 +11,34 @@ class TaskController extends BaseController {
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
 		$this->display ();
 	}
-	
-	public function taskview(){
+	public function taskview() {
 		// 检查登录情况
 		$this->is_login ( 1 );
 		
-		$type = I('get.type');
-		$tid = I('get.tid');
+		$type = I ( 'get.type' );
+		$tid = I ( 'get.tid' );
 		
-		switch ($type){
-			case 'http':
-			redirect(U('/HttpView/index/tid/'.$tid));
-			break;
+		switch ($type) {
+			case 'http' :
+				redirect ( U ( '/HttpView/index/tid/' . $tid ) );
+				break;
+			// case 'ping' :
+			// redirect ( U ( '/PingView/index/tid/' . $tid ) );
+			// break;
+			case 'ftp' :
+				redirect ( U ( '/FtpView/index/tid/' . $tid ) );
+				break;
+			case 'udp' :
+				redirect ( U ( '/UdpView/index/tid/' . $tid ) );
+				break;
+			case 'tcp' :
+				redirect ( U ( '/TcpView/index/tid/' . $tid ) );
+				break;
+			case 'dns' :
+				redirect ( U ( '/DnsView/index/tid/' . $tid ) );
+				break;
 		}
 	}
-	
 	public function tasklist() {
 		
 		// 检查登录情况
@@ -40,7 +53,6 @@ class TaskController extends BaseController {
 		$this->assign ( "tasklist", $tasklist );
 		$this->display ();
 	}
-	
 	public function create() {
 		$this->is_login ( 1 );
 		
@@ -87,7 +99,6 @@ class TaskController extends BaseController {
 				break;
 		}
 	}
-	
 	public function delete() {
 		$r = $this->is_login ( 0 );
 		
@@ -114,7 +125,6 @@ class TaskController extends BaseController {
 			echo "2";
 		}
 	}
-
 	public function updatealarm() {
 		$r = $this->is_login ( 0 );
 		
@@ -123,7 +133,7 @@ class TaskController extends BaseController {
 		}
 		$aid = I ( "post.aid" );
 		$sid = I ( "post.sid" );
-		if ($aid == "" || $sid == "" ) {
+		if ($aid == "" || $sid == "") {
 			// $this->error("请求错误");
 			exit ( "请求错误" );
 		}
@@ -131,22 +141,20 @@ class TaskController extends BaseController {
 		// print_r($_POST);
 		// exit();
 		$taskModel = D ( "jk_trigger_ruls" );
-		$alarm =array();
-		//if($sid == '1'){
-
-		$taskitemtable = "jk_taskitem_".$sid;
+		$alarm = array ();
+		// if($sid == '1'){
+		
+		$taskitemtable = "jk_taskitem_" . $sid;
 		$alarm = $taskModel->where ( array (
-		"jk_trigger_ruls.id" => $aid
-		) )->join($taskitemtable.' ON jk_trigger_ruls.index_id = '.$taskitemtable.'.itemid')->find();
-		//}
-
-		$return = array();
-		$return['status'] = 1;
-		$return['data'] = $alarm;
-		echo json_encode($return);
-
+				"jk_trigger_ruls.id" => $aid 
+		) )->join ( $taskitemtable . ' ON jk_trigger_ruls.index_id = ' . $taskitemtable . '.itemid' )->find ();
+		// }
+		
+		$return = array ();
+		$return ['status'] = 1;
+		$return ['data'] = $alarm;
+		echo json_encode ( $return );
 	}
-
 	public function delalarm() {
 		$r = $this->is_login ( 0 );
 		
@@ -270,30 +278,29 @@ class TaskController extends BaseController {
 				// udp任务
 				$this->display ( 'udpadd' );
 				break;
-			case 13:
+			case 13 :
 				// dns任务
-				$ip = $taskdetail['ip'];
-				$server = $taskdetail['server'];
+				$ip = $taskdetail ['ip'];
+				$server = $taskdetail ['server'];
 				$cbip = 0;
 				$cbserver = 0;
-				$ip_arr = array();
-				if($ip != ""){
-					$ip_arr = explode(",", $ip);
+				$ip_arr = array ();
+				if ($ip != "") {
+					$ip_arr = explode ( ",", $ip );
 					$cbip = 1;
-					$this->assign("iparr",$ip_arr);
-				}else{
-					$this->assign("iparr",$ip_arr);
+					$this->assign ( "iparr", $ip_arr );
+				} else {
+					$this->assign ( "iparr", $ip_arr );
 				}
-				if($server != ""){
-					$cbserver=1;
+				if ($server != "") {
+					$cbserver = 1;
 				}
-				$this->assign("cbserver",$cbserver);
-				$this->assign("cbip",$cbip);
+				$this->assign ( "cbserver", $cbserver );
+				$this->assign ( "cbip", $cbip );
 				$this->display ( 'dnsadd' );
 				break;
 		}
 	}
-	
 	public function pingtaskadd() {
 		if (! $this->is_login ()) {
 			exit ( "请登录" );
@@ -446,8 +453,8 @@ class TaskController extends BaseController {
 			exit ( "请登录" );
 		}
 		
-		//var_dump($_POST);
-		//exit();
+		// var_dump($_POST);
+		// exit();
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 1;
 		$taskModel = D ( 'jk_task' );
@@ -511,7 +518,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-// 				"lasttime" => time (),
+				// "lasttime" => time (),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -705,7 +712,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-// 				"lasttime" => time (),
+				// "lasttime" => time (),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -802,8 +809,8 @@ class TaskController extends BaseController {
 		if (! $this->is_login ()) {
 			exit ( "请登录" );
 		}
-// 		print_r ( $_POST );
-// 		exit ();
+		// print_r ( $_POST );
+		// exit ();
 		
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 8; // TCP 类型
@@ -864,7 +871,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-// 				"lasttime" => time (),
+				// "lasttime" => time (),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -953,7 +960,6 @@ class TaskController extends BaseController {
 		
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
-
 	public function udptaskadd() {
 		if (! $this->is_login ()) {
 			exit ( "请登录" );
@@ -1024,7 +1030,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-// 				"lasttime" => time (),
+				// "lasttime" => time (),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -1121,23 +1127,22 @@ class TaskController extends BaseController {
 		
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
-	
 	public function dnstaskadd() {
 		if (! $this->is_login ()) {
 			exit ( "请登录" );
 		}
-// 		print_r ( $_POST );
-// 		exit ();
-	
+		// print_r ( $_POST );
+		// exit ();
+		
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 13; // DNS 类型
 		$taskModel = D ( 'jk_task' );
 		$taskDetailsModel = D ( 'jk_taskdetails_' . $sid );
-	
+		
 		/*
 		 * Array ( [mids] => :3:,:4:,:5:,:6: [tid] => [update] => [adv] => 0 [alarm_num] => 1 [a0] => 1,gt,152,ms,0,1,当前响应时间,大于, [title] => aa [target] => asd [port] => dasd [username] => dasd [password] => dddd [frequency] => 5 )
-		*/
-	
+		 */
+		
 		$taskid = I ( 'post.tid' );
 		$update = FALSE;
 		// $update = I ( 'post.update' );
@@ -1153,7 +1158,7 @@ class TaskController extends BaseController {
 		$ips = I ( 'post.ip' );
 		$cbserver = I ( 'post.cbserver' );
 		$server = I ( 'post.server' );
-	
+		
 		// 数据验证（简单）
 		if ($mids == "") {
 			$this->error ( "监控点不能为空" );
@@ -1164,7 +1169,7 @@ class TaskController extends BaseController {
 		if (! isset ( $target ) || $target == "") {
 			$this->error ( "监控地址不能为空" );
 		}
-			
+		
 		// 添加task表
 		$mid = $mids;
 		$label = "";
@@ -1174,7 +1179,7 @@ class TaskController extends BaseController {
 		// }
 		// $mid = $mid . ":" . $mids [$i] . ":";
 		// }
-	
+		
 		for($i = 0; $i < count ( $labels ); $i ++) {
 			if ($i > 0) {
 				$label = $label . ",";
@@ -1189,11 +1194,11 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-// 				"lasttime" => time (),
+				// "lasttime" => time (),
 				"labels" => $label,
-				"isadv" => $adv
+				"isadv" => $adv 
 		);
-	
+		
 		if ($taskid == "") {
 			$taskid = $taskModel->add ( $data );
 			if (! $taskid) {
@@ -1201,26 +1206,26 @@ class TaskController extends BaseController {
 			}
 		} else {
 			$r = $taskModel->where ( array (
-					"id" => $taskid
+					"id" => $taskid 
 			) )->save ( $data );
 			if (! $r) {
 				$this->error ( "ERROR2" );
 			}
 			$update = TRUE;
 		}
-	
+		
 		// 添加detail表
 		$ips1 = "";
-		if($cbip == 1){
-			foreach ($ips as $val){
-				if($ips1 !== ""){
-					$ips1 = $ips1.",".$val;
-				}else{
+		if ($cbip == 1) {
+			foreach ( $ips as $val ) {
+				if ($ips1 !== "") {
+					$ips1 = $ips1 . "," . $val;
+				} else {
 					$ips1 = $val;
 				}
 			}
 		}
-		if($cbserver == 0){
+		if ($cbserver == 0) {
 			$server = "";
 		}
 		if ($update) {
@@ -1229,10 +1234,10 @@ class TaskController extends BaseController {
 					"dnstype" => $dnstype,
 					"ip" => $ips1,
 					"server" => $server,
-					"target" => $target
+					"target" => $target 
 			);
 			$r = $taskDetailsModel->where ( array (
-					"taskid" => $taskid
+					"taskid" => $taskid 
 			) )->save ( $data );
 			// if (! $r) {
 			// $this->error ( "ERROR1" );
@@ -1244,14 +1249,14 @@ class TaskController extends BaseController {
 					"dnstype" => $dnstype,
 					"ip" => $ips1,
 					"server" => $server,
-					"target" => $target
+					"target" => $target 
 			);
 			$ssid = $taskDetailsModel->add ( $data );
 			if (! $ssid) {
 				$this->error ( "ERROR1" );
 			}
 		}
-	
+		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
 		if ($alarm_num > 0) {
@@ -1282,9 +1287,9 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"is_monitor_avg" => 0
+						"is_monitor_avg" => 0 
 				);
-	
+				
 				// $data['monitor_id'] = $mid;
 				$flag = $triggerModel->add ( $data );
 			}
@@ -1292,7 +1297,7 @@ class TaskController extends BaseController {
 				$this->error ( "ERROR4" );
 			}
 		}
-	
+		
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
 }

@@ -1,3 +1,4 @@
+var appurl = rooturl + '/HttpView/';
 var mymap = echarts.init(document.getElementById('map'));
 
 
@@ -85,7 +86,7 @@ $('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
 	//console.log(picker.endDate.format('YYYY-MM-DD'));
 	var sdate = picker.startDate.format('YYYY-MM-DD');
 	var edate = picker.endDate.format('YYYY-MM-DD');
-	var url = rooturl + "/HttpView/stindex/" + "tid/" + tid + "/sdate/" + sdate + "/edate/" + edate;
+	var url = appurl + "stindex/" + "tid/" + tid + "/sdate/" + sdate + "/edate/" + edate;
 	window.location.href = url;
 });
 
@@ -116,9 +117,9 @@ function drewline(param, type) {
 
 
 	var myline = echarts.init(document.getElementById('line'));
-	var posturl = rooturl + '/HttpView/getlinedata.html';
+	var posturl = appurl + 'getlinedata.html';
 	if (lb == 2) {
-		var posturl = rooturl + '/HttpView/getbardata.html';
+		var posturl = appurl + 'getbardata.html';
 	}
 	$.post(posturl, {
 		tid: tid,

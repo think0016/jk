@@ -1,6 +1,7 @@
+var appurl = rooturl + '/HttpView/';
 var mymap = echarts.init(document.getElementById('map'));
 var myline = echarts.init(document.getElementById('line'));
-var posturl = rooturl + '/HttpView/getlinedatax.html';
+var posturl = appurl + 'getlinedatax.html';
 
 var mapdata = $.parseJSON(mapdata);
 var mapitem = "";
@@ -10,7 +11,7 @@ var subtext = "";
 if (item == "2") {
 	mapitem = "响应时间";
 	mformatter = '平均{a}:{c}毫秒';
-	maxv = 3000;
+	maxv = 100;
 	subtext = "响应时间";
 } else if (item == "8") {
 	mapitem = "可用率";
@@ -94,7 +95,7 @@ $.post(posturl, {
 			yAxis : [ {
 				name : '响应时间(ms)',
 				min : 0,
-				max : 5000,
+				//max : 100,
 				type : 'value',
 				
 				axisLine : {
@@ -170,13 +171,13 @@ $('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
 	//console.log(picker.endDate.format('YYYY-MM-DD'));
 	var sdate = picker.startDate.format('YYYY-MM-DD');
 	var edate = picker.endDate.format('YYYY-MM-DD');
-	var url = rooturl + "/HttpView/index/" + "tid/" + tid + "/sdate/" + sdate + "/edate/" + edate;
+	var url = appurl + "index/" + "tid/" + tid + "/sdate/" + sdate + "/edate/" + edate;
 	window.location.href = url;
 });
 
 
 function createtable(sdate,edate,aid){
-	var purl = rooturl + "/HttpView/getalarmtabledata/tid/" + tid+"/sdate/" + sdate + "/edate/" + edate + "/aid/" + aid +"/limit/2";
+	var purl = appurl + "getalarmtabledata/tid/" + tid+"/sdate/" + sdate + "/edate/" + edate + "/aid/" + aid +"/limit/2";
 
 	// if(table != ''){
 	// 	$('#alarmtable').dataTable().fnDestroy();

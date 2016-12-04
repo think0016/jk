@@ -2,16 +2,17 @@
 
 namespace Jk\Controller;
 
-class HttpViewController extends MonitorController {
-	private $sid = 1;
-	private $defaultitem = "connecttime";
+class TcpViewController extends MonitorController {
+	private $sid = 8;
+	private $defaultitem = "responsetime";
 	private $showitem = array (
-			"status" => 8,
-			"connecttime" => 2 
+			"status" => 2,
+			//"connecttime" => 2,
+			"responsetime" => 1
 	);
 	private $showitemunit = array (
-			"8" => '%',
-			"2" => '毫秒' 
+			"2" => '%',
+			"1" => '毫秒' 
 	);
 	public function index() {
 		// 检查登录情况
@@ -77,6 +78,8 @@ class HttpViewController extends MonitorController {
 			}
 			
 			$rs = $this->rrd_avg ( $rrdfilename, $stime, $etime, $step );
+			
+			
 			$list = $this->getMonitoryPoint ( $mid );
 			$total += $rs [0];
 			
@@ -260,12 +263,7 @@ class HttpViewController extends MonitorController {
 		$ssid = $task ['ssid'];
 		// $itemid = $this->showitem ["connecttime"];
 		$item_arr = array (
-				"2" => "响应时间",
-				"4" => "下载时间",
-				"5" => "总时间",
-				"6" => "下载速度",
-				"7" => "解析时间",
-				"9" => "文件大小" 
+				"2" => "响应时间"
 		);
 		
 		$result1 = array (); // 地区最慢
@@ -513,7 +511,7 @@ class HttpViewController extends MonitorController {
 			$operator_type = $alarmslist [$i] ['operator_type'];
 			$threshold = $alarmslist [$i] ['threshold'];
 			// $ltime = abs ( $alarmslist [$i] ['times'] - $alarmslist [$i] ['times'] );
-			if ($alarm_itemid == $this->showitem['connecttime']) { // 时延
+			if ($alarm_itemid == $this->showitem['responsetime']) { // 时延
 				switch ($operator_type) {
 					case 'gt' :
 						$temp ['msg'] = "时延大于" . $threshold . "毫秒";
@@ -782,19 +780,19 @@ class HttpViewController extends MonitorController {
 		$rrdfilename = array ();
 		foreach ( $mids_arr as $val ) {
 			$mid = str_replace ( ":", "", $val );
-			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, 2 );
+			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['responsetime'] );
 			$rrdfilename [] = $x;
 		}
 		
 		$rs1 = $this->rrd_get_m ( $rrdfilename, $stime, $etime, $step );
 		// var_dump($rsx);
 		
-		// 响应时间的
+		// 可用率
 		// 获取监控点集合
 		$rrdfilename = array ();
 		foreach ( $mids_arr as $val ) {
 			$mid = str_replace ( ":", "", $val );
-			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, 8, 1 );
+			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['status'], 1 );
 			$rrdfilename [] = $x;
 		}
 		$rs2 = $this->rrd_get_m ( $rrdfilename, $stime, $etime, $step );
@@ -815,6 +813,7 @@ class HttpViewController extends MonitorController {
 		$return ['yv1'] = $yv1;
 		$return ['yv2'] = $yv2;
 		
+
 		echo json_encode ( $return );
 	}
 	
@@ -863,10 +862,10 @@ class HttpViewController extends MonitorController {
 				$mname = $this->getMonitoryPoint ( $mid )['operator'];
 			}
 			$rrdfilename = "";
-			if ($itemid == $this->showitem['connecttime']) {
-				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, 2 );
+			if ($itemid == $this->showitem['responsetime']) {
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['responsetime'] );
 			} else if ($itemid == $this->showitem['status']) {
-				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, 8, 1 );
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['status'], 1 );
 			}
 			
 			$opclass [$mname] [] = $rrdfilename;

@@ -1,4 +1,5 @@
 //$(function() {
+var appurl = rooturl + '/HttpView/';
 var mymap = echarts.init(document.getElementById('map'));
 //var myline = echarts.init(document.getElementById('line'));
 var lb = 1;
@@ -14,7 +15,7 @@ var subtext = "";
 if (item == "2") {
 	mapitem = "响应时间";
 	mformatter = '平均{a}:{c}毫秒';
-	maxv = 3000;
+	maxv = 100;
 	subtext = "响应时间";
 } else if (item == "8") {
 	mapitem = "可用率";
@@ -105,7 +106,7 @@ $('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
 	//console.log(picker.endDate.format('YYYY-MM-DD'));
 	var sdate = picker.startDate.format('YYYY-MM-DD');
 	var edate = picker.endDate.format('YYYY-MM-DD');
-	var url = rooturl + "/HttpView/ctindex/" + "tid/" + tid + "/sdate/" + sdate + "/edate/" + edate;
+	var url = appurl + "ctindex/" + "tid/" + tid + "/sdate/" + sdate + "/edate/" + edate;
 	window.location.href = url;
 });
 
@@ -133,9 +134,9 @@ function drewline(param, type) {
 
 
 	var myline = echarts.init(document.getElementById('line'));
-	var posturl = rooturl + '/HttpView/getlinedata.html';
+	var posturl = appurl + 'getlinedata.html';
 	if (lb == 2) {
-		var posturl = rooturl + '/HttpView/getbardata.html';
+		var posturl = appurl + 'getbardata.html';
 	}
 	$.post(posturl, {
 		tid: tid,
