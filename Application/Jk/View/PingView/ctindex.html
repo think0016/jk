@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>{$sitetitle}</title>
+	<!-- Tell the browser to be responsive to screen width -->
+	<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport">
+	<!-- Bootstrap 3.3.6 -->
+	<load href="__PUBLIC__/bootstrap/css/bootstrap.min.css" />
+	<!-- Font Awesome -->
+	<load href="__PUBLIC__/plugins/font-awesome/css/font-awesome.min.css" />
+	<!-- Ionicons -->
+	<load href="__PUBLIC__/plugins/other/ionicons.min.css" />
+	<!-- daterange picker -->
+	<load href="__PUBLIC__/plugins/daterangepicker/daterangepicker.css" />
+	<!-- dataTables -->
+	<load href="__PUBLIC__/plugins/datatables/dataTables.bootstrap.css" />
+	<!-- Theme style -->
+	<load href="__PUBLIC__/dist/css/admincore.css" />
+	<!-- layui -->
+	<!-- 	<load href="__PUBLIC__/plugins/layui/css/layui.css" />
+	-->
+	<!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+        page. However, you can choose any other skin. Make sure you
+        apply the skin class to the body tag so the changes take effect.
+  -->
+	<load href="__PUBLIC__/dist/css/skins/skin-blue.min.css" />
+	<!-- private css -->
+	<load href="__PUBLIC__/jk/css/style.css" />
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+	<script type="text/javascript">
+		var rooturl = '__APP__';
+		var tid = {$taskdetails.taskid};
+		var sdate = '{$sdate}';
+		var edate = '{$edate}';
+		var mapdata = "{$mapdata}";
+		var item = '{$itemid}';
+		//var step = {$step};
+		//var alarmsnum = {$alarmsnum};
+	</script>
+
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini ">
+	<div class="wrapper">
+
+		<!-- Main Header -->
+		<header class="main-header">
+
+			<!-- Logo -->
+			<include file="Public/logo" />
+
+			<!-- Header Navbar -->
+			<nav class="navbar navbar-static-top" role="navigation">
+				<!-- Sidebar toggle button-->
+				<a href="#" class="sidebar-toggle" data-toggle="offcanvas"
+					role="button">
+					<span class="sr-only">Toggle navigation</span>
+				</a>
+
+				<!-- 上方导航栏 START -->
+				<include file="Public/top_nav" />
+				<!-- 上方导航栏 END -->
+
+				<!-- Navbar Right Menu -->
+				<include file="Public/top_right_menu" />
+				<!-- Navbar Right Menu end -->
+			</nav>
+		</header>
+		<!-- Left side column. contains the logo and sidebar -->
+		<aside class="main-sidebar">
+
+			<!-- sidebar: style can be found in sidebar.less -->
+			<section class="sidebar">
+
+				<!-- Sidebar user panel (optional) -->
+
+				<!-- search form (Optional) -->
+
+				<!-- /.search form -->
+
+				<!-- Sidebar Menu -->
+				<ul class="sidebar-menu">
+					<li class="header">HEADER</li>
+					<!-- Optionally, you can add icons to the links -->
+					<li>
+						<a href="__APP__/PingView/index/tid/{$taskdetails.taskid}"> <i class="fa fa-link"></i>
+							<span>概览</span>
+						</a>
+					</li>
+					<li class="active">
+						<a href="__APP__/PingView/ctindex/tid/{$taskdetails.taskid}"> <i class="fa fa-link"></i>
+							<span>响应时间</span>
+						</a>
+					</li>
+					<li>
+						<a href="__APP__/PingView/stindex/tid/{$taskdetails.taskid}">
+							<i class="fa fa-link"></i>
+							<span>可用性</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<i class="fa fa-link"></i>
+							<span>历史快照</span>
+						</a>
+					</li>
+					<li>
+						<a href="__APP__/PingView/alarmindex/tid/{$taskdetails.taskid}">
+							<i class="fa fa-link"></i>
+							<span>告警信息</span>
+						</a>
+					</li>
+				</ul>
+				<!-- /.sidebar-menu -->
+			</section>
+			<!-- /.sidebar -->
+		</aside>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					HTTP详情
+					<small>Optional description</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li>
+						<a href="#">
+							<i class="fa fa-dashboard"></i>
+							Level
+						</a>
+					</li>
+					<li class="active">Here</li>
+				</ol>
+			</section>
+
+			<!-- Main content -->
+			<section class="content">
+
+				<!-- Your Page Content Here -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box">
+							<div class="box-header with-border">
+								<h3 class="box-title">实时状态</h3>
+								<div class="box-tools pull-right">
+									<!-- Buttons, labels, and many other things can be placed here! -->
+									<!-- Here is a label for example -->
+								</div>
+								<!-- /.box-tools -->
+							</div>
+							<!-- /.box-header -->
+							<div class="box-body">
+								<div class="col-md-12">
+									<div class="box box-solid">
+										<div class="box-tools pull-left "></div>
+										<div class="box-tools pull-right">
+											<button type="button" class="btn btn-default pull-right btn-sm" id="daterange-btn">
+												<span>
+													<i class="fa fa-calendar"></i>
+													时期范围
+												</span>
+												<i class="fa fa-caret-down"></i>
+											</button>
+										</div>
+
+									</div>
+								</div>
+								<div class="col-md-2"></div>
+								<div class="col-md-8">
+									<div class="divider20"></div>
+									<div id="map" style="height: 600px;"></div>
+								</div>
+								<div class="col-md-2"></div>
+
+							</div>
+							<!-- /.box-body -->
+							<!-- <div class="box-footer">The footer of the box</div>
+						-->
+						<!-- box-footer -->
+					</div>
+					<!-- /.box -->
+				</div>
+
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="box">
+						<!-- /.box-header -->
+						<div class="box-body">
+							<div class="col-md-12">
+								<div class="box-tools pull-left ">
+									<div class="btn-group">
+										<a class="btn btn-default btn-sm" id='opbtn' onclick="drewline(1,'po');">运营商</a>
+										<a class="btn btn-default btn-sm" id='prbtn' onclick="drewline(2,'po');">省份</a>
+									</div>
+								</div>
+								<div class="box-tools pull-right ">
+									<div class="btn-group">
+										<a class="btn btn-default btn-sm active" id='llbtn' onclick="drewline(1,'lb');">趋势图</a>
+										<a class="btn btn-default btn-sm" id='bbbtn' onclick="drewline(2,'lb');">汇总图</a>
+									</div>
+								</div>
+							</div>
+							<div class="clear"></div>
+							<div class="divider20"></div>
+							<div class="col-md-12">
+								<div id="line" style="height: 400px;"></div>
+							</div>
+
+						</div>
+						<!-- /.box-body -->
+						<!-- <div class="box-footer">The footer of the box</div>
+					-->
+					<!-- box-footer -->
+				</div>
+				<!-- /.box -->
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="box">
+					<div class="box-header with-border">
+						<h3 class="box-title">按省份</h3>
+
+						<!-- /.box-tools -->
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+
+						<table id="provincetable" class="potable table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>省份</th>
+									<th>连接建立时间（ms）</th>
+									<th>解析时间（ms）</th>
+									<th>内容下载时间</th>
+									<th>下载速度</th>
+									<th>文件大小</th>
+									<th>总时间</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<volist name="result1" id="vo">
+									<tr>
+										<td>{$i}</td>
+										<td>{$vo.name}</td>
+										<td>{$vo[value][2]}</td>
+										<td>{$vo[value][7]}</td>
+										<td>{$vo[value][4]}</td>
+										<td>{$vo[value][6]}</td>
+										<td>{$vo[value][9]}</td>
+										<td>{$vo[value][5]}</td>
+									</tr>
+								</volist>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td></td>
+									<td>平均/总计</td>
+									<td>{$result_tongji['p'][2]}</td>
+									<td>{$result_tongji['p'][7]}</td>
+									<td>{$result_tongji['p'][4]}</td>
+									<td>{$result_tongji['p'][6]}</td>
+									<td>{$result_tongji['p'][9]}</td>
+									<td>{$result_tongji['p'][5]}</td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+					<!-- /.box-body -->
+					<div class="box-footer clearfix">
+						<!-- 				<ul class="pagination pagination-sm no-margin pull-right">
+						<li>
+							<a href="#">&laquo;</a>
+						</li>
+						<li>
+							<a href="#">1</a>
+						</li>
+						<li>
+							<a href="#">2</a>
+						</li>
+						<li>
+							<a href="#">3</a>
+						</li>
+						<li>
+							<a href="#">&raquo;</a>
+						</li>
+					</ul>
+					-->
+				</div>
+			</div>
+			<!-- /.box -->
+		</div>
+
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="box-header with-border">
+					<h3 class="box-title">按运营商</h3>
+
+					<!-- /.box-tools -->
+				</div>
+				<!-- /.box-header -->
+				<div class="box-body">
+					<table class="potable table table-bordered table-hover">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>省份</th>
+								<th>连接建立时间（ms）</th>
+								<th>解析时间（ms）</th>
+								<th>内容下载时间</th>
+								<th>下载速度</th>
+								<th>文件大小</th>
+								<th>总时间</th>
+							</tr>
+						</thead>
+						<tbody>
+							<volist name="result2" id="vo">
+								<tr>
+									<td>{$i}</td>
+									<td>{$vo.name}</td>
+									<td>{$vo[value][2]}</td>
+									<td>{$vo[value][7]}</td>
+									<td>{$vo[value][4]}</td>
+									<td>{$vo[value][6]}</td>
+									<td>{$vo[value][9]}</td>
+									<td>{$vo[value][5]}</td>
+								</tr>
+							</volist>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td></td>
+								<td>平均/总计</td>
+								<td>{$result_tongji['o'][2]}</td>
+								<td>{$result_tongji['o'][7]}</td>
+								<td>{$result_tongji['o'][4]}</td>
+								<td>{$result_tongji['o'][6]}</td>
+								<td>{$result_tongji['o'][9]}</td>
+								<td>{$result_tongji['o'][5]}</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+				<!-- /.box-body -->
+				<div class="box-footer clearfix">
+					<!-- 				<ul class="pagination pagination-sm no-margin pull-right">
+					<li>
+						<a href="#">&laquo;</a>
+					</li>
+					<li>
+						<a href="#">1</a>
+					</li>
+					<li>
+						<a href="#">2</a>
+					</li>
+					<li>
+						<a href="#">3</a>
+					</li>
+					<li>
+						<a href="#">&raquo;</a>
+					</li>
+				</ul>
+				-->
+			</div>
+		</div>
+		<!-- /.box -->
+	</div>
+
+</div>
+</section>
+<!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+<!-- Main Footer -->
+<include file="Public/main_footer" />
+
+<!-- Control Sidebar -->
+
+<!-- /.control-sidebar -->
+<!-- Add the sidebar's background. This div must be placed
+       immediately after the control sidebar -->
+<div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 2.2.3 -->
+<load href="__PUBLIC__/plugins/jQuery/jquery-2.2.3.min.js" />
+<!-- Bootstrap 3.3.6 -->
+<load href="__PUBLIC__/bootstrap/js/bootstrap.min.js" />
+<!-- echarts -->
+<load href="__PUBLIC__/plugins/echarts/echarts.js" />
+<load href="__PUBLIC__/plugins/echarts/china.js" />
+<!-- date-range-picker -->
+<load href="__PUBLIC__/plugins/momentjs/moment.js" />
+<load href="__PUBLIC__/plugins/daterangepicker/daterangepicker.js" />
+<!-- layui -->
+<!-- <load href="__PUBLIC__/plugins/layui/layui.js" />
+-->
+<!-- dataTables -->
+<load href="__PUBLIC__/plugins/datatables/jquery.dataTables.min.js" />
+<load href="__PUBLIC__/plugins/datatables/dataTables.bootstrap.min.js" />
+<!-- AdminLTE App -->
+<load href="__PUBLIC__/dist/js/app.min.js" />
+<!-- Optionally, you can add Slimscroll and FastClick plugins.
+     Both of these plugins are recommended to enhance the
+     user experience. Slimscroll is required when using the
+     fixed layout. -->
+<load href="__PUBLIC__/jk/js/monitor/pingview_ct.js" />
+<script type="text/javascript">//$('#Notifications').text(alarmsnum);
+  $(function () {
+
+  });
+</script>
+</body>
+</html>
