@@ -134,7 +134,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
 				<h1>
-					HTTP详情
+					PING详情
 					<small>Optional description</small>
 				</h1>
 				<ol class="breadcrumb">
@@ -211,10 +211,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									</div>
 								</div>
 								<div class="box-tools pull-right ">
-									<div class="btn-group">
+<!-- 									<div class="btn-group">
 										<a class="btn btn-default btn-sm active" id='llbtn' onclick="drewline(1,'lb');">趋势图</a>
 										<a class="btn btn-default btn-sm" id='bbbtn' onclick="drewline(2,'lb');">汇总图</a>
-									</div>
+									</div> -->
 								</div>
 							</div>
 							<div class="clear"></div>
@@ -248,14 +248,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<table id="provincetable" class="potable table table-bordered table-hover">
 							<thead>
 								<tr>
-									<th>#</th>
-									<th>省份</th>
-									<th>连接建立时间（ms）</th>
-									<th>解析时间（ms）</th>
-									<th>内容下载时间</th>
-									<th>下载速度</th>
-									<th>文件大小</th>
-									<th>总时间</th>
+									<th style="width: 30px;">#</th>
+									<th style="width: 60px;">省份</th>
+									<th>响应时间（ms）</th>
+
 								</tr>
 							</thead>
 
@@ -264,12 +260,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<tr>
 										<td>{$i}</td>
 										<td>{$vo.name}</td>
-										<td>{$vo[value][2]}</td>
-										<td>{$vo[value][7]}</td>
-										<td>{$vo[value][4]}</td>
-										<td>{$vo[value][6]}</td>
-										<td>{$vo[value][9]}</td>
-										<td>{$vo[value][5]}</td>
+										<td>{$vo[value][3]}</td>
+
 									</tr>
 								</volist>
 							</tbody>
@@ -277,12 +269,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<tr>
 									<td></td>
 									<td>平均/总计</td>
-									<td>{$result_tongji['p'][2]}</td>
-									<td>{$result_tongji['p'][7]}</td>
-									<td>{$result_tongji['p'][4]}</td>
-									<td>{$result_tongji['p'][6]}</td>
-									<td>{$result_tongji['p'][9]}</td>
-									<td>{$result_tongji['p'][5]}</td>
+									<td>{$result_tongji['p'][3]}</td>
+
 								</tr>
 							</tfoot>
 						</table>
@@ -327,14 +315,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<table class="potable table table-bordered table-hover">
 						<thead>
 							<tr>
-								<th>#</th>
-								<th>省份</th>
-								<th>连接建立时间（ms）</th>
-								<th>解析时间（ms）</th>
-								<th>内容下载时间</th>
-								<th>下载速度</th>
-								<th>文件大小</th>
-								<th>总时间</th>
+								<th style="width: 30px;">#</th>
+								<th style="width: 60px;">省份</th>
+								<th>响应时间（ms）</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -342,12 +325,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<tr>
 									<td>{$i}</td>
 									<td>{$vo.name}</td>
-									<td>{$vo[value][2]}</td>
-									<td>{$vo[value][7]}</td>
-									<td>{$vo[value][4]}</td>
-									<td>{$vo[value][6]}</td>
-									<td>{$vo[value][9]}</td>
-									<td>{$vo[value][5]}</td>
+									<td>{$vo[value][3]}</td>
+
 								</tr>
 							</volist>
 						</tbody>
@@ -355,12 +334,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<tr>
 								<td></td>
 								<td>平均/总计</td>
-								<td>{$result_tongji['o'][2]}</td>
-								<td>{$result_tongji['o'][7]}</td>
-								<td>{$result_tongji['o'][4]}</td>
-								<td>{$result_tongji['o'][6]}</td>
-								<td>{$result_tongji['o'][9]}</td>
-								<td>{$result_tongji['o'][5]}</td>
+								<td>{$result_tongji['o'][3]}</td>
+
 							</tr>
 						</tfoot>
 					</table>

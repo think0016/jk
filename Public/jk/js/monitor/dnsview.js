@@ -25,112 +25,112 @@ function randomData() {
 }
 
 option1 = {
-	title : {
-		text : '实时监控状态图',
-		subtext : subtext,
-		left : 'center'
+	title: {
+		text: '实时监控状态图',
+		subtext: subtext,
+		left: 'center'
 	},
-	tooltip : {
-		trigger : 'item',
-		formatter : mformatter
+	tooltip: {
+		trigger: 'item',
+		formatter: mformatter
 	},
-	visualMap : {
-		min : 0,
-		max : maxv,
-		left : 'left',
-		top : 'bottom',
-		text : [ '高', '低' ], // 文本，默认为数值文本
-		calculable : true
+	visualMap: {
+		min: 0,
+		max: maxv,
+		left: 'left',
+		top: 'bottom',
+		text: ['高', '低'], // 文本，默认为数值文本
+		calculable: true
 	},
-	series : [ {
-		name : mapitem,
-		type : 'map',
-		mapType : 'china',
-		roam : false,
-		label : {
-			normal : {
-				show : true
+	series: [{
+		name: mapitem,
+		type: 'map',
+		mapType: 'china',
+		roam: false,
+		label: {
+			normal: {
+				show: true
 			},
-			emphasis : {
-				show : true
+			emphasis: {
+				show: true
 			}
 		},
-		data : mapdata
-	} ]
+		data: mapdata
+	}]
 };
 
 mymap.setOption(option1);
 
 $.post(posturl, {
-	tid : tid,
-	sdate : sdate,
-	edate : edate,
-	step : step
+	tid: tid,
+	sdate: sdate,
+	edate: edate,
+	step: step
 }, function(data, textStatus, xhr) {
 	/* optional stuff to do after success */
 	var linedata = $.parseJSON(data);
-	
-	
+
+
 	option2 = {
-			title : {
-				text : '响应时间&可用率曲线图'
-			},
-			tooltip : {
-				trigger : 'axis'
-			},
-			legend : {
-				data : [ '响应时间', '可用率' ]
-			},
-			toolbox : {
-				feature : {
-					saveAsImage : {}
-				}
-			},
-			xAxis : {
-				type : 'category',
-				boundaryGap : false,
-				interval : 100,
-				data : linedata.xv
-			},
-			yAxis : [ {
-				name : '响应时间(ms)',
-				min : 0,
-				//max : 100,
-				type : 'value',
-				
-				axisLine : {
+		title: {
+			text: '响应时间&可用率曲线图'
+		},
+		tooltip: {
+			trigger: 'axis'
+		},
+		legend: {
+			data: ['响应时间', '可用率']
+		},
+		toolbox: {
+			feature: {
+				saveAsImage: {}
+			}
+		},
+		xAxis: {
+			type: 'category',
+			boundaryGap: false,
+			interval: 100,
+			data: linedata.xv
+		},
+		yAxis: [{
+			name: '响应时间(ms)',
+			min: 0,
+			//max : 100,
+			type: 'value',
+
+			axisLine: {
 				// show:false
-				}
-			}, {
-				name : '可用率(%)',
-				min : 0,
-				max : 100,
-				type : 'value',
-				axisLine : {
+			}
+		}, {
+			name: '可用率(%)',
+			min: 0,
+			max: 100,
+			type: 'value',
+			axisLine: {
 				// show:false
-				}
-			} ],
-			series : [ {
-				name : '响应时间',
-				yAxisIndex : 0,
-				type : 'line',
-				smooth : true,
-				data : linedata.yv1
-			}, {
-				name : '可用率',
-				yAxisIndex : 1,
-				type : 'line',
-				smooth : true,
-				data : linedata.yv2
-			} ]
-		};
-	
+			}
+		}],
+		series: [{
+			name: '响应时间',
+			yAxisIndex: 0,
+			type: 'line',
+			smooth: true,
+			data: linedata.yv1
+		}, {
+			name: '可用率',
+			yAxisIndex: 1,
+			type: 'line',
+			smooth: true,
+			data: linedata.yv2
+		}]
+	};
+
 	myline.setOption(option2);
 });
 
 //Date range as a button
-var sdate1=sdate.split(" ");
-var edate1=edate.split(" ");
+var sdate1 = sdate.split(" ");
+var edate1 = edate.split(" ");
 $('#daterange-btn span').html(sdate1[0] + ' 至 ' + edate1[0]);
 $('#daterange-btn').daterangepicker({
 		maxDate: moment(), //最大时间   
@@ -176,49 +176,52 @@ $('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
 });
 
 
-function createtable(sdate,edate,aid){
-	var purl = appurl + "getalarmtabledata/tid/" + tid+"/sdate/" + sdate + "/edate/" + edate + "/aid/" + aid +"/limit/2";
+function createtable(sdate, edate, aid) {
+	var purl = appurl + "getalarmtabledata/tid/" + tid + "/sdate/" + sdate + "/edate/" + edate + "/aid/" + aid + "/limit/2";
 
 	// if(table != ''){
 	// 	$('#alarmtable').dataTable().fnDestroy();
 	// }
 
-    table = $('#alarmtable').dataTable( {
-          "ajax": {
-              "url": purl,
-              //默认为data,这里定义为空，则只需要传不带属性的数据
-              "dataSrc": ""
-          },
-          	"pageLength":2,
-          	"paging": false,
-          	"info": false,
-			"lengthChange": false,
-			"searching": false,
-			"ordering": true,
-			"retrieve": true,
-			"autoWidth": false,
-			"columns": [
-              { "data": 0 },
-              { "data": 1 },
-              { "data": 5 },
-              { "data": 6 },
-              { "data": 7 }
-          ]
-			//,
-			// "language": {
-			// 	"lengthMenu": "每页 _MENU_ 条记录",
-			// 	"zeroRecords": "没有找到记录",
-			// 	"info": "第 _PAGE_ 页 ( 总共 _PAGES_ 页 )",
-			// 	"infoEmpty": "无记录",
-			// 	"infoFiltered": "(从 _MAX_ 条记录过滤)",
-			// 	"oPaginate": {
-			// 		"sFirst": "首页",
-			// 		"sPrevious": "上页",
-			// 		"sNext": "下页",
-			// 		"sLast": "末页"
-			// 	}
-			//}
-    } );
+	table = $('#alarmtable').dataTable({
+		"ajax": {
+			"url": purl,
+			//默认为data,这里定义为空，则只需要传不带属性的数据
+			"dataSrc": ""
+		},
+		"pageLength": 2,
+		"paging": false,
+		"info": false,
+		"lengthChange": false,
+		"searching": false,
+		"ordering": true,
+		"retrieve": true,
+		"autoWidth": false,
+		"columns": [{
+			"data": 0
+		}, {
+			"data": 1
+		}, {
+			"data": 5
+		}, {
+			"data": 6
+		}, {
+			"data": 7
+		}],
+		"language": {
+			"lengthMenu": "每页 _MENU_ 条记录",
+			"zeroRecords": "近期无告警记录",
+			"info": "第 _PAGE_ 页 ( 总共 _PAGES_ 页 )",
+			"infoEmpty": "无记录",
+			"infoFiltered": "(从 _MAX_ 条记录过滤)",
+			"oPaginate": {
+				"sFirst": "首页",
+				"sPrevious": "上页",
+				"sNext": "下页",
+				"sLast": "末页"
+			}
+		}
+	});
 }
 
-createtable(sdate1[0],edate1[0],0);
+createtable(sdate1[0], edate1[0], 0);

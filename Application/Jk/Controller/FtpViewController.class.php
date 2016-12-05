@@ -3,12 +3,13 @@
 namespace Jk\Controller;
 
 class FtpViewController extends MonitorController {
+	private $tasktype = 'ftp';
 	private $sid = 6;
 	private $defaultitem = "responsetime";
 	private $showitem = array (
 			"status" => 2,
-			//"connecttime" => 2,
-			"responsetime" => 1
+			// "connecttime" => 2,
+			"responsetime" => 1 
 	);
 	private $showitemunit = array (
 			"2" => '%',
@@ -55,7 +56,7 @@ class FtpViewController extends MonitorController {
 		$step = 3600;
 		if ($itemid == "") {
 			$itemid = $this->defaultitem; // 默认响应时间
-			// $itemid = "status"; // 默认响应时间
+				                              // $itemid = "status"; // 默认响应时间
 		}
 		$mids = $task ['mids'];
 		$uid = $task ['uid'];
@@ -71,15 +72,13 @@ class FtpViewController extends MonitorController {
 		foreach ( $mids_arr as $val ) {
 			$n ++;
 			$mid = str_replace ( ":", "", $val );
-			if ($itemid == $this->showitem['status']) {
+			if ($itemid == $this->showitem ['status']) {
 				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid, 1 );
 			} else {
 				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
 			}
 			
 			$rs = $this->rrd_avg ( $rrdfilename, $stime, $etime, $step );
-			
-			
 			$list = $this->getMonitoryPoint ( $mid );
 			$total += $rs [0];
 			
@@ -133,65 +132,65 @@ class FtpViewController extends MonitorController {
 		
 		// 告警查询
 		/**
-		$alarmsModel = D ( "jk_alarms_list" );
-		$alarmslist = $alarmsModel->join ( 'jk_trigger_ruls ON jk_trigger_ruls.id = jk_alarms_list.trigger_id' )->where ( array (
-				"jk_alarms_list.task_id" => $taskid 
-		) )->order ( 'jk_alarms_list.id desc' )->limit ( 10 )->select ();
-		
-		$alarmdatas = array ();
-		$alarmsnum = 0; // 警报数量( 暂时用于提示)
-		
-		for($i = 0; $i < count ( $alarmslist ); $i ++) {
-			$temp = array ();
-			
-			$alarm_type = $alarmslist [$i] ['type'];
-			$alarm_itemid = $alarmslist [$i] ['index_id'];
-			$operator_type = $alarmslist [$i] ['operator_type'];
-			$threshold = $alarmslist [$i] ['threshold'];
-			// $ltime = abs ( $alarmslist [$i] ['times'] - $alarmslist [$i] ['times'] );
-			if ($alarm_itemid == 2) { // 时延
-				switch ($operator_type) {
-					case 'gt' :
-						$temp ['msg'] = "时延大于" . $threshold . "毫秒";
-						break;
-					case 'lt' :
-						$temp ['msg'] = "时延小于" . $threshold . "毫秒";
-						break;
-					default :
-						$temp ['msg'] = "时延等于" . $threshold . "毫秒";
-				}
-			} else if ($alarm_itemid == 8) {
-				switch ($operator_type) {
-					case 'gt' :
-						$temp ['msg'] = "可用性大于" . $threshold . "%";
-						break;
-					case 'lt' :
-						$temp ['msg'] = "可用性小于" . $threshold . "%";
-						break;
-					default :
-						$temp ['msg'] = "可用性等于" . $threshold . "%";
-				}
-			}
-			
-			$temp ['stime'] = date ( "Y-m-d H:i:s", $alarmslist [$i] ['times'] ); // 告警时间
-			
-			if ($alarm_type == 0) {
-				$temp ['status'] = "<span class=\"label label-warning\">故障</span>"; // 当前状态
-				$ltime = "";
-				if ($i == 0) {
-					$ltime = abs ( time () - $alarmslist [$i] ['times'] );
-				} else {
-					$i2 = $i - 1;
-					$ltime = abs ( $alarmslist [$i2] ['times'] - $alarmslist [$i] ['times'] );
-				}
-				$temp ['ltime'] = changeTimeType ( $ltime ); // 持续时间
-			} else {
-				$temp ['ltime'] = ""; // 持续时间
-				$temp ['status'] = "<span class=\"label label-info\">恢复</span>"; // 当前状态
-			}
-			$alarmdatas [] = $temp;
-		}
-		**/
+		 * $alarmsModel = D ( "jk_alarms_list" );
+		 * $alarmslist = $alarmsModel->join ( 'jk_trigger_ruls ON jk_trigger_ruls.id = jk_alarms_list.trigger_id' )->where ( array (
+		 * "jk_alarms_list.task_id" => $taskid
+		 * ) )->order ( 'jk_alarms_list.id desc' )->limit ( 10 )->select ();
+		 *
+		 * $alarmdatas = array ();
+		 * $alarmsnum = 0; // 警报数量( 暂时用于提示)
+		 *
+		 * for($i = 0; $i < count ( $alarmslist ); $i ++) {
+		 * $temp = array ();
+		 *
+		 * $alarm_type = $alarmslist [$i] ['type'];
+		 * $alarm_itemid = $alarmslist [$i] ['index_id'];
+		 * $operator_type = $alarmslist [$i] ['operator_type'];
+		 * $threshold = $alarmslist [$i] ['threshold'];
+		 * // $ltime = abs ( $alarmslist [$i] ['times'] - $alarmslist [$i] ['times'] );
+		 * if ($alarm_itemid == 2) { // 时延
+		 * switch ($operator_type) {
+		 * case 'gt' :
+		 * $temp ['msg'] = "时延大于" . $threshold . "毫秒";
+		 * break;
+		 * case 'lt' :
+		 * $temp ['msg'] = "时延小于" . $threshold . "毫秒";
+		 * break;
+		 * default :
+		 * $temp ['msg'] = "时延等于" . $threshold . "毫秒";
+		 * }
+		 * } else if ($alarm_itemid == 8) {
+		 * switch ($operator_type) {
+		 * case 'gt' :
+		 * $temp ['msg'] = "可用性大于" . $threshold . "%";
+		 * break;
+		 * case 'lt' :
+		 * $temp ['msg'] = "可用性小于" . $threshold . "%";
+		 * break;
+		 * default :
+		 * $temp ['msg'] = "可用性等于" . $threshold . "%";
+		 * }
+		 * }
+		 *
+		 * $temp ['stime'] = date ( "Y-m-d H:i:s", $alarmslist [$i] ['times'] ); // 告警时间
+		 *
+		 * if ($alarm_type == 0) {
+		 * $temp ['status'] = "<span class=\"label label-warning\">故障</span>"; // 当前状态
+		 * $ltime = "";
+		 * if ($i == 0) {
+		 * $ltime = abs ( time () - $alarmslist [$i] ['times'] );
+		 * } else {
+		 * $i2 = $i - 1;
+		 * $ltime = abs ( $alarmslist [$i2] ['times'] - $alarmslist [$i] ['times'] );
+		 * }
+		 * $temp ['ltime'] = changeTimeType ( $ltime ); // 持续时间
+		 * } else {
+		 * $temp ['ltime'] = ""; // 持续时间
+		 * $temp ['status'] = "<span class=\"label label-info\">恢复</span>"; // 当前状态
+		 * }
+		 * $alarmdatas [] = $temp;
+		 * }
+		 */
 		// print_r ( $alarmdatas );
 		// exit ();
 		$this->assignbase ();
@@ -207,9 +206,9 @@ class FtpViewController extends MonitorController {
 		$this->assign ( "itemid", $itemid );
 		$this->assign ( "unit", $this->showitemunit [$itemid] );
 		$this->assign ( "step", $step );
-		//$this->assign ( "sel", $sel );
-		//$this->assign ( "alarmdata", $alarmdatas );
-		//$this->assign ( "alarmsnum", $alarmsnum );
+		// $this->assign ( "sel", $sel );
+		// $this->assign ( "alarmdata", $alarmdatas );
+		// $this->assign ( "alarmsnum", $alarmsnum );
 		$this->display ();
 	}
 	
@@ -263,7 +262,7 @@ class FtpViewController extends MonitorController {
 		$ssid = $task ['ssid'];
 		// $itemid = $this->showitem ["connecttime"];
 		$item_arr = array (
-				"2" => "响应时间"
+				"1" => "响应时间" 
 		);
 		
 		$result1 = array (); // 地区最慢
@@ -343,7 +342,7 @@ class FtpViewController extends MonitorController {
 			$result1 [] = $temp;
 			$maptemp = array ();
 			$maptemp ['name'] = $k;
-			$maptemp ['value'] = $v [2];
+			$maptemp ['value'] = $v [$this->showitem ['responsetime']];
 			$result_map [] = $maptemp;
 			unset ( $result1 [$k] );
 		}
@@ -372,7 +371,7 @@ class FtpViewController extends MonitorController {
 		$this->assign ( "mapdata", addslashes ( json_encode ( $result_map ) ) );
 		$this->assign ( "sdate", $stime );
 		$this->assign ( "edate", $etime );
-		$this->assign ( "itemid", $this->showitem ['connecttime'] );
+		$this->assign ( "itemid", $this->showitem ['responsetime'] );
 		
 		$this->display ();
 	}
@@ -436,7 +435,7 @@ class FtpViewController extends MonitorController {
 		foreach ( $mids_arr as $val ) {
 			$n ++;
 			$mid = str_replace ( ":", "", $val );
-			if ($itemid == $this->showitem['status']) {
+			if ($itemid == $this->showitem ['status']) {
 				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid, 1 );
 			} else {
 				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
@@ -511,7 +510,7 @@ class FtpViewController extends MonitorController {
 			$operator_type = $alarmslist [$i] ['operator_type'];
 			$threshold = $alarmslist [$i] ['threshold'];
 			// $ltime = abs ( $alarmslist [$i] ['times'] - $alarmslist [$i] ['times'] );
-			if ($alarm_itemid == $this->showitem['responsetime']) { // 时延
+			if ($alarm_itemid == $this->showitem ['responsetime']) { // 时延
 				switch ($operator_type) {
 					case 'gt' :
 						$temp ['msg'] = "时延大于" . $threshold . "毫秒";
@@ -522,7 +521,7 @@ class FtpViewController extends MonitorController {
 					default :
 						$temp ['msg'] = "时延等于" . $threshold . "毫秒";
 				}
-			} else if ($alarm_itemid == $this->showitem['status']) {
+			} else if ($alarm_itemid == $this->showitem ['status']) {
 				switch ($operator_type) {
 					case 'gt' :
 						$temp ['msg'] = "可用性大于" . $threshold . "%";
@@ -587,7 +586,7 @@ class FtpViewController extends MonitorController {
 			$this->error ( "参数错误1" );
 		}
 		
-		$setime = $this->timeinterval ( $stime, $etime , "w");
+		$setime = $this->timeinterval ( $stime, $etime, "w" );
 		$stime = $setime [0];
 		$etime = $setime [1];
 		
@@ -619,7 +618,6 @@ class FtpViewController extends MonitorController {
 		$this->assign ( "triggerlist", $triggerlist );
 		$this->display ();
 	}
-	
 	public function getalarmtabledata() {
 		if (! $this->is_login ( 0 )) {
 		}
@@ -630,12 +628,12 @@ class FtpViewController extends MonitorController {
 		$etime = I ( 'get.edate' );
 		$limit = I ( 'get.limit' );
 		
-		if($limit=="" || $limit==0){
+		if ($limit == "" || $limit == 0) {
 			$limit = 1000;
 		}
 		
-		//$setime = $this->timeinterval ( $stime, $etime, "w" );
-		$setime = $this->timeinterval ( $stime, $etime  );
+		$setime = $this->timeinterval ( $stime, $etime, "w" );
+		// $setime = $this->timeinterval ( $stime, $etime );
 		$stime = strtotime ( $setime [0] );
 		$etime = strtotime ( $setime [1] );
 		
@@ -653,22 +651,21 @@ class FtpViewController extends MonitorController {
 			$this->error ( "参数错误2" );
 		}
 		$taskdetails = $taskdetailsModel->where ( array (
-				"taskid" => $taskid
+				"taskid" => $taskid 
 		) )->find ();
-		
 		
 		$triggerlist = array ();
 		if ($aid == 0 || $aid == "") { // 全部告警信息
 			$triggerlist = $triggerModel->join ( "jk_taskitem_" . $this->sid . " ON jk_trigger_ruls.index_id=" . "jk_taskitem_" . $this->sid . ".itemid" )->where ( array (
 					"jk_trigger_ruls.task_id" => $taskid 
-			) )->limit($limit)->select ();
+			) )->limit ( $limit )->select ();
 		} else {
 			$triggerlist = $triggerModel->join ( "jk_taskitem_" . $this->sid . " ON jk_trigger_ruls.index_id=" . "jk_taskitem_" . $this->sid . ".itemid" )->where ( array (
 					"jk_trigger_ruls.task_id" => $taskid,
 					"jk_trigger_ruls.id" => $aid 
-			) )->limit($limit)->select ();
+			) )->limit ( $limit )->select ();
 		}
-
+		
 		for($i = 0; $i < count ( $triggerlist ); $i ++) {
 			$triggerlist [$i] ["alarmcomment"] = $this->get_alarm_comment ( $triggerlist [$i] ["threshold"], $triggerlist [$i] ["comment"], $triggerlist [$i] ["iunit"], $triggerlist [$i] ["operator_type"] );
 		}
@@ -703,7 +700,7 @@ class FtpViewController extends MonitorController {
 						$letime = $alarmslist [$i2] ['times'];
 					}
 					$alarmslist [$i] ['ltime'] = changeTimeType ( abs ( $letime - $alarmslist [$i] ['times'] ) );
-				}else{
+				} else {
 					$alarmslist [$i] ['ltime'] = '';
 				}
 				$alarmslist [$i] ['alarmcomment'] = $val ['alarmcomment'];
@@ -713,28 +710,31 @@ class FtpViewController extends MonitorController {
 			
 			$result = array_merge ( $result, $alarmslist );
 		}
-		usort($result, array("HttpViewController","alarm_sort"));
+		usort ( $result, array (
+				"HttpViewController",
+				"alarm_sort" 
+		) );
 		
-		$return = array();
-
-		for ($i = 0; $i < count($result); $i++) {
-			$temp = array();
-			$temp[] = $i+1;
-			$temp[] = $result[$i]['atime'];//监控时间
-			$temp[] = $task['title'];//监控任务名
-			$temp[] = $taskdetails['target'];//监控对象
-			$temp[] = 'http';//监控类型
-			$temp[] = $result[$i]['alarmcomment'];//事件信息
-			$temp[] = $result[$i]['ltime'];//持续时间
-			if($result[$i]['type']==1){
-				$temp[] = '恢复';//持续时间
-			}else{
-				$temp[] = '故障';//持续时间
+		$return = array ();
+		
+		for($i = 0; $i < count ( $result ); $i ++) {
+			$temp = array ();
+			$temp [] = $i + 1;
+			$temp [] = $result [$i] ['atime']; // 监控时间
+			$temp [] = $task ['title']; // 监控任务名
+			$temp [] = $taskdetails ['target']; // 监控对象
+			$temp [] = $this->tasktype; // 监控类型
+			$temp [] = $result [$i] ['alarmcomment']; // 事件信息
+			$temp [] = $result [$i] ['ltime']; // 持续时间
+			if ($result [$i] ['type'] == 1) {
+				$temp [] = '恢复'; // 持续时间
+			} else {
+				$temp [] = '故障'; // 持续时间
 			}
-			$return[] = $temp;
+			$return [] = $temp;
 		}
-		$return = array_slice($return,0,$limit);
-		echo json_encode($return);
+		$return = array_slice ( $return, 0, $limit );
+		echo json_encode ( $return );
 	}
 	public function getlinedatax() {
 		if (! $this->is_login ( 0 )) {
@@ -780,7 +780,7 @@ class FtpViewController extends MonitorController {
 		$rrdfilename = array ();
 		foreach ( $mids_arr as $val ) {
 			$mid = str_replace ( ":", "", $val );
-			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['responsetime'] );
+			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem ['responsetime'] );
 			$rrdfilename [] = $x;
 		}
 		
@@ -792,7 +792,7 @@ class FtpViewController extends MonitorController {
 		$rrdfilename = array ();
 		foreach ( $mids_arr as $val ) {
 			$mid = str_replace ( ":", "", $val );
-			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['status'], 1 );
+			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem ['status'], 1 );
 			$rrdfilename [] = $x;
 		}
 		$rs2 = $this->rrd_get_m ( $rrdfilename, $stime, $etime, $step );
@@ -813,10 +813,8 @@ class FtpViewController extends MonitorController {
 		$return ['yv1'] = $yv1;
 		$return ['yv2'] = $yv2;
 		
-
 		echo json_encode ( $return );
 	}
-	
 	public function getlinedata() {
 		if (! $this->is_login ( 0 )) {
 			exit ( "ERROR1" );
@@ -862,10 +860,10 @@ class FtpViewController extends MonitorController {
 				$mname = $this->getMonitoryPoint ( $mid )['operator'];
 			}
 			$rrdfilename = "";
-			if ($itemid == $this->showitem['responsetime']) {
-				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['responsetime'] );
-			} else if ($itemid == $this->showitem['status']) {
-				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['status'], 1 );
+			if ($itemid == $this->showitem ['responsetime']) {
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem ['responsetime'] );
+			} else if ($itemid == $this->showitem ['status']) {
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem ['status'], 1 );
 			}
 			
 			$opclass [$mname] [] = $rrdfilename;
@@ -908,7 +906,6 @@ class FtpViewController extends MonitorController {
 		
 		echo json_encode ( $return );
 	}
-	
 	public function getbardata() {
 		if (! $this->is_login ( 0 )) {
 			exit ( "ERROR1" );
@@ -1035,9 +1032,9 @@ class FtpViewController extends MonitorController {
 		echo json_encode ( $return );
 	}
 	protected function alarm_sort($a, $b) {
-		if ($a['times'] == $b['times']) {
+		if ($a ['times'] == $b ['times']) {
 			return 0;
-		}		
-		return ($a['times'] < $b['times']) ? 1 : - 1;
+		}
+		return ($a ['times'] < $b ['times']) ? 1 : - 1;
 	}
 }

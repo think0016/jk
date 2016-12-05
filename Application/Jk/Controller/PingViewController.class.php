@@ -4,15 +4,16 @@ namespace Jk\Controller;
 
 class PingViewController extends MonitorController {
 	private $sid = 3;
-	private $defaultitem = "connecttime";
+	private $tasktype = 'ping';
+	private $defaultitem = "delaytime";
 	private $showitem = array (
 			"status" => 4,
 			//"connecttime" => 2,
-			"connecttime" => 2
+			"delaytime" => 3
 	);
 	private $showitemunit = array (
 			"4" => '%',
-			"2" => '毫秒' 
+			"3" => '毫秒' 
 	);
 	public function index() {
 		// 检查登录情况
@@ -261,7 +262,7 @@ class PingViewController extends MonitorController {
 		$ssid = $task ['ssid'];
 		// $itemid = $this->showitem ["connecttime"];
 		$item_arr = array (
-				"2" => "响应时间"
+				"3" => "响应时间"
 		);
 		
 		$result1 = array (); // 地区最慢
@@ -341,7 +342,7 @@ class PingViewController extends MonitorController {
 			$result1 [] = $temp;
 			$maptemp = array ();
 			$maptemp ['name'] = $k;
-			$maptemp ['value'] = $v [2];
+			$maptemp ['value'] = $v [$this->showitem['delaytime']];
 			$result_map [] = $maptemp;
 			unset ( $result1 [$k] );
 		}
@@ -353,10 +354,10 @@ class PingViewController extends MonitorController {
 			unset ( $result2 [$k] );
 		}
 		
-		// print_r ( $result1 );
-		// print_r ( $result2 );
-		// print_r ( $total );
-		// exit ();
+// 		print_r ( $result1 );
+// 		print_r ( $result2 );
+// 		print_r ( $total );
+// 		exit ();
 		
 		// $mapdata = addslashes ( json_encode ( $result_map ) );
 		
@@ -370,7 +371,7 @@ class PingViewController extends MonitorController {
 		$this->assign ( "mapdata", addslashes ( json_encode ( $result_map ) ) );
 		$this->assign ( "sdate", $stime );
 		$this->assign ( "edate", $etime );
-		$this->assign ( "itemid", $this->showitem ['connecttime'] );
+		$this->assign ( "itemid", $this->showitem ['delaytime'] );
 		
 		$this->display ();
 	}
@@ -509,7 +510,7 @@ class PingViewController extends MonitorController {
 			$operator_type = $alarmslist [$i] ['operator_type'];
 			$threshold = $alarmslist [$i] ['threshold'];
 			// $ltime = abs ( $alarmslist [$i] ['times'] - $alarmslist [$i] ['times'] );
-			if ($alarm_itemid == $this->showitem['connecttime']) { // 时延
+			if ($alarm_itemid == $this->showitem['delaytime']) { // 时延
 				switch ($operator_type) {
 					case 'gt' :
 						$temp ['msg'] = "时延大于" . $threshold . "毫秒";
@@ -632,8 +633,8 @@ class PingViewController extends MonitorController {
 			$limit = 1000;
 		}
 		
-		//$setime = $this->timeinterval ( $stime, $etime, "w" );
-		$setime = $this->timeinterval ( $stime, $etime  );
+		$setime = $this->timeinterval ( $stime, $etime, "w" );
+		//$setime = $this->timeinterval ( $stime, $etime  );
 		$stime = strtotime ( $setime [0] );
 		$etime = strtotime ( $setime [1] );
 		
@@ -721,7 +722,7 @@ class PingViewController extends MonitorController {
 			$temp[] = $result[$i]['atime'];//监控时间
 			$temp[] = $task['title'];//监控任务名
 			$temp[] = $taskdetails['target'];//监控对象
-			$temp[] = 'http';//监控类型
+			$temp[] = $this->tasktype;//监控类型
 			$temp[] = $result[$i]['alarmcomment'];//事件信息
 			$temp[] = $result[$i]['ltime'];//持续时间
 			if($result[$i]['type']==1){
@@ -778,7 +779,7 @@ class PingViewController extends MonitorController {
 		$rrdfilename = array ();
 		foreach ( $mids_arr as $val ) {
 			$mid = str_replace ( ":", "", $val );
-			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['connecttime'] );
+			$x = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['delaytime'] );
 			$rrdfilename [] = $x;
 		}
 		
@@ -861,8 +862,8 @@ class PingViewController extends MonitorController {
 				$mname = $this->getMonitoryPoint ( $mid )['operator'];
 			}
 			$rrdfilename = "";
-			if ($itemid == $this->showitem['connecttime']) {
-				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['connecttime'] );
+			if ($itemid == $this->showitem['delaytime']) {
+				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['delaytime'] );
 			} else if ($itemid == $this->showitem['status']) {
 				$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $this->showitem['status'], 1 );
 			}

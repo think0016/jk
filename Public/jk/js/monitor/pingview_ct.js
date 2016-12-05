@@ -12,12 +12,12 @@ var mapitem = "";
 var mformatter = '';
 var maxv = 0;
 var subtext = "";
-if (item == "2") {
+if (item == "3") {
 	mapitem = "响应时间";
 	mformatter = '平均{a}:{c}毫秒';
 	maxv = 100;
 	subtext = "响应时间";
-} else if (item == "8") {
+} else if (item == "4") {
 	mapitem = "可用率";
 	mformatter = '平均{a}:{c}%';
 	maxv = 100;
@@ -143,7 +143,7 @@ function drewline(param, type) {
 		sdate: sdate,
 		edate: edate,
 		po: po,
-		itemid: 2,
+		itemid: item,
 		step: 3600
 	}, function(data, textStatus, xhr) {
 		/* optional stuff to do after success */

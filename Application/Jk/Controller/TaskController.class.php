@@ -22,9 +22,9 @@ class TaskController extends BaseController {
 			case 'http' :
 				redirect ( U ( '/HttpView/index/tid/' . $tid ) );
 				break;
-			// case 'ping' :
-			// redirect ( U ( '/PingView/index/tid/' . $tid ) );
-			// break;
+			case 'ping' :
+				redirect ( U ( '/PingView/index/tid/' . $tid ) );
+				break;
 			case 'ftp' :
 				redirect ( U ( '/FtpView/index/tid/' . $tid ) );
 				break;

@@ -143,7 +143,7 @@ function drewline(param, type) {
 		sdate: sdate,
 		edate: edate,
 		po: po,
-		itemid: 2,
+		itemid: item,
 		step: 3600
 	}, function(data, textStatus, xhr) {
 		/* optional stuff to do after success */
