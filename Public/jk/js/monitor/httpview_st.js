@@ -4,39 +4,43 @@ var mymap = echarts.init(document.getElementById('map'));
 
 //MAP
 var mapdata = $.parseJSON(mapdata);
+var inRange_color = ['#B22222','#FFFF00','#008000'];
 option1 = {
-	title : {
-		text : '实时监控状态图',
-		subtext : "可用性",
-		left : 'center'
+	title: {
+		text: '实时监控状态图',
+		subtext: "可用性",
+		left: 'center'
 	},
-	tooltip : {
-		trigger : 'item',
-		formatter : '平均{a}:{c}%'
+	tooltip: {
+		trigger: 'item',
+		formatter: '平均{a}:{c}%'
 	},
-	visualMap : {
-		min : 0,
-		max : 100,
-		left : 'left',
-		top : 'bottom',
-		text : [ '高', '低' ], // 文本，默认为数值文本
-		calculable : true
+	visualMap: {
+		min: 0,
+		max: 100,
+		left: 'left',
+		top: 'bottom',
+		text: ['高', '低'], // 文本，默认为数值文本
+		inRange: {
+			color: inRange_color
+		},
+		calculable: true
 	},
-	series : [ {
-		name : "可用率",
-		type : 'map',
-		mapType : 'china',
-		roam : false,
-		label : {
-			normal : {
-				show : true
+	series: [{
+		name: "可用率",
+		type: 'map',
+		mapType: 'china',
+		roam: false,
+		label: {
+			normal: {
+				show: true
 			},
-			emphasis : {
-				show : true
+			emphasis: {
+				show: true
 			}
 		},
-		data : mapdata
-	} ]
+		data: mapdata
+	}]
 };
 
 mymap.setOption(option1);
@@ -44,8 +48,8 @@ mymap.setOption(option1);
 
 
 //Date range as a button
-var sdate1=sdate.split(" ");
-var edate1=edate.split(" ");
+var sdate1 = sdate.split(" ");
+var edate1 = edate.split(" ");
 $('#daterange-btn span').html(sdate1[0] + ' 至 ' + edate1[0]);
 $('#daterange-btn').daterangepicker({
 		maxDate: moment(), //最大时间   
@@ -93,6 +97,7 @@ $('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
 
 var lb = 1;
 var po = 1;
+
 function drewline(param, type) {
 
 	if (type == 'lb') {

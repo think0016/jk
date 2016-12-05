@@ -8,6 +8,7 @@ var mapitem = "";
 var mformatter = '';
 var maxv = 0;
 var subtext = "";
+var inRange_color = ['#008000', '#FFFF00', '#B22222'];
 if (item == "1") {
 	mapitem = "响应时间";
 	mformatter = '平均{a}:{c}毫秒';
@@ -18,6 +19,7 @@ if (item == "1") {
 	mformatter = '平均{a}:{c}%';
 	maxv = 100;
 	subtext = "可用性";
+	inRange_color = ['#B22222', '#FFFF00', '#008000'];
 }
 
 function randomData() {
@@ -39,6 +41,9 @@ option1 = {
 		max: maxv,
 		left: 'left',
 		top: 'bottom',
+		inRange: {
+			color: inRange_color
+		},
 		text: ['高', '低'], // 文本，默认为数值文本
 		calculable: true
 	},

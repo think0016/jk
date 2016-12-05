@@ -12,6 +12,7 @@ var mapitem = "";
 var mformatter = '';
 var maxv = 0;
 var subtext = "";
+var inRange_color = ['#008000', '#FFFF00', '#B22222'];
 if (item == "2") {
 	mapitem = "响应时间";
 	mformatter = '平均{a}:{c}毫秒';
@@ -22,6 +23,7 @@ if (item == "2") {
 	mformatter = '平均{a}:{c}%';
 	maxv = 100;
 	subtext = "可用性";
+	inRange_color = ['#B22222', '#FFFF00', '#008000'];
 }
 
 option1 = {
@@ -40,6 +42,9 @@ option1 = {
 		left: 'left',
 		top: 'bottom',
 		text: ['高', '低'], // 文本，默认为数值文本
+		inRange: {
+			color: inRange_color
+		},
 		calculable: true
 	},
 	series: [{
@@ -64,8 +69,8 @@ mymap.setOption(option1);
 
 
 //Date range as a button
-var sdate1=sdate.split(" ");
-var edate1=edate.split(" ");
+var sdate1 = sdate.split(" ");
+var edate1 = edate.split(" ");
 $('#daterange-btn span').html(sdate1[0] + ' 至 ' + edate1[0]);
 $('#daterange-btn').daterangepicker({
 		maxDate: moment(), //最大时间   
