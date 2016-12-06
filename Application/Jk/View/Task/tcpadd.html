@@ -317,7 +317,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<div class="col-sm-9">
 									<select class="form-control" id="calc">
 										<option value="0">所有监测点平均</option>
-										<option value="1">所选监控点平均</option>
+										<option value="1">选择监控点</option>
 									</select>
 								</div>
 							</div>
@@ -528,14 +528,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 		if(calc == 1){
 			var n = 0;
-			$(".amids").find("option:selected").each(function(){
+			$("input[name='amidsopt']:checked").each(function() {
 				//console.log($(this).text());
-			    //console.log($(this).val());
-			    if(n>0){
-			    	amids = amids + ";";
-			    }
-			    amids = amids + $(this).val();
-			    n++;
+				//console.log($(this).val());
+				if (n > 0) {
+					amids = amids + ";";
+				}
+				amids = amids + $(this).val();
+				n++;
 			});
 		}
 		var temp = new Array();

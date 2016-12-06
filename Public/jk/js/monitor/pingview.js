@@ -9,10 +9,10 @@ var mformatter = '';
 var maxv = 0;
 var subtext = "";
 var inRange_color = ['#008000', '#FFFF00', '#B22222'];
-if (item == "3") {
+if (item == "1") {
 	mapitem = "响应时间";
 	mformatter = '平均{a}:{c}毫秒';
-	maxv = 100;
+	maxv = 1000;
 	subtext = "响应时间";
 } else if (item == "4") {
 	mapitem = "可用率";

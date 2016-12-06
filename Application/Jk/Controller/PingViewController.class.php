@@ -9,11 +9,11 @@ class PingViewController extends MonitorController {
 	private $showitem = array (
 			"status" => 4,
 			//"connecttime" => 2,
-			"delaytime" => 3
+			"delaytime" => 1
 	);
 	private $showitemunit = array (
 			"4" => '%',
-			"3" => '毫秒' 
+			"1" => '毫秒' 
 	);
 	public function index() {
 		// 检查登录情况
@@ -262,7 +262,7 @@ class PingViewController extends MonitorController {
 		$ssid = $task ['ssid'];
 		// $itemid = $this->showitem ["connecttime"];
 		$item_arr = array (
-				"3" => "响应时间"
+				"1" => "响应时间"
 		);
 		
 		$result1 = array (); // 地区最慢

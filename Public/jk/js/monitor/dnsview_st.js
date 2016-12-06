@@ -4,6 +4,7 @@ var mymap = echarts.init(document.getElementById('map'));
 
 //MAP
 var mapdata = $.parseJSON(mapdata);
+var inRange_color = ['#B22222','#FFFF00','#008000'];
 option1 = {
 	title : {
 		text : '实时监控状态图',
@@ -20,6 +21,9 @@ option1 = {
 		left : 'left',
 		top : 'bottom',
 		text : [ '高', '低' ], // 文本，默认为数值文本
+		inRange: {
+			color: inRange_color
+		},
 		calculable : true
 	},
 	series : [ {
