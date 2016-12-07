@@ -1324,7 +1324,7 @@ class TaskController extends BaseController {
 	public function apachetaskadd() {
 		$this->is_login ( 1 );
 		/**
-		 * Array ( [mids] => :4: [tid] => [update] => [adv] => 0 
+		 * Array ( [mids] => :4: [tid] => [update] => [adv] => 0
 		 * [alarm_num] => 1
 		 * [a0] => 1,gt,123,,,1,并发连接数,大于,
 		 * [title] => ce
@@ -1334,8 +1334,7 @@ class TaskController extends BaseController {
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 4;
 		$taskModel = D ( 'jk_task' );
-		$taskDetailsModel = D ( 'jk_taskdetails_'.$sid );
-		
+		$taskDetailsModel = D ( 'jk_taskdetails_' . $sid );
 		
 		$taskid = I ( 'post.tid' );
 		$update = FALSE;
@@ -1343,7 +1342,7 @@ class TaskController extends BaseController {
 		$alarm_num = I ( 'post.alarm_num' );
 		$title = I ( 'post.title' );
 		$target = I ( 'post.target' );
-		$mids = ":4:";//固定监控点(以后使用优化算法)
+		$mids = ":4:"; // 固定监控点(以后使用优化算法)
 		$labels = I ( 'post.labels' );
 		$frequency = I ( 'post.frequency' );
 		$adv = I ( 'post.adv' );
@@ -1355,7 +1354,6 @@ class TaskController extends BaseController {
 		if (! isset ( $target ) || $target == "") {
 			$this->error ( "监控地址不能为空" );
 		}
-		
 		
 		// 添加task表
 		$mid = $mids;
@@ -1382,7 +1380,7 @@ class TaskController extends BaseController {
 				"title" => $title,
 				"frequency" => $frequency,
 				"labels" => $label,
-				"isadv" => $adv
+				"isadv" => $adv 
 		);
 		
 		if ($taskid == "") {
@@ -1392,7 +1390,7 @@ class TaskController extends BaseController {
 			}
 		} else {
 			$r = $taskModel->where ( array (
-					"id" => $taskid
+					"id" => $taskid 
 			) )->save ( $data );
 			if (! $r) {
 				$this->error ( "ERROR2" );
@@ -1403,10 +1401,10 @@ class TaskController extends BaseController {
 		// 添加detail表
 		if ($update) {
 			$data = array (
-					"target" => $target
+					"target" => $target 
 			);
 			$r = $taskDetailsModel->where ( array (
-					"taskid" => $taskid
+					"taskid" => $taskid 
 			) )->save ( $data );
 			// if (! $r) {
 			// $this->error ( "ERROR1" );
@@ -1415,7 +1413,7 @@ class TaskController extends BaseController {
 			$data = array (
 					"sid" => $sid,
 					"taskid" => $taskid,
-					"target" => $target
+					"target" => $target 
 			);
 			$ssid = $taskDetailsModel->add ( $data );
 			if (! $ssid) {
@@ -1424,7 +1422,7 @@ class TaskController extends BaseController {
 		}
 		
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
-		//添加告警策略   1,gt,123,,,1,并发连接数,大于,
+		// 添加告警策略 1,gt,123,,,1,并发连接数,大于,
 		if ($alarm_num > 0) {
 			$monitor_id = str_replace ( ":", "", $mids );
 			$flag = 0;
@@ -1437,14 +1435,14 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
-// 				if ($unit == "s") {
-// 					$threshold *= 60;
-// 				}
-// 				if ($calc == 1) {
-// 					// $calc = "avg";
-// 					$amids = $alist [8];
-// 					$monitor_id = str_replace ( ";", ",", $amids );
-// 				}
+				// if ($unit == "s") {
+				// $threshold *= 60;
+				// }
+				// if ($calc == 1) {
+				// // $calc = "avg";
+				// $amids = $alist [8];
+				// $monitor_id = str_replace ( ";", ",", $amids );
+				// }
 				$data = array (
 						"task_id" => $taskid,
 						"data_calc_func" => "avg",
@@ -1453,9 +1451,10 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"is_monitor_avg" => 0
+						"rrd_name" => $this->getrrdfilename($taskid, session("uid"), "4", $sid, "0", $a_itemid),
+						"is_monitor_avg" => 0 
 				);
-		
+				
 				// $data['monitor_id'] = $mid;
 				$flag = $triggerModel->add ( $data );
 			}
@@ -1464,11 +1463,9 @@ class TaskController extends BaseController {
 			}
 		}
 		
-		//print_r ( $_POST );
+		// print_r ( $_POST );
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
-	
-	
 	public function nginxtaskadd() {
 		$this->is_login ( 1 );
 		/**
@@ -1478,12 +1475,11 @@ class TaskController extends BaseController {
 		 * [title] => ce
 		 * [target] => 127.0.0.1
 		 * [frequency] => 5 )
-		*/
+		 */
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 5;
 		$taskModel = D ( 'jk_task' );
-		$taskDetailsModel = D ( 'jk_taskdetails_'.$sid );
-		
+		$taskDetailsModel = D ( 'jk_taskdetails_' . $sid );
 		
 		$taskid = I ( 'post.tid' );
 		$update = FALSE;
@@ -1491,7 +1487,7 @@ class TaskController extends BaseController {
 		$alarm_num = I ( 'post.alarm_num' );
 		$title = I ( 'post.title' );
 		$target = I ( 'post.target' );
-		$mids = ":4:";//固定监控点(以后使用优化算法)
+		$mids = ":4:"; // 固定监控点(以后使用优化算法)
 		$labels = I ( 'post.labels' );
 		$frequency = I ( 'post.frequency' );
 		$adv = I ( 'post.adv' );
@@ -1503,7 +1499,6 @@ class TaskController extends BaseController {
 		if (! isset ( $target ) || $target == "") {
 			$this->error ( "监控地址不能为空" );
 		}
-		
 		
 		// 添加task表
 		$mid = $mids;
@@ -1530,7 +1525,7 @@ class TaskController extends BaseController {
 				"title" => $title,
 				"frequency" => $frequency,
 				"labels" => $label,
-				"isadv" => $adv
+				"isadv" => $adv 
 		);
 		
 		if ($taskid == "") {
@@ -1540,7 +1535,7 @@ class TaskController extends BaseController {
 			}
 		} else {
 			$r = $taskModel->where ( array (
-					"id" => $taskid
+					"id" => $taskid 
 			) )->save ( $data );
 			if (! $r) {
 				$this->error ( "ERROR2" );
@@ -1551,10 +1546,10 @@ class TaskController extends BaseController {
 		// 添加detail表
 		if ($update) {
 			$data = array (
-					"target" => $target
+					"target" => $target 
 			);
 			$r = $taskDetailsModel->where ( array (
-					"taskid" => $taskid
+					"taskid" => $taskid 
 			) )->save ( $data );
 			// if (! $r) {
 			// $this->error ( "ERROR1" );
@@ -1563,7 +1558,7 @@ class TaskController extends BaseController {
 			$data = array (
 					"sid" => $sid,
 					"taskid" => $taskid,
-					"target" => $target
+					"target" => $target 
 			);
 			$ssid = $taskDetailsModel->add ( $data );
 			if (! $ssid) {
@@ -1572,7 +1567,7 @@ class TaskController extends BaseController {
 		}
 		
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
-		//添加告警策略   1,gt,123,,,1,并发连接数,大于,
+		// 添加告警策略 1,gt,123,,,1,并发连接数,大于,
 		if ($alarm_num > 0) {
 			$monitor_id = str_replace ( ":", "", $mids );
 			$flag = 0;
@@ -1585,14 +1580,14 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
-				// 				if ($unit == "s") {
-				// 					$threshold *= 60;
-				// 				}
-				// 				if ($calc == 1) {
-				// 					// $calc = "avg";
-				// 					$amids = $alist [8];
-				// 					$monitor_id = str_replace ( ";", ",", $amids );
-				// 				}
+				// if ($unit == "s") {
+				// $threshold *= 60;
+				// }
+				// if ($calc == 1) {
+				// // $calc = "avg";
+				// $amids = $alist [8];
+				// $monitor_id = str_replace ( ";", ",", $amids );
+				// }
 				$data = array (
 						"task_id" => $taskid,
 						"data_calc_func" => "avg",
@@ -1601,9 +1596,10 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"is_monitor_avg" => 0
+						"rrd_name" => $this->getrrdfilename($taskid, session("uid"), "4", $sid, "0", $a_itemid),
+						"is_monitor_avg" => 0 
 				);
-		
+				
 				// $data['monitor_id'] = $mid;
 				$flag = $triggerModel->add ( $data );
 			}
@@ -1612,7 +1608,17 @@ class TaskController extends BaseController {
 			}
 		}
 		
-		//print_r ( $_POST );
+		// print_r ( $_POST );
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
+	}
+	
+	private function getrrdfilename($tid, $uid, $mid, $sid, $ssid, $itemid, $type = 0) {
+		$filename = $tid . "_" . $uid . "_" . $mid . "_" . $sid . "_" . $ssid . "_" . $itemid . ".rrd";
+		
+		// if ($type == 1) {
+		// $filename = C ( 'rrd_dir' ) . $tid . "_" . $uid . "_" . $mid . "_" . $sid . "_" . $ssid . "_" . $itemid . "_status.rrd";
+		// }
+		
+		return $filename;
 	}
 }

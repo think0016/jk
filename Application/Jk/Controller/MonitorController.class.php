@@ -70,6 +70,7 @@ class MonitorController extends BaseController {
 		exec ( $c, $output );
 		return $output;
 	}
+	
 	public function getrrdfilename($tid, $uid, $mid, $sid, $ssid, $itemid, $type = 0) {
 		$filename = C ( 'rrd_dir' ) . $tid . "_" . $uid . "_" . $mid . "_" . $sid . "_" . $ssid . "_" . $itemid . ".rrd";
 		if ($type == 1) {

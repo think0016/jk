@@ -57,7 +57,7 @@ class BaseController extends Controller {
 	}
 
 	/**
-	 * Rrd操作END
+	 * 时间间隔
 	 */
 	public function rlasttime($mid, $timedata) {
 		$return = time ();

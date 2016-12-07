@@ -2,14 +2,11 @@
 
 namespace Webservice\Controller;
 
-class IndexController extends BaseController {
+class ServiceController extends BaseController {
 	private $type_arr = array (
-			"http",
-			"ping",
-			"ftp",
-			"udp",
-			"tcp",
-			"dns" 
+			"apache",
+			"nginx",
+			"mysql" 
 	);
 	public function postwebtask() {
 		$type = $_POST ["type"];
@@ -63,7 +60,7 @@ class IndexController extends BaseController {
 		// 获取监控点信息
 		$ip = get_client_ip ();
 		if (C ( 'wsdebug' ) == 1) {
-			$ip = "120.52.96.49";
+			$ip = "120.52.96.48";
 		}
 		
 		$taskitem = array ();
@@ -105,36 +102,27 @@ class IndexController extends BaseController {
 			
 			// 获取监控参数
 			switch ($type) {
-				case "http" :
-					$task = $this->gethttptask ( $taskval );
-					break;
-				case "ping" :
-					$task = $this->getpingtask ( $taskval );
-					break;
-				// case "apache" :
+				// case "http" :
+				// $task = $this->gethttptask ( $taskval );
 				// break;
-				// case "nginx" :
+				// case "ping" :
+				// $task = $this->getpingtask ( $taskval );
 				// break;
-				case "ftp" :
-					$task = $this->getftptask ( $taskval );
+				case "apache" :
+					$task = $this->getapachetask ( $taskval );
 					break;
-				case "udp" :
-					$task = $this->getudptask ( $taskval );
+				case "nginx" :
 					break;
-				case "tcp" :
-					$task = $this->gettcptask ( $taskval );
+				case "mysql" :
 					break;
-				case "dns" :
-					$task = $this->getdnstask ( $taskval );
-					break;
-				// case "mysql" :
-				// break;
 			}
 			// $task ["type"] = $type;
 			
-			if (in_array ( $type, $this->type_arr )) {
+			if (in_array ( $type , $this->type_arr )) {
 				$taskitem [] = $task;
 			}
+			
+			
 			
 			// LOG
 			// wlog ( "mid".$mid." 获取tid=" . $tid . "任务" );
@@ -144,121 +132,6 @@ class IndexController extends BaseController {
 		$return ["list"] = $taskitem;
 		echo json_encode ( $return );
 	}
-	
-	// public function getwebtask2() {
-	
-	// // 获取监控点信息
-	// $ip = "182.118.3.134";
-	// //$ip = get_client_ip ();
-	// $taskitem = array ();
-	
-	// $pointmodel = D ( "jk_monitorypoint" );
-	// $point = $pointmodel->field ( 'id' )->where ( array (
-	// 'status' => 1,
-	// 'ip' => $ip
-	// ) )->find ();
-	
-	// if (! $point) {
-	// wlog ( "NO POINT BY " . $ip );
-	// exit ( "NO POINT BY " . $ip );
-	// }
-	
-	// // 获取任务信息
-	// $taskmodel = D ( "jk_task" );
-	// $map ["status"] = 1;
-	// $map ["mids"] = array (
-	// "like",
-	// "%:" . $point ['id'] . ":%"
-	// );
-	// $tasklist = $taskmodel->where ( $map )->select ();
-	// foreach ( $tasklist as $k => $taskval ) {
-	
-	// $sid = $taskval ['sid'];
-	// $ssid = $taskval ['ssid'];
-	// $tid = $taskval ['id'];
-	
-	// $task = array ();
-	// $task ["id"] = $tid;
-	// // 获取监控类型
-	// $tasktypemodel = D ( "jk_tasktype" );
-	// $type1 = $tasktypemodel->where ( array (
-	// "sid" => $sid
-	// ) )->find ();
-	// $type = $type1 ['name'];
-	
-	// // 获取监控参数
-	// $table = "jk_taskdetails_" . $sid;
-	// $taskdetailsmodel = D ( $table );
-	// switch ($type) {
-	// case "http" :
-	// $detailslist = $taskdetailsmodel->where ( array (
-	// "ssid" => $ssid
-	// ) )->find ();
-	// $task ["target"] = $detailslist ["target"];
-	// break;
-	// case "ping" :
-	// $detailslist = $taskdetailsmodel->where ( array (
-	// "ssid" => $ssid
-	// ) )->find ();
-	// $task ["target"] = $detailslist ["target"];
-	// break;
-	// case "apache" :
-	// $detailslist = $taskdetailsmodel->where ( array (
-	// "ssid" => $ssid
-	// ) )->find ();
-	// $task ["target"] = $detailslist ["target"];
-	// break;
-	// case "nginx" :
-	// $detailslist = $taskdetailsmodel->where ( array (
-	// "ssid" => $ssid
-	// ) )->find ();
-	// $task ["target"] = $detailslist ["target"];
-	// break;
-	// case "ftp" :
-	// $detailslist = $taskdetailsmodel->where ( array (
-	// "ssid" => $ssid
-	// ) )->find ();
-	// $task ["target"] = $detailslist ["target"];
-	// $task ["port"] = $detailslist ["port"];
-	// $task ["username"] = $detailslist ["username"];
-	// $task ["password"] = $detailslist ["password"];
-	// break;
-	// case "udp" :
-	// $detailslist = $taskdetailsmodel->where ( array (
-	// "ssid" => $ssid
-	// ) )->find ();
-	// $task ["target"] = $detailslist ["target"];
-	// $task ["port"] = $detailslist ["port"];
-	// break;
-	// case "tcp" :
-	// $detailslist = $taskdetailsmodel->where ( array (
-	// "ssid" => $ssid
-	// ) )->find ();
-	// $task ["target"] = $detailslist ["target"];
-	// $task ["port"] = $detailslist ["port"];
-	// break;
-	// case "mysql" :
-	// $detailslist = $taskdetailsmodel->where ( array (
-	// "ssid" => $ssid
-	// ) )->find ();
-	// $task ["target"] = $detailslist ["target"];
-	// $task ["port"] = $detailslist ["port"];
-	// $task ["username"] = $detailslist ["username"];
-	// $task ["password"] = $detailslist ["password"];
-	// break;
-	// }
-	// $task ["type"] = $type;
-	
-	// $taskitem [] = $task;
-	
-	// // LOG
-	// wlog ( "获取ssid=" . $ssid . "任务" );
-	// }
-	
-	// $return ["count"] = count ( $taskitem );
-	// $return ["list"] = $taskitem;
-	// echo json_encode ( $return );
-	// }
 	public function index() {
 		echo $this->CreateRrd ( "aaaa", 300, "asas" );
 		echo "INDEX";
@@ -557,6 +430,62 @@ class IndexController extends BaseController {
 		}
 		
 		$return ['type'] = "dns"; // 普通任务
+		
+		return $return;
+	}
+	
+	private function getapachetask($taskval) {
+		$sid = 4;
+		$return = array ();
+		
+		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
+		// $ssid = $taskval ['ssid'];
+		$tid = $taskval ['id'];
+		// $isadv = $taskval ['isadv'];
+		$frequency = $taskval ['frequency'];
+		$lasttime = $taskval ['lasttime'];
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+		
+		$return ['id'] = $tid;
+		$return ['frequency'] = $frequency;
+		$return ['lasttime'] = $lasttime;
+		$taskdetail = $taskdetailsModel->where ( array (
+				"taskid" => $tid 
+		) )->find ();
+		
+		if ($taskdetail) {
+			$return ['target'] = $taskdetail ['target'];
+		}
+		
+		$return ['type'] = "apache"; // 普通任务
+		
+		return $return;
+	}
+	
+	private function getnginxtask($taskval) {
+		$sid = 5;
+		$return = array ();
+		
+		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
+		// $ssid = $taskval ['ssid'];
+		$tid = $taskval ['id'];
+		// $isadv = $taskval ['isadv'];
+		$frequency = $taskval ['frequency'];
+		$lasttime = $taskval ['lasttime'];
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+		
+		$return ['id'] = $tid;
+		$return ['frequency'] = $frequency;
+		$return ['lasttime'] = $lasttime;
+		$taskdetail = $taskdetailsModel->where ( array (
+				"taskid" => $tid 
+		) )->find ();
+		
+		if ($taskdetail) {
+			$return ['target'] = $taskdetail ['target'];
+		}
+		
+		$return ['type'] = "nginx"; // 普通任务
 		
 		return $return;
 	}
