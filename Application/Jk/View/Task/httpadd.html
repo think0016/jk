@@ -274,7 +274,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<case value="eq">等于</case>
 									</switch>
 								</td>
-								<td>{$vo.threshold}</td>
+								<td>{$vo.threshold}{$vo.iunit}</td>
 								<td>{$vo.data_times}</td>
 								<td>
 									<span class="badge bg-green">开启</span>
@@ -743,6 +743,9 @@ function updatealarm(index, type) {
 				$(".amidsdiv").css('display', 'block');
 			}
 		} else if (temp[6] == '当日可用率') {
+			$('.alarmv2').css('display', 'block');
+			$('.alarmv1').css('display', 'none');
+
 			$("input[name='alermindex']").val(index);
 			$("#item_id").val(temp[0]);
 			$("#op2").val(temp[1]);
@@ -793,6 +796,8 @@ function updatealarm(index, type) {
 					} else if (d.data.comment == '当日可用率') {
 						$("#op2").val(d.data.operator_type);
 						$("#threshold2").val(d.data.threshold);
+						$('.alarmv2').css('display', 'block');
+						$('.alarmv1').css('display', 'none');
 					}
 						$("input[name='alermajax']").val(1);
 						$("input[name='alermindex']").val(d.data.id);
@@ -839,6 +844,8 @@ $('#addalarm').on('hidden.bs.modal',
 		$("input[name='alermindex']").val(-1);
 		$("input[name='alermajax']").val(0);
 		//$("#form2")[0].reset();
+		$('.alarmv1').css('display', 'block');
+		$('.alarmv2').css('display', 'none');
 	})
 
 </script>

@@ -97,6 +97,24 @@ class TaskController extends BaseController {
 			case "dns" :
 				$this->display ( 'dnsadd' );
 				break;
+			case "apache" :
+				$this->display ( 'apacheadd' );
+				break;
+			case "nginx" :
+				$this->display ( 'nginxadd' );
+				break;
+			case "mysql" :
+				$this->display ( 'mysqladd' );
+				break;
+			case "tomcat" :
+				$this->display ( 'tomcatadd' );
+				break;
+			case "sqlserver" :
+				$this->display ( 'sqlserveradd' );
+				break;
+			case "oracle" :
+				$this->display ( 'oracleadd' );
+				break;
 		}
 	}
 	public function delete() {
@@ -260,11 +278,14 @@ class TaskController extends BaseController {
 				break;
 			case 2 :
 			case 3 :
-				// http任务
 				$this->display ( 'pingadd' );
 				break;
 			case 4 :
+				$this->display ( 'apacheadd' );
+				break;
 			case 5 :
+				$this->display ( 'nginxadd' );
+				break;
 			case 6 :
 				// ftp任务
 				$this->display ( 'ftpadd' );
@@ -1298,6 +1319,300 @@ class TaskController extends BaseController {
 			}
 		}
 		
+		$this->success ( "保存成功", U ( "Task/tasklist" ) );
+	}
+	public function apachetaskadd() {
+		$this->is_login ( 1 );
+		/**
+		 * Array ( [mids] => :4: [tid] => [update] => [adv] => 0 
+		 * [alarm_num] => 1
+		 * [a0] => 1,gt,123,,,1,并发连接数,大于,
+		 * [title] => ce
+		 * [target] => 127.0.0.1
+		 * [frequency] => 5 )
+		 */
+		$now = date ( "Y-m-d H:i:s" );
+		$sid = 4;
+		$taskModel = D ( 'jk_task' );
+		$taskDetailsModel = D ( 'jk_taskdetails_'.$sid );
+		
+		
+		$taskid = I ( 'post.tid' );
+		$update = FALSE;
+		// $update = I ( 'post.update' );
+		$alarm_num = I ( 'post.alarm_num' );
+		$title = I ( 'post.title' );
+		$target = I ( 'post.target' );
+		$mids = ":4:";//固定监控点(以后使用优化算法)
+		$labels = I ( 'post.labels' );
+		$frequency = I ( 'post.frequency' );
+		$adv = I ( 'post.adv' );
+		
+		// 数据验证（简单）
+		if (! isset ( $title ) || $title == "") {
+			$this->error ( "任务名不能为空" );
+		}
+		if (! isset ( $target ) || $target == "") {
+			$this->error ( "监控地址不能为空" );
+		}
+		
+		
+		// 添加task表
+		$mid = $mids;
+		$label = "";
+		// for($i = 0; $i < count ( $mids ); $i ++) {
+		// if ($i > 0) {
+		// $mid = $mid . ",";
+		// }
+		// $mid = $mid . ":" . $mids [$i] . ":";
+		// }
+		
+		for($i = 0; $i < count ( $labels ); $i ++) {
+			if ($i > 0) {
+				$label = $label . ",";
+			}
+			$label = $label . ":" . $labels [$i] . ":";
+		}
+		$frequency = $frequency * 60;
+		$data = array (
+				"sid" => $sid,
+				"mids" => $mids,
+				"uid" => session ( "uid" ),
+				"addtime" => $now,
+				"title" => $title,
+				"frequency" => $frequency,
+				"labels" => $label,
+				"isadv" => $adv
+		);
+		
+		if ($taskid == "") {
+			$taskid = $taskModel->add ( $data );
+			if (! $taskid) {
+				$this->error ( "ERROR2" );
+			}
+		} else {
+			$r = $taskModel->where ( array (
+					"id" => $taskid
+			) )->save ( $data );
+			if (! $r) {
+				$this->error ( "ERROR2" );
+			}
+			$update = TRUE;
+		}
+		
+		// 添加detail表
+		if ($update) {
+			$data = array (
+					"target" => $target
+			);
+			$r = $taskDetailsModel->where ( array (
+					"taskid" => $taskid
+			) )->save ( $data );
+			// if (! $r) {
+			// $this->error ( "ERROR1" );
+			// }
+		} else {
+			$data = array (
+					"sid" => $sid,
+					"taskid" => $taskid,
+					"target" => $target
+			);
+			$ssid = $taskDetailsModel->add ( $data );
+			if (! $ssid) {
+				$this->error ( "ERROR1" );
+			}
+		}
+		
+		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
+		//添加告警策略   1,gt,123,,,1,并发连接数,大于,
+		if ($alarm_num > 0) {
+			$monitor_id = str_replace ( ":", "", $mids );
+			$flag = 0;
+			$triggerModel = D ( 'jk_trigger_ruls' );
+			for($i = 0; $i < $alarm_num; $i ++) {
+				$key = "post.a" . $i;
+				$alarm = I ( $key );
+				if ($alarm == "del") {
+					continue;
+				}
+				$alist = explode ( ",", $alarm );
+				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+// 				if ($unit == "s") {
+// 					$threshold *= 60;
+// 				}
+// 				if ($calc == 1) {
+// 					// $calc = "avg";
+// 					$amids = $alist [8];
+// 					$monitor_id = str_replace ( ";", ",", $amids );
+// 				}
+				$data = array (
+						"task_id" => $taskid,
+						"data_calc_func" => "avg",
+						"operator_type" => $a_operator,
+						"threshold" => $threshold,
+						"data_times" => $atimes,
+						"index_id" => $a_itemid,
+						"monitor_id" => $monitor_id,
+						"is_monitor_avg" => 0
+				);
+		
+				// $data['monitor_id'] = $mid;
+				$flag = $triggerModel->add ( $data );
+			}
+			if ($flag == 0) {
+				$this->error ( "ERROR4" );
+			}
+		}
+		
+		//print_r ( $_POST );
+		$this->success ( "保存成功", U ( "Task/tasklist" ) );
+	}
+	
+	
+	public function nginxtaskadd() {
+		$this->is_login ( 1 );
+		/**
+		 * Array ( [mids] => :4: [tid] => [update] => [adv] => 0
+		 * [alarm_num] => 1
+		 * [a0] => 1,gt,123,,,1,并发连接数,大于,
+		 * [title] => ce
+		 * [target] => 127.0.0.1
+		 * [frequency] => 5 )
+		*/
+		$now = date ( "Y-m-d H:i:s" );
+		$sid = 5;
+		$taskModel = D ( 'jk_task' );
+		$taskDetailsModel = D ( 'jk_taskdetails_'.$sid );
+		
+		
+		$taskid = I ( 'post.tid' );
+		$update = FALSE;
+		// $update = I ( 'post.update' );
+		$alarm_num = I ( 'post.alarm_num' );
+		$title = I ( 'post.title' );
+		$target = I ( 'post.target' );
+		$mids = ":4:";//固定监控点(以后使用优化算法)
+		$labels = I ( 'post.labels' );
+		$frequency = I ( 'post.frequency' );
+		$adv = I ( 'post.adv' );
+		
+		// 数据验证（简单）
+		if (! isset ( $title ) || $title == "") {
+			$this->error ( "任务名不能为空" );
+		}
+		if (! isset ( $target ) || $target == "") {
+			$this->error ( "监控地址不能为空" );
+		}
+		
+		
+		// 添加task表
+		$mid = $mids;
+		$label = "";
+		// for($i = 0; $i < count ( $mids ); $i ++) {
+		// if ($i > 0) {
+		// $mid = $mid . ",";
+		// }
+		// $mid = $mid . ":" . $mids [$i] . ":";
+		// }
+		
+		for($i = 0; $i < count ( $labels ); $i ++) {
+			if ($i > 0) {
+				$label = $label . ",";
+			}
+			$label = $label . ":" . $labels [$i] . ":";
+		}
+		$frequency = $frequency * 60;
+		$data = array (
+				"sid" => $sid,
+				"mids" => $mids,
+				"uid" => session ( "uid" ),
+				"addtime" => $now,
+				"title" => $title,
+				"frequency" => $frequency,
+				"labels" => $label,
+				"isadv" => $adv
+		);
+		
+		if ($taskid == "") {
+			$taskid = $taskModel->add ( $data );
+			if (! $taskid) {
+				$this->error ( "ERROR2" );
+			}
+		} else {
+			$r = $taskModel->where ( array (
+					"id" => $taskid
+			) )->save ( $data );
+			if (! $r) {
+				$this->error ( "ERROR2" );
+			}
+			$update = TRUE;
+		}
+		
+		// 添加detail表
+		if ($update) {
+			$data = array (
+					"target" => $target
+			);
+			$r = $taskDetailsModel->where ( array (
+					"taskid" => $taskid
+			) )->save ( $data );
+			// if (! $r) {
+			// $this->error ( "ERROR1" );
+			// }
+		} else {
+			$data = array (
+					"sid" => $sid,
+					"taskid" => $taskid,
+					"target" => $target
+			);
+			$ssid = $taskDetailsModel->add ( $data );
+			if (! $ssid) {
+				$this->error ( "ERROR1" );
+			}
+		}
+		
+		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
+		//添加告警策略   1,gt,123,,,1,并发连接数,大于,
+		if ($alarm_num > 0) {
+			$monitor_id = str_replace ( ":", "", $mids );
+			$flag = 0;
+			$triggerModel = D ( 'jk_trigger_ruls' );
+			for($i = 0; $i < $alarm_num; $i ++) {
+				$key = "post.a" . $i;
+				$alarm = I ( $key );
+				if ($alarm == "del") {
+					continue;
+				}
+				$alist = explode ( ",", $alarm );
+				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+				// 				if ($unit == "s") {
+				// 					$threshold *= 60;
+				// 				}
+				// 				if ($calc == 1) {
+				// 					// $calc = "avg";
+				// 					$amids = $alist [8];
+				// 					$monitor_id = str_replace ( ";", ",", $amids );
+				// 				}
+				$data = array (
+						"task_id" => $taskid,
+						"data_calc_func" => "avg",
+						"operator_type" => $a_operator,
+						"threshold" => $threshold,
+						"data_times" => $atimes,
+						"index_id" => $a_itemid,
+						"monitor_id" => $monitor_id,
+						"is_monitor_avg" => 0
+				);
+		
+				// $data['monitor_id'] = $mid;
+				$flag = $triggerModel->add ( $data );
+			}
+			if ($flag == 0) {
+				$this->error ( "ERROR4" );
+			}
+		}
+		
+		//print_r ( $_POST );
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
 }

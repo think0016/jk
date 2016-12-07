@@ -113,13 +113,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<!-- Horizontal Form -->
 						<div class="box box-info">
 							<div class="box-header with-border">
-								<h3 class="box-title">TCP监控任务设置</h3>
+								<h3 class="box-title">apache监控任务设置</h3>
 							</div>
 							<!-- /.box-header -->
 							<!-- form start -->
-							<form action="__APP__/Task/tcptaskadd" class="form-horizontal"  method="post" id="form1">
+							<form action="__APP__/Task/apachetaskadd" class="form-horizontal"  method="post" id="form1">
 								<div id="hiddens">
-									<input type="hidden" name="mids" value="{$task.mids}">
+									<input type="hidden" name="mids" value=":4:">
 									<input type="hidden" name="tid" value="{$task.id}">
 									<input type="hidden" name="update" value="{$update}">
 									<input type="hidden" name="adv" value="0">
@@ -132,25 +132,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											<input type="text" name="title" class="form-control" id="input1" placeholder="任务名称" value="{$task.title}"></div>
 									</div>
 									<div class="form-group">
-										<label for="input2" class="col-sm-2 control-label">tcp监控地址：</label>
+										<label for="input2" class="col-sm-2 control-label">服务状态页URL：</label>
 
 										<div class="col-sm-10">
-											<input type="text" name="target" class="form-control" id="input2" placeholder="http监控地址" value="{$taskdetail.target}"></div>
+											<input type="text" name="target" class="form-control" id="input2" placeholder="" value="{$taskdetail.target}"></div>
 									</div>
-									<div class="form-group">
-										<label for="input2" class="col-sm-2 control-label">tcp端口：</label>
-
-										<div class="col-sm-10">
-											<input type="text" name="port" class="form-control" id="input2" placeholder="http监控地址" value="{$taskdetail.port}"></div>
-									</div>
-									<div class="form-group">
+<!-- 									<div class="form-group">
 										<label for="input2" class="col-sm-2 control-label">监控点：</label>
 
 										<div class="col-sm-1">
 											<button type="button" class="btn btn-info pull-left" onclick="smp();">配置</button>
 										</div>
 										<div class="col-sm-9" id="midinfo">已配置0个监控点</div>
-									</div>
+									</div> -->
 									<!-- 									<div class="form-group">
 									<label class="col-sm-2 control-label">监控点</label>
 									<div class="col-sm-10">
@@ -256,7 +250,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 		<!-- 添加监控点模态框 -->
 
-		<include file="Public/mpoint_add_div" />
+
 
 		<!-- 添加监控点模态框 END -->
 
@@ -284,7 +278,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</div>
 							</div>
 							<div class="form-group">
-								<div class="col-sm-1 alarmv1"></div>
+								<div class="col-sm-3 alarmv1"></div>
 								<div class="col-sm-3 alarmv1">
 									<select class="form-control" id="op1">
 										<option value="gt">大于</option>
@@ -292,14 +286,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<option value="eq">等于</option>
 									</select>
 								</div>
-								<div class="col-sm-5 alarmv1">
-									<input type="number" id="threshold1" class="form-control" id="lastname" placeholder=""></div>
-								<div class="col-sm-3 alarmv1">
-									<select class="form-control" id="unit">
-										<option value="ms">毫秒</option>
-										<option value="s">秒</option>
-									</select>
-								</div>
+								<div class="col-sm-6 alarmv1">
+									<input type="number" id="threshold1" class="form-control" id="lastname"  placeholder="请求数/s"></div>
 								<div class="col-sm-3 alarmv2"></div>
 								<div class="col-sm-3 alarmv2">
 									<select class="form-control" id="op2">
@@ -309,10 +297,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									</select>
 								</div>
 								<div class="col-sm-6 alarmv2">
-									<input type="number" id="threshold2" class="form-control" id="lastname" placeholder="百分比"></div>
+									<input type="number" id="threshold2" class="form-control" id="lastname"></div>
 
 							</div>
-							<div class="form-group">
+<!-- 							<div class="form-group">
 								<label for="firstname" class="col-sm-3 control-label">数值计算方式：</label>
 								<div class="col-sm-9">
 									<select class="form-control" id="calc">
@@ -324,10 +312,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<div class="form-group amidsdiv">
 								<label for="firstname" class="col-sm-3 control-label">监控点选择：</label>
 								<div class="col-sm-9 amids">
-								
+									
 								</div>
 							</div>
-							<div class="form-group">
+ -->							<div class="form-group">
 								<label for="firstname" class="col-sm-3 control-label">连续告警次数：</label>
 								<div class="col-sm-9">
 									<select class="form-control" id="atimes">
@@ -387,7 +375,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- AdminLTE App -->
 <load href="__PUBLIC__/dist/js/app.min.js" />
 <!-- private JS -->
-<load href="__PUBLIC__/jk/js/task/mpoint.js" />
+<!-- <load href="__PUBLIC__/jk/js/task/mpoint.js" /> -->
 <!-- <load href="__PUBLIC__/jk/js/http.js" />
 -->
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
@@ -397,6 +385,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script type="text/javascript">
 	var sid = {$task.sid|default = 0};
 	var is_adv = {$task.isadv|default=0};
+
+	/* LAYER UI */
+	var layer;
+	layui.use(['layer'], function() {
+		layer = layui.layer;
+	});
+
 	/* SELECT2 */
 	$(".select2").select2();
 
@@ -463,11 +458,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 			for (var i = 0; i < pointlist.length; i++) {
 
-				var v1 = pointlist[i][0];
-				var v2 = pointlist[i][1];
-				//    	var html="<option value=\""+v1+"\">"+v2+"</option>";
-				var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\">" + v2;
-				$('.amids').append(html);
+				var v1=pointlist[i][0];
+				var v2=pointlist[i][1];
+		    	var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\">" + v2;
+		    	$('.amids').append(html);
 
 			}
 
@@ -495,10 +489,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		var aitem=$("#item_id").find("option:selected").text();
 		var a1 = $('.alarmv1');
 		var a2 = $('.alarmv2');
-		if(aitem=='当日可用率' || aitem=='当前丢包率'){
+		if(aitem=='吞吐率'){
 			a1.css('display', 'none');
 			a2.css('display', 'block');
-		}else if(aitem == '当前响应时间'){
+		}else if(aitem == '并发连接数'){
 			a2.css('display', 'none');
 			a1.css('display', 'block');
 		}
@@ -513,31 +507,33 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		var op = $("#op1 option:selected").val();
 		var op_text = $("#op1 option:selected").text();
 		var threshold = $("#threshold1").val();
-		var unit = $("#unit option:selected").val();
-		var calc = $("#calc option:selected").val();
+		var unit = '';
+		var calc = '';
 		var atimes = $("#atimes option:selected").val();
 		var amids ="";
 
 		var aitem = $("#item_id").find("option:selected").text();
-		if (aitem=='当日可用率' || aitem=='当前丢包率') {
+		if (aitem=='吞吐率') {
 			op = $("#op2 option:selected").val();
 			op_text = $("#op2 option:selected").text();
 			threshold = $("#threshold2").val();
 			unit = '%';
 		}
 
-		if(calc == 1){
-			var n = 0;
-			$("input[name='amidsopt']:checked").each(function() {
-				//console.log($(this).text());
-				//console.log($(this).val());
-				if (n > 0) {
-					amids = amids + ";";
-				}
-				amids = amids + $(this).val();
-				n++;
-			});
-		}
+		// if(calc == 1){
+		// 	var n = 0;
+		// 	$("input[name='amidsopt']:checked").each(function() {
+		// 		//console.log($(this).text());
+		// 		//console.log($(this).val());
+		// 		if (n > 0) {
+		// 			amids = amids + ";";
+		// 		}
+		// 		amids = amids + $(this).val();
+		// 		n++;
+		// 	});
+		// }
+
+		var index = alarmlist.length;
 		var temp = new Array();
 		temp[0] = item_id;
 		temp[1] = op;
@@ -549,6 +545,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		temp[7] = op_text;
 		temp[8] = amids;
 
+		console.log(temp);
 
 		var index = $("input[name='alermindex']").val();
 		var isajax = $("input[name='alermajax']").val();
@@ -590,28 +587,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		//验证表单
 		var title=$("input[name='title']").val(); 
 		var target=$("input[name='target']").val();
-		var port=$("input[name='port']").val();
-		//var username=$("input[name='username']").val();
-		//var password=$("input[name='password']").val();
 
 		if(title == ''){
 			layer.msg('任务名称不能为空');
 		}else if(target == ''){
-		    layer.msg('监控地址不能为空');
-		}else if(port == ''){
-			layer.msg('端口号不能为空');
-		}else if(pointlist.length == 0){
-			layer.msg('监控点不能为空');
+			layer.msg('监控地址不能为空');
 		}else{
-			var mids = "";
-			for (var i = 0; i < pointlist.length; i++) {
-				if(i > 0 ){
-					mids = mids + ",:" + pointlist[i][0] + ":";
-				}else{
-					mids = mids + ":" + pointlist[i][0] + ":";
-				}
-			}
-			$("input[name='mids']").val(mids);
+			// var mids = "";
+			// for (var i = 0; i < pointlist.length; i++) {
+			// 	if(i > 0 ){
+			// 		mids = mids + ",:" + pointlist[i][0] + ":";
+			// 	}else{
+			// 		mids = mids + ":" + pointlist[i][0] + ":";
+			// 	}
+			// }
+			//$("input[name='mids']").val(mids);
 			$('#form1')[0].submit();
 		}
 
@@ -658,70 +648,69 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			//清空表单
 			var temp = alarmlist[index];
 
-			if (temp[6] == '当前响应时间') {
+			if (temp[6] == '并发连接数') {
 				$("input[name='alermindex']").val(index);
 				$("#item_id").val(temp[0]);
 				$("#op1").val(temp[1]);
 				$("#threshold1").val(temp[2]);
-				$("#unit").val(temp[3]);
-				$("#calc").val(temp[4]);
+				//$("#unit").val(temp[3]);
+				//$("#calc").val(temp[4]);
 				$("#atimes").val(temp[5]);
 
-				if (temp[4] == 1) {
-					$('.amids').empty();
+				// if (temp[4] == 1) {
+				// 	$('.amids').empty();
 
-					var tempopt = temp[8].split(';');
-					for (var i = 0; i < pointlist.length; i++) {
-						var v1 = pointlist[i][0];
-						var v2 = pointlist[i][1];
-						var c = "";
-						console.log(tempopt.length);
-						for (var n = 0; n < tempopt.length; n++) {
-							if (tempopt[n] == v1) {
-								c = "checked";
-							}
-						}
+				// 	var tempopt = temp[8].split(';');
+				// 	for (var i = 0; i < pointlist.length; i++) {
+				// 		var v1 = pointlist[i][0];
+				// 		var v2 = pointlist[i][1];
+				// 		var c = "";
+				// 		console.log(tempopt.length);
+				// 		for (var n = 0; n < tempopt.length; n++) {
+				// 			if (tempopt[n] == v1) {
+				// 				c = "checked";
+				// 			}
+				// 		}
 
-						var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
-						$('.amids').append(html);
-					}
+				// 		var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
+				// 		$('.amids').append(html);
+				// 	}
 
-					$(".amidsdiv").css('display', 'block');
-				}
-			} else if (temp[6] == '当日可用率' || temp[6] == '当日丢包率' ) {
-				$('.alarmv2').css('display', 'block');
-				$('.alarmv1').css('display', 'none');
-
-
+				// 	$(".amidsdiv").css('display', 'block');
+				// }
+			} else if (temp[6] == '吞吐率') {
 				$("input[name='alermindex']").val(index);
 				$("#item_id").val(temp[0]);
 				$("#op2").val(temp[1]);
 				$("#threshold2").val(temp[2]);
-				$("#unit").val(temp[3]);
-				$("#calc").val(temp[4]);
+				// $("#unit").val(temp[3]);
+				// $("#calc").val(temp[4]);
 				$("#atimes").val(temp[5]);
 
-				if (temp[4] == 1) {
-					$('.amids').empty();
+				$('.alarmv2').css('display', 'block');
+				$('.alarmv1').css('display', 'none');
 
-					var tempopt = temp[8].split(';');
-					for (var i = 0; i < pointlist.length; i++) {
-						var v1 = pointlist[i][0];
-						var v2 = pointlist[i][1];
-						var c = "";
-						console.log(tempopt.length);
-						for (var n = 0; n < tempopt.length; n++) {
-							if (tempopt[n] == v1) {
-								c = "checked";
-							}
-						}
+				// if (temp[4] == 1) {
+				// 	$('.amids').empty();
 
-						var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
-						$('.amids').append(html);
-					}
+				// 	var tempopt = temp[8].split(';');
+				// 	for (var i = 0; i < pointlist.length; i++) {
+				// 		var v1 = pointlist[i][0];
+				// 		var v2 = pointlist[i][1];
+				// 		var c = "";
+				// 		console.log(tempopt.length);
+				// 		for (var n = 0; n < tempopt.length; n++) {
+				// 			if (tempopt[n] == v1) {
+				// 				c = "checked";
+				// 			}
+				// 		}
 
-					$(".amidsdiv").css('display', 'block');
-				}
+				// 		var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
+				// 		$('.amids').append(html);
+				// 	}
+
+				// 	$(".amidsdiv").css('display', 'block');
+				// }
 			}
 
 			//$('#addalarm').modal('show');
@@ -736,11 +725,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					var d = jQuery.parseJSON(data);
 					console.log(d.data);
 					if (d.status == 1) {
-						if (d.data.comment == '当前响应时间') {
+						if (d.data.comment == '并发连接数') {
 							$("#op1").val(d.data.operator_type);
 							$("#threshold1").val(d.data.threshold);
 
-						} else if (d.data.comment == '当日可用率' || d.data.comment == '当日丢包率') {
+						} else if (d.data.comment == '吞吐率') {
 							$("#op2").val(d.data.operator_type);
 							$("#threshold2").val(d.data.threshold);
 							$('.alarmv2').css('display', 'block');
@@ -749,28 +738,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							$("input[name='alermajax']").val(1);
 							$("input[name='alermindex']").val(d.data.id);
 							$("#item_id").val(d.data.index_id);
-							$("#unit").val(d.data.iunit);
+							//$("#unit").val(d.data.iunit);
 							$("#atimes").val(d.data.data_times);
-							$("#calc").val(1);
 
-							$('.amids').empty();
+							//$("#calc").val(1);
 
-							var tempopt = d.data.monitor_id.split(',');
-							for (var i = 0; i < pointlist.length; i++) {
-								var v1 = pointlist[i][0];
-								var v2 = pointlist[i][1];
-								var c = "";
-								for (var n = 0; n < tempopt.length; n++) {
-									if (tempopt[n] == v1) {
-										c = "checked";
-									}
-								}
+							// $('.amids').empty();
 
-								var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
-								$('.amids').append(html);
-							}
+							// var tempopt = d.data.monitor_id.split(',');
+							// for (var i = 0; i < pointlist.length; i++) {
+							// 	var v1 = pointlist[i][0];
+							// 	var v2 = pointlist[i][1];
+							// 	var c = "";
+							// 	for (var n = 0; n < tempopt.length; n++) {
+							// 		if (tempopt[n] == v1) {
+							// 			c = "checked";
+							// 		}
+							// 	}
 
-							$(".amidsdiv").css('display', 'block');
+							// 	var html = "<input type=\"checkbox\" name=\"amidsopt\" value=\"" + v1 + "\"" + c + ">" + v2
+							// 	$('.amids').append(html);
+							// }
+
+							// $(".amidsdiv").css('display', 'block');
 						//$(("#atrx"+index)).remove();
 					} else {
 						alert('系统错误');
@@ -790,10 +780,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			$("#form2")[0].reset();
 			$("input[name='alermindex']").val(-1);
 			$("input[name='alermajax']").val(0);
-			//$("#form2")[0].reset();
-			$('.alarmv1').css('display', 'block');
 			$('.alarmv2').css('display', 'none');
+			$('.alarmv1').css('display', 'block');
+			//$("#form2")[0].reset();
 		})
+
 	
 
 	</script>
