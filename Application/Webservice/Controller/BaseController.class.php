@@ -5,11 +5,9 @@ namespace Webservice\Controller;
 use Think\Controller;
 
 class BaseController extends Controller {
-
 	public function index() {
-
 	}
-
+	
 	/**
 	 * Rrd操作
 	 */
@@ -23,18 +21,17 @@ class BaseController extends Controller {
 		}
 		return $flag;
 	}
-
 	public function UpdateRrd($name, $ds_name, $data) {
 		$flag = 0;
 		$filename = C ( "rrd_dir" ) . $name . ".rrd";
-
+		
 		if (! file_exists ( $filename )) {
 			$r = $this->CreateRrd ( $name, '300', $ds_name );
 			if ($r != 1) {
 				return "error:create";
 			}
 		}
-
+		
 		$data = time () . ":" . $data;
 		$c = "/usr/bin/rrdtool update  $filename  --template  $ds_name  $data";
 		system ( $c, $status );
@@ -44,18 +41,33 @@ class BaseController extends Controller {
 			return "ERROR:update:" . $c;
 		}
 	}
-
 	public function format_rddname($tid, $uid, $mid, $sid, $ssid, $itemid) {
 		return $tid . "_" . $uid . "_" . $mid . "_" . $sid . "_" . $ssid . "_" . $itemid;
 	}
-
+	
+	// 用于网站性能监控
 	public function UpdateRrdBysh($filename, $dotime, $ds_name, $data, $taskid, $step) {
 		$c = "sh /var/www/ce/cmd/create_rrd.sh " . $filename . ".rrd" . " " . $dotime . " " . $ds_name . " " . $data . " " . $taskid . " " . $step;
 		// wlog("[UpdateRrdBysh]".$c);
 		system ( $c, $status );
 		return $status;
 	}
-
+	
+	// 用于服务性能监控
+	public function UpdateServiceRrdBysh($filename, $dotime, $ds_name, $data, $taskid, $step, $data_type) {
+		$c = "sh /var/www/ce/cmd/create_services_rrd.sh " . $filename . ".rrd" . " " . $dotime . " " . $ds_name . " " . $data . " " . $taskid . " " . $step . " " . $data_type;
+		// wlog("[UpdateRrdBysh]".$c);
+		system ( $c, $status );
+		return $status;
+	}
+	
+	// 用于监控状态异常处理
+	public function task_status_process($taskid, $sid, $status) {
+		$c = "/var/www/ce/cmd/ task_status_process.py " . $taskid. " " . $sid . " " . $status;
+		// wlog("[UpdateRrdBysh]".$c);
+		system ( $c, $status );
+		return $status;
+	}
 	/**
 	 * 时间间隔
 	 */
@@ -70,5 +82,4 @@ class BaseController extends Controller {
 		// wlog("mid:".$mid." rlasttime:".$return);
 		return $return;
 	}
-
 }

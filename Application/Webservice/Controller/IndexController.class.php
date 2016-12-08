@@ -13,7 +13,7 @@ class IndexController extends BaseController {
 	);
 	public function postwebtask() {
 		$type = $_POST ["type"];
-		wlog ( "(postwebtask)[" . $type . "]" );
+		//wlog ( "(Indexpostwebtask)[" . $type . "]" );
 		$r = 0;
 		if ($type == "appcrash" || $type == "appmem" || $type == "appnet") {
 			if ($type == "appnet") {
@@ -36,7 +36,6 @@ class IndexController extends BaseController {
 			) )->find ();
 			
 			if (! $point) {
-				wlog ( "NO POINT BY " . $ip );
 				exit ( "NO POINT BY " . $ip );
 			}
 			$mid = $point ['id'];

@@ -383,6 +383,7 @@ class TaskController extends BaseController {
 				"uid" => session ( "uid" ),
 				"addtime" => $now,
 				"title" => $title,
+				"lasttime" => $this->initlasttime ( $mid ),
 				"frequency" => $frequency,
 				"labels" => $label,
 				"isadv" => $adv 
@@ -539,7 +540,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				// "lasttime" => time (),
+				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -733,7 +734,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				// "lasttime" => time (),
+				"lasttime"=>$this->initlasttime($mid),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -892,7 +893,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				// "lasttime" => time (),
+				"lasttime"=>$this->initlasttime($mid),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -1051,7 +1052,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				// "lasttime" => time (),
+				"lasttime"=>$this->initlasttime($mid),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -1215,7 +1216,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				// "lasttime" => time (),
+				"lasttime"=>$this->initlasttime($mid),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -1323,6 +1324,7 @@ class TaskController extends BaseController {
 	}
 	public function apachetaskadd() {
 		$this->is_login ( 1 );
+		//print_r($_POST);exit();
 		/**
 		 * Array ( [mids] => :4: [tid] => [update] => [adv] => 0
 		 * [alarm_num] => 1
@@ -1379,6 +1381,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
+				"lasttime"=>$this->initlasttime($mid),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -1422,7 +1425,7 @@ class TaskController extends BaseController {
 		}
 		
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
-		// 添加告警策略 1,gt,123,,,1,并发连接数,大于,
+		// 添加告警策略 1,gt,999,,,1,并发连接数,大于,,145
 		if ($alarm_num > 0) {
 			$monitor_id = str_replace ( ":", "", $mids );
 			$flag = 0;
@@ -1435,6 +1438,7 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+				$triggerid = $alist[9];
 				// if ($unit == "s") {
 				// $threshold *= 60;
 				// }
@@ -1451,12 +1455,17 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"rrd_name" => $this->getrrdfilename($taskid, session("uid"), "4", $sid, "0", $a_itemid),
+						"rrd_name" => $this->getrrdfilename ( $taskid, session ( "uid" ), "4", $sid, "0", $a_itemid ),
 						"is_monitor_avg" => 0 
 				);
 				
 				// $data['monitor_id'] = $mid;
-				$flag = $triggerModel->add ( $data );
+				if($triggerid>0){
+					$flag = $triggerModel->where(array("id"=>$triggerid))->save ( $data );
+				}else{
+					$flag = $triggerModel->add ( $data );
+				}
+				
 			}
 			if ($flag == 0) {
 				$this->error ( "ERROR4" );
@@ -1524,6 +1533,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
+				"lasttime"=>$this->initlasttime($mid),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -1580,6 +1590,7 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+				$triggerid = $alist[9];
 				// if ($unit == "s") {
 				// $threshold *= 60;
 				// }
@@ -1596,12 +1607,16 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"rrd_name" => $this->getrrdfilename($taskid, session("uid"), "4", $sid, "0", $a_itemid),
+						"rrd_name" => $this->getrrdfilename ( $taskid, session ( "uid" ), "4", $sid, "0", $a_itemid ),
 						"is_monitor_avg" => 0 
 				);
 				
 				// $data['monitor_id'] = $mid;
-				$flag = $triggerModel->add ( $data );
+				if($triggerid>0){
+					$flag = $triggerModel->where(array("id"=>$triggerid))->save ( $data );
+				}else{
+					$flag = $triggerModel->add ( $data );
+				}
 			}
 			if ($flag == 0) {
 				$this->error ( "ERROR4" );
@@ -1611,7 +1626,6 @@ class TaskController extends BaseController {
 		// print_r ( $_POST );
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
-	
 	private function getrrdfilename($tid, $uid, $mid, $sid, $ssid, $itemid, $type = 0) {
 		$filename = $tid . "_" . $uid . "_" . $mid . "_" . $sid . "_" . $ssid . "_" . $itemid . ".rrd";
 		
@@ -1620,5 +1634,19 @@ class TaskController extends BaseController {
 		// }
 		
 		return $filename;
+	}
+	
+	/**
+	 * 初始化时间间隔lasttime
+	 * @param unknown $mids
+	 */
+	private function initlasttime($mids) {
+		$m2 = str_replace ( ":", "", $mids );
+		$temp = explode ( ",", $m2 );
+		$return = array ();
+		foreach ( $temp as $val ) {
+			$return [$val] = time ();
+		}
+		return serialize ( $return );
 	}
 }
