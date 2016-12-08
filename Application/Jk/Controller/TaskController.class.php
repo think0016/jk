@@ -441,6 +441,7 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+				$triggerid = $alist [9];
 				if ($unit == "s") {
 					$threshold *= 60;
 				}
@@ -461,7 +462,13 @@ class TaskController extends BaseController {
 				);
 				
 				// $data['monitor_id'] = $mid;
-				$flag = $triggerModel->add ( $data );
+				if ($triggerid > 0) {
+					$flag = $triggerModel->where ( array (
+							"id" => $triggerid 
+					) )->save ( $data );
+				} else {
+					$flag = $triggerModel->add ( $data );
+				}
 			}
 			if ($flag == 0) {
 				$this->error ( "ERROR4" );
@@ -631,6 +638,7 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+				$triggerid = $alist [9];
 				if ($unit == "s") {
 					$threshold *= 60;
 				}
@@ -651,7 +659,13 @@ class TaskController extends BaseController {
 				);
 				
 				// $data['monitor_id'] = $mid;
-				$flag = $triggerModel->add ( $data );
+				if ($triggerid > 0) {
+					$flag = $triggerModel->where ( array (
+							"id" => $triggerid 
+					) )->save ( $data );
+				} else {
+					$flag = $triggerModel->add ( $data );
+				}
 			}
 			if ($flag == 0) {
 				$this->error ( "ERROR4" );
@@ -734,7 +748,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				"lasttime"=>$this->initlasttime($mid),
+				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -798,6 +812,7 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+				$triggerid = $alist [9];
 				if ($unit == "s") {
 					$threshold *= 60;
 				}
@@ -818,7 +833,13 @@ class TaskController extends BaseController {
 				);
 				
 				// $data['monitor_id'] = $mid;
-				$flag = $triggerModel->add ( $data );
+				if ($triggerid > 0) {
+					$flag = $triggerModel->where ( array (
+							"id" => $triggerid 
+					) )->save ( $data );
+				} else {
+					$flag = $triggerModel->add ( $data );
+				}
 			}
 			if ($flag == 0) {
 				$this->error ( "ERROR4" );
@@ -893,7 +914,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				"lasttime"=>$this->initlasttime($mid),
+				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -953,6 +974,7 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+				$triggerid = $alist [9];
 				if ($unit == "s") {
 					$threshold *= 60;
 				}
@@ -973,7 +995,13 @@ class TaskController extends BaseController {
 				);
 				
 				// $data['monitor_id'] = $mid;
-				$flag = $triggerModel->add ( $data );
+				if ($triggerid > 0) {
+					$flag = $triggerModel->where ( array (
+							"id" => $triggerid 
+					) )->save ( $data );
+				} else {
+					$flag = $triggerModel->add ( $data );
+				}
 			}
 			if ($flag == 0) {
 				$this->error ( "ERROR4" );
@@ -1052,7 +1080,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				"lasttime"=>$this->initlasttime($mid),
+				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -1120,6 +1148,7 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+				$triggerid = $alist [9];
 				if ($unit == "s") {
 					$threshold *= 60;
 				}
@@ -1140,7 +1169,13 @@ class TaskController extends BaseController {
 				);
 				
 				// $data['monitor_id'] = $mid;
-				$flag = $triggerModel->add ( $data );
+				if ($triggerid > 0) {
+					$flag = $triggerModel->where ( array (
+							"id" => $triggerid 
+					) )->save ( $data );
+				} else {
+					$flag = $triggerModel->add ( $data );
+				}
 			}
 			if ($flag == 0) {
 				$this->error ( "ERROR4" );
@@ -1216,7 +1251,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				"lasttime"=>$this->initlasttime($mid),
+				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -1293,6 +1328,7 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
+				$triggerid = $alist [9];
 				if ($unit == "s") {
 					$threshold *= 60;
 				}
@@ -1313,7 +1349,13 @@ class TaskController extends BaseController {
 				);
 				
 				// $data['monitor_id'] = $mid;
-				$flag = $triggerModel->add ( $data );
+				if ($triggerid > 0) {
+					$flag = $triggerModel->where ( array (
+							"id" => $triggerid 
+					) )->save ( $data );
+				} else {
+					$flag = $triggerModel->add ( $data );
+				}
 			}
 			if ($flag == 0) {
 				$this->error ( "ERROR4" );
@@ -1324,7 +1366,7 @@ class TaskController extends BaseController {
 	}
 	public function apachetaskadd() {
 		$this->is_login ( 1 );
-		//print_r($_POST);exit();
+		// print_r($_POST);exit();
 		/**
 		 * Array ( [mids] => :4: [tid] => [update] => [adv] => 0
 		 * [alarm_num] => 1
@@ -1381,7 +1423,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				"lasttime"=>$this->initlasttime($mid),
+				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -1438,7 +1480,7 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
-				$triggerid = $alist[9];
+				$triggerid = $alist [9];
 				// if ($unit == "s") {
 				// $threshold *= 60;
 				// }
@@ -1460,12 +1502,13 @@ class TaskController extends BaseController {
 				);
 				
 				// $data['monitor_id'] = $mid;
-				if($triggerid>0){
-					$flag = $triggerModel->where(array("id"=>$triggerid))->save ( $data );
-				}else{
+				if ($triggerid > 0) {
+					$flag = $triggerModel->where ( array (
+							"id" => $triggerid 
+					) )->save ( $data );
+				} else {
 					$flag = $triggerModel->add ( $data );
 				}
-				
 			}
 			if ($flag == 0) {
 				$this->error ( "ERROR4" );
@@ -1533,7 +1576,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"frequency" => $frequency,
-				"lasttime"=>$this->initlasttime($mid),
+				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"isadv" => $adv 
 		);
@@ -1590,7 +1633,7 @@ class TaskController extends BaseController {
 				}
 				$alist = explode ( ",", $alarm );
 				list ( $a_itemid, $a_operator, $threshold, $unit, $calc, $atimes ) = $alist;
-				$triggerid = $alist[9];
+				$triggerid = $alist [9];
 				// if ($unit == "s") {
 				// $threshold *= 60;
 				// }
@@ -1612,9 +1655,11 @@ class TaskController extends BaseController {
 				);
 				
 				// $data['monitor_id'] = $mid;
-				if($triggerid>0){
-					$flag = $triggerModel->where(array("id"=>$triggerid))->save ( $data );
-				}else{
+				if ($triggerid > 0) {
+					$flag = $triggerModel->where ( array (
+							"id" => $triggerid 
+					) )->save ( $data );
+				} else {
 					$flag = $triggerModel->add ( $data );
 				}
 			}
@@ -1638,7 +1683,8 @@ class TaskController extends BaseController {
 	
 	/**
 	 * 初始化时间间隔lasttime
-	 * @param unknown $mids
+	 *
+	 * @param unknown $mids        	
 	 */
 	private function initlasttime($mids) {
 		$m2 = str_replace ( ":", "", $mids );

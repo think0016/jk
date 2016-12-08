@@ -573,6 +573,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		temp[6] = item_text;
 		temp[7] = op_text;
 		temp[8] = amids;
+		temp[9] = 0;
 
 		var index = $("input[name='alermindex']").val();
 		var isajax = $("input[name='alermajax']").val();
@@ -581,8 +582,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				$(("#atr" + index)).remove();
 				alarmlist[index] = temp;
 			}else{
+				temp[9] = index;
 				$(("#atrx" + index)).remove();
-				delalarm(index,1);
+				delalarm(index,2);
 				index = alarmlist.length;
 				alarmlist[index] = temp;
 			}
@@ -661,7 +663,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			console.log("DEL:"+index);
 			alarmlist[index]="del";
 			$(("#atr"+index)).remove();
-		}else{
+		}else if(type==1){			
 			var delurl = '__APP__/Task/delalarm';
 			$.post(delurl, {
 					aid: index
@@ -678,6 +680,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						}	
 					}
 				});
+		}else{
+			$(("#atrx" + index)).remove();
 		}
 	}
 

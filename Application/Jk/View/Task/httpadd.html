@@ -607,6 +607,7 @@ function savealarm() {
 	temp[6] = item_text;
 	temp[7] = op_text;
 	temp[8] = amids;
+	temp[9] = 0;
 
 	var index = $("input[name='alermindex']").val();
 	var isajax = $("input[name='alermajax']").val();
@@ -615,8 +616,9 @@ function savealarm() {
 			$(("#atr" + index)).remove();
 			alarmlist[index] = temp;
 		}else{
+			temp[9] = index;
 			$(("#atrx" + index)).remove();
-			delalarm(index,1);
+			delalarm(index,2);
 			index = alarmlist.length;
 			alarmlist[index] = temp;
 		}
@@ -679,31 +681,33 @@ function createtr(arr, index) {
 	return html;
 }
 
-function delalarm(index, type) {
-	if (type == 0) {
-		//不用AJAX
-		console.log("DEL:" + index);
-		alarmlist[index] = "del";
-		$(("#atr" + index)).remove();
-	} else {
-		var delurl = '__APP__/Task/delalarm';
-		$.post(delurl, {
-				aid: index
-			},
-			function(data, status) {				
-				if (data == 1) {
-					if(type == 2){
-						alert('操作成功');
-					}					
-					$(("#atrx" + index)).remove();
-				} else {
-					if(type == 2){
-						alert('操作失败');
-					}	
-				}
-			});
+	function delalarm(index,type){
+		if(type==0){
+			//不用AJAX
+			console.log("DEL:"+index);
+			alarmlist[index]="del";
+			$(("#atr"+index)).remove();
+		}else if(type==1){			
+			var delurl = '__APP__/Task/delalarm';
+			$.post(delurl, {
+					aid: index
+				},
+				function(data, status) {
+					if (data == 1) {
+						if(type == 2){
+							alert('操作成功');
+						}					
+						$(("#atrx" + index)).remove();
+					} else {
+						if(type == 2){
+							alert('操作失败');
+						}	
+					}
+				});
+		}else{
+			$(("#atrx" + index)).remove();
+		}
 	}
-}
 
 function updatealarm(index, type) {
 	if (type == 0) {
