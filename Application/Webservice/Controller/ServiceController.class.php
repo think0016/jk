@@ -5,7 +5,10 @@ namespace Webservice\Controller;
 class ServiceController extends BaseController {
 	private $type_arr = array (
 			"apache",
+			"tomcat",
 			"nginx",
+			"sqlserver",
+			"oracle",
 			"mysql" 
 	);
 	public function postwebtask() {
@@ -105,7 +108,17 @@ class ServiceController extends BaseController {
 					$task = $this->getnginxtask ( $taskval );
 					break;
 				case "mysql" :
+					$task = $this->getmysqltask ( $taskval );
 					break;
+				case "tomcat" :
+					$task = $this->gettomcattask ( $taskval );
+					break;
+				case "sqlserver" :
+					$task = $this->getsqlservertask ( $taskval );
+					break;				
+				case "oracle" :
+					$task = $this->getoracletask ( $taskval );
+					break; // oracle
 			}
 			
 			if (in_array ( $type, $this->type_arr )) {
@@ -120,12 +133,10 @@ class ServiceController extends BaseController {
 		$return ["list"] = $taskitem;
 		echo json_encode ( $return );
 	}
-	
 	public function index() {
 		echo $this->CreateRrd ( "aaaa", 300, "asas" );
 		echo "INDEX";
 	}
-	
 	private function savedata($post) {
 		$return = array ();
 		$status = $post ['status'];
@@ -191,12 +202,11 @@ class ServiceController extends BaseController {
 			}
 		} else {
 			// 调用task_status_process.py
-			$this->task_status_process($taskid, $tasklist ["sid"], $status);
+			$this->task_status_process ( $taskid, $tasklist ["sid"], $status );
 		}
 		
 		return count ( $return );
 	}
-	
 	private function getapachetask($taskval) {
 		$sid = 4;
 		$return = array ();
@@ -249,6 +259,159 @@ class ServiceController extends BaseController {
 		
 		$return ['type'] = "nginx"; // 普通任务
 		
+		return $return;
+	}
+	private function getsqlserver($taskval) {
+		$sid = 7;
+		$return = array ();
+		
+		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
+		// $ssid = $taskval ['ssid'];
+		$tid = $taskval ['id'];
+		// $isadv = $taskval ['isadv'];
+		$frequency = $taskval ['frequency'];
+		$lasttime = $taskval ['lasttime'];
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+		
+		$return ['id'] = $tid;
+		$return ['frequency'] = $frequency;
+		$return ['lasttime'] = $lasttime;
+		$taskdetail = $taskdetailsModel->where ( array (
+				"taskid" => $tid 
+		) )->find ();
+		
+		if ($taskdetail) {
+			$return ['target'] = $taskdetail ['target'];
+			$return ['port'] = $taskdetail ['port'];
+			$return ['username'] = $taskdetail ['username'];
+			$return ['password'] = $taskdetail ['password'];
+		}
+		
+		$return ['type'] = "mysql"; // 普通任务
+		
+		return $return;
+	}
+	private function gettomcattask($taskval) {
+		$sid = 33;
+		$return = array ();
+		
+		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
+		// $ssid = $taskval ['ssid'];
+		$tid = $taskval ['id'];
+		// $isadv = $taskval ['isadv'];
+		$frequency = $taskval ['frequency'];
+		$lasttime = $taskval ['lasttime'];
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+		
+		$return ['id'] = $tid;
+		$return ['frequency'] = $frequency;
+		$return ['lasttime'] = $lasttime;
+		$taskdetail = $taskdetailsModel->where ( array (
+				"taskid" => $tid 
+		) )->find ();
+		
+		if ($taskdetail) {
+			$return ['target'] = $taskdetail ['target'];
+			$return ['servicename'] = $taskdetail ['servicename'];
+			$return ['username'] = $taskdetail ['username'];
+			$return ['password'] = $taskdetail ['password'];
+		}
+		
+		$return ['type'] = "tomcat"; // 普通任务
+		
+		return $return;
+	}
+	private function getsqlservertask($taskval) {
+		$sid = 34;
+		$return = array ();
+		
+		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
+		// $ssid = $taskval ['ssid'];
+		$tid = $taskval ['id'];
+		// $isadv = $taskval ['isadv'];
+		$frequency = $taskval ['frequency'];
+		$lasttime = $taskval ['lasttime'];
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+		
+		$return ['id'] = $tid;
+		$return ['frequency'] = $frequency;
+		$return ['lasttime'] = $lasttime;
+		$taskdetail = $taskdetailsModel->where ( array (
+				"taskid" => $tid 
+		) )->find ();
+		
+		if ($taskdetail) {
+			$return ['target'] = $taskdetail ['target'];
+			$return ['databasename'] = $taskdetail ['databasename'];
+			$return ['username'] = $taskdetail ['username'];
+			$return ['password'] = $taskdetail ['password'];
+			$return ['port'] = $taskdetail ['port'];
+		}
+		
+		$return ['type'] = "sqlserver"; // 普通任务
+		
+		return $return;
+	}
+	
+	private function getmysqltask($taskval) {
+		$sid = 7;
+		$return = array ();
+	
+		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
+		// $ssid = $taskval ['ssid'];
+		$tid = $taskval ['id'];
+		// $isadv = $taskval ['isadv'];
+		$frequency = $taskval ['frequency'];
+		$lasttime = $taskval ['lasttime'];
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+	
+		$return ['id'] = $tid;
+		$return ['frequency'] = $frequency;
+		$return ['lasttime'] = $lasttime;
+		$taskdetail = $taskdetailsModel->where ( array (
+				"taskid" => $tid
+		) )->find ();
+	
+		if ($taskdetail) {
+			$return ['target'] = $taskdetail ['target'];
+			$return ['username'] = $taskdetail ['username'];
+			$return ['password'] = $taskdetail ['password'];
+			$return ['port'] = $taskdetail ['port'];
+		}
+	
+		$return ['type'] = "sqlserver"; // 普通任务
+	
+		return $return;
+	}
+	
+	private function getoracletask($taskval) {
+		$sid = 35;
+		$return = array ();
+	
+		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
+		// $ssid = $taskval ['ssid'];
+		$tid = $taskval ['id'];
+		// $isadv = $taskval ['isadv'];
+		$frequency = $taskval ['frequency'];
+		$lasttime = $taskval ['lasttime'];
+		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
+	
+		$return ['id'] = $tid;
+		$return ['frequency'] = $frequency;
+		$return ['lasttime'] = $lasttime;
+		$taskdetail = $taskdetailsModel->where ( array (
+				"taskid" => $tid
+		) )->find ();
+	
+		if ($taskdetail) {
+			$return ['target'] = $taskdetail ['target'];
+			$return ['username'] = $taskdetail ['username'];
+			$return ['password'] = $taskdetail ['password'];
+			$return ['port'] = $taskdetail ['port'];
+		}
+	
+		$return ['type'] = "sqlserver"; // 普通任务
+	
 		return $return;
 	}
 }
