@@ -197,15 +197,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<button type="button" class="btn btn-info pull-left">添加</button>
 							</div>
 						</div>
-						<div class="form-group">
-							<label for="ex1" class="col-sm-2 control-label">监控频率：</label>
-							<div class="col-sm-4">
-								<input id="ex1" name="frequency" data-slider-id='blue' type="text" data-slider-min="1" data-slider-max="60" data-slider-step="1" data-slider-value="{$task.frequency|default=5}"/>
-							</div>
-							<div class="col-sm-6">
-								<span class="ext1v">{$task.frequency|default=5}分钟</span>
-							</div>
-						</div>
+								<div class="form-group">
+									<label for="ex1" class="col-sm-2 control-label">监控频率：</label>
+									<div class="col-sm-10">
+										<div class="btn-group">
+										<input type="hidden" name="frequency" value="{$task.frequency|default=5}">
+					                      <button type="button" class="frequency btn btn-default" time="1">1分钟</button>
+					                      <button type="button" class="frequency btn btn-default" time="2">2分钟</button>
+					                      <button type="button" class="frequency btn btn-default" time="3">3分钟</button>					                      
+					                      <empty name="$task.frequency">
+					                       <button type="button" class="frequency btn btn-default active" time="5">5分钟</button>
+					                       <else /> 
+					                       <button type="button" class="frequency btn btn-default" time="5">5分钟</button>
+					                      </empty> 
+					                      <button type="button" class="frequency btn btn-default" time="10">10分钟</button>
+					                      <button type="button" class="frequency btn btn-default" time="15">15分钟</button>
+					                      <button type="button" class="frequency btn btn-default" time="30">30分钟</button>
+					                      <button type="button" class="frequency btn btn-default" time="60">60分钟</button>
+					                    </div>
+									</div>
+								</div>
 
 						<div class="form-group " >
 							<div class="col-sm-12">
@@ -812,7 +823,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		})
 
 	
-
+	//监控频率js
+	$('.frequency').click(function(){
+	var time = $(this).attr("time");
+	$("input[name='frequency']").val(time);
+	$('.frequency').removeClass('active');
+	$(this).addClass('active');
+	});
 	</script>
 </body>
 </html>

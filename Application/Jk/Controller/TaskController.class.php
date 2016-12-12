@@ -1028,8 +1028,6 @@ class TaskController extends BaseController {
 		if (! $this->is_login ()) {
 			exit ( "请登录" );
 		}
-		// print_r ( $_POST );
-		// exit ();
 		
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 9; // UDP 类型
