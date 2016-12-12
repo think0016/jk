@@ -261,36 +261,7 @@ class ServiceController extends BaseController {
 		
 		return $return;
 	}
-	private function getsqlserver($taskval) {
-		$sid = 7;
-		$return = array ();
-		
-		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
-		// $ssid = $taskval ['ssid'];
-		$tid = $taskval ['id'];
-		// $isadv = $taskval ['isadv'];
-		$frequency = $taskval ['frequency'];
-		$lasttime = $taskval ['lasttime'];
-		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
-		
-		$return ['id'] = $tid;
-		$return ['frequency'] = $frequency;
-		$return ['lasttime'] = $lasttime;
-		$taskdetail = $taskdetailsModel->where ( array (
-				"taskid" => $tid 
-		) )->find ();
-		
-		if ($taskdetail) {
-			$return ['target'] = $taskdetail ['target'];
-			$return ['port'] = $taskdetail ['port'];
-			$return ['username'] = $taskdetail ['username'];
-			$return ['password'] = $taskdetail ['password'];
-		}
-		
-		$return ['type'] = "mysql"; // 普通任务
-		
-		return $return;
-	}
+
 	private function gettomcattask($taskval) {
 		$sid = 33;
 		$return = array ();
@@ -379,7 +350,7 @@ class ServiceController extends BaseController {
 			$return ['port'] = $taskdetail ['port'];
 		}
 	
-		$return ['type'] = "sqlserver"; // 普通任务
+		$return ['type'] = "mysql"; // 普通任务
 	
 		return $return;
 	}
@@ -410,7 +381,7 @@ class ServiceController extends BaseController {
 			$return ['port'] = $taskdetail ['port'];
 		}
 	
-		$return ['type'] = "sqlserver"; // 普通任务
+		$return ['type'] = "oracle"; // 普通任务
 	
 		return $return;
 	}
