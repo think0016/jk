@@ -97,8 +97,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						</a>
 					</li>
 					<li>
-						<a href="">
-							<i class="fa fa-link"></i>
+						<a href=""> <i class="fa fa-link"></i>
 							<span>详细报表</span>
 						</a>
 					</li>
@@ -148,109 +147,84 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<!-- /.box-header -->
 							<div class="box-body">
 								<div class="col-md-12">
-								<table class="table table-bordered">
-									<tr>
-										<td>监控对象</td>
-										<td>{$taskdetails.target}</td>
+									<table class="table table-bordered">
+										<tr>
+											<td>监控对象</td>
+											<td>{$taskdetails.target}</td>
 
-									</tr>
-									<tr>
-										<td>监控类型</td>
-										<td>Apache</td>
+										</tr>
+										<tr>
+											<td>监控类型</td>
+											<td>Apache</td>
 
-									</tr>
-<!-- 									<tr>
-										<td>监控状态</td>
-										<td>
-											<switch name="task.status" >
-												<case value="1">开启</case>
-												<case value="2">停止</case>
-											</switch>
-										</td>
+										</tr>
+										<tr>
+											<td>操作</td>
+											<td>
+												<a href="" class="btn btn-default btn-xs">修改配置</a>
+											</td>
 
-									</tr> -->
-									<tr>
-										<td>操作</td>
-										<td>
-											<a href="" class="btn btn-default btn-xs">修改配置</a>
-										</td>
-
-									</tr>
-								</table>
+										</tr>
+									</table>
 								</div>
-								<!-- 									<dl class="dl-horizontal">
-								<dt>监控对象</dt>
-								<dd>{$taskdetails.target}</dd>
-								<dt>监控类型</dt>
-								<dd>http</dd>
-								<dt>监控状态</dt>
-								<dd>
-									<switch name="task.status" >
-										<case value="1">开启</case>
-										<case value="2">停止</case>
-									</switch>
-								</dd>
-								<dt>操作</dt>
-								<dd>
-									<a href="" class="btn btn-default btn-xs">修改配置</a>
-								</dd>
-							</dl>
-							-->
-						</div>
-						<!-- /.box-body -->
-						<!-- <div class="box-footer">The footer of the box</div>
-					-->
-					<!-- box-footer -->
-				</div>
-				<!-- /.box -->
-			</div>
-			<div class="col-md-8">
-				<div class="box">
-					<div class="box-header with-border">
-						<h3 class="box-title">告警信息</h3>
-						<div class="box-tools pull-right">
-							<!-- Buttons, labels, and many other things can be placed here! -->
-							<!-- Here is a label for example -->
-							<a href="__APP__/HttpView/alarmindex/tid/{$taskdetails.taskid}" class="btn btn-sm btn-default">查看全部</a>
-						</div>
-						<!-- /.box-tools -->
+							</div>
+							<!-- /.box-body -->
+							<!-- <div class="box-footer">The footer of the box</div>
+						-->
+						<!-- box-footer -->
 					</div>
-					<!-- /.box-header -->
-					<div class="box-body">
-						<table id="alarmtable" class="potable table table-bordered table-hover">
-							<thead><tr>
-								<th style="width: 10px">#</th>
-								<th>告警时间</th>
-								<th>事件信息</th>
-								<th>持续时间</th>
-								<th>当前状态</th>
-								<!-- <th>操作</th> -->
-							</tr>
-							</thead>  
-<!-- 							<tr>
-								<th style="width: 10px">#</th>
-								<th>告警时间</th>
-								<th>事件信息</th>
-								<th>持续时间</th>
-								<th>当前状态</th>
-								<th>操作</th>
-							</tr>
-							<volist name="alarmdata" id="vo" offset="0" length='2'>
-								<tr>
-									<td>{$i}.</td>
-									<td>{$vo.stime}</td>
-									<td>{$vo.msg}</td>
-									<td>{$vo.ltime}</td>
-									<td>{$vo.status}</td>
-
-									<td>
-										<div class="btn-group">
-											<a class="btn btn-default btn-xs">查看</a>
-											<a class="btn btn-default btn-xs">处理</a>
-										</div>
-									</td>
+					<!-- /.box -->
+				</div>
+				<div class="col-md-8">
+					<div class="box">
+						<div class="box-header with-border">
+							<h3 class="box-title">告警信息</h3>
+							<div class="box-tools pull-right">
+								<!-- Buttons, labels, and many other things can be placed here! -->
+								<!-- Here is a label for example -->
+								<a href="__APP__/HttpView/alarmindex/tid/{$taskdetails.taskid}" class="btn btn-sm btn-default">查看全部</a>
+							</div>
+							<!-- /.box-tools -->
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">
+							<table id="alarmtable" class="potable table table-bordered table-hover">
+								<thead>
+									<tr>
+										<th style="width: 10px">#</th>
+										<th>告警时间</th>
+										<th>事件信息</th>
+										<th>持续时间</th>
+										<th>当前状态</th>
+										<!-- <th>操作</th>
+									-->
 								</tr>
-							</volist> -->
+							</thead>
+							<!-- 							<tr>
+							<th style="width: 10px">#</th>
+							<th>告警时间</th>
+							<th>事件信息</th>
+							<th>持续时间</th>
+							<th>当前状态</th>
+							<th>操作</th>
+						</tr>
+						<volist name="alarmdata" id="vo" offset="0" length='2'>
+							<tr>
+								<td>{$i}.</td>
+								<td>{$vo.stime}</td>
+								<td>{$vo.msg}</td>
+								<td>{$vo.ltime}</td>
+								<td>{$vo.status}</td>
+
+								<td>
+									<div class="btn-group">
+										<a class="btn btn-default btn-xs">查看</a>
+										<a class="btn btn-default btn-xs">处理</a>
+									</div>
+								</td>
+							</tr>
+						</volist>
+						-->
 					</table>
 				</div>
 				<!-- /.box-body -->
@@ -277,176 +251,32 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<div class="col-md-12">
 					<div class="box box-solid">
 						<div class="box-tools pull-left ">
-							<div class="btn-group">
-								<switch name="itemid">
-									<case value="2">
-										<a class="btn btn-default btn-sm active">响应时间</a>
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/status">可用性</a>
-									</case>
-									<case value="8">
-										<a class="btn btn-default btn-sm" href="__APP__/HttpView/index/tid/{$taskdetails.taskid}/itemid/connecttime">响应时间</a>
-										<a class="btn btn-default btn-sm active">可用性</a>
-									</case>
-								</switch>
-							</div>
 						</div>
-										<div class="box-tools pull-right">
-											<button type="button" class="btn btn-default pull-right btn-sm" id="daterange-btn">
-												<span>
-													<i class="fa fa-calendar"></i>
-													时期范围
-												</span>
-												<i class="fa fa-caret-down"></i>
-											</button>
-										</div>
+						<div class="box-tools pull-right">
+							<button type="button" class="btn btn-default pull-right btn-sm" id="daterange-btn">
+								<span>
+									<i class="fa fa-calendar"></i>
+									时期范围
+								</span>
+								<i class="fa fa-caret-down"></i>
+							</button>
+						</div>
 
 					</div>
 				</div>
-				<div class="col-md-7">
-					<div class="divider20"></div>
-					<div id="map" style="height: 600px;"></div>
-				</div>
-				<div class="col-md-5">
+				<div class="col-md-12">
 					<div class="divider"></div>
 					<div class="box box-solid">
-						<!-- /.box-header -->
-						<div class="box-body">所有地区平均：{$total_avg}{$unit}</div>
-						<!-- /.box-body -->
+						<div class="box-tools pull-left ">
+							Apache吞吐率情况
+						</div>
+					<div class="divider100 bgtest"></div>
+					</div>
 
-					</div>
-
-					<div class="box">
-						<div class="box-header with-border">
-							<h3 class="box-title">按地区排名（最慢）</h3>
-							<div class="box-tools pull-right">
-								<a href="" class="btn btn-sm btn-default">查看全部</a>
-							</div>
-						</div>
-						<!-- /.box-header -->
-						<div class="box-body">
-							<table class="table table-bordered">
-								<tr>
-									<th style="width: 50px">名次</th>
-									<th>省份</th>
-									<th>响应时间</th>
-								</tr>
-								<volist name="result1" id="vo" offset="0" length='4'>
-									<tr>
-										<td>{$i}.</td>
-										<td>{$vo.name}</td>
-										<td>{$vo.value}{$unit}</td>
-									</tr>
-								</volist>
-							</table>
-						</div>
-						<!-- /.box-body -->
-						<!-- 								<div class="box-footer clearfix">
-						<ul class="pagination pagination-sm no-margin pull-right">
-							<li>
-								<a href="#">&laquo;</a>
-							</li>
-							<li>
-								<a href="#">1</a>
-							</li>
-							<li>
-								<a href="#">2</a>
-							</li>
-							<li>
-								<a href="#">3</a>
-							</li>
-							<li>
-								<a href="#">&raquo;</a>
-							</li>
-						</ul>
-					</div>
-					-->
 				</div>
-				<!-- /.box -->
-				<div class="box">
-					<div class="box-header with-border">
-						<h3 class="box-title">运营商排名（最慢）</h3>
-						<div class="box-tools pull-right">
-							<a href="" class="btn btn-sm btn-default">查看全部</a>
-						</div>
-					</div>
-					<!-- /.box-header -->
-					<div class="box-body">
-						<table class="table table-bordered">
-							<tr>
-								<th style="width: 50px">名次</th>
-								<th>运营商</th>
-								<th>响应时间</th>
-							</tr>
-							<volist name="result2" id="vo" offset="0" length='3'>
-								<tr>
-									<td>{$i}.</td>
-									<td>{$vo[0]}</td>
-									<td>{$vo[1]}{$unit}</td>
-								</tr>
-							</volist>
-						</table>
-					</div>
-					<!-- /.box-body -->
-					<!-- 								<div class="box-footer clearfix">
-					<ul class="pagination pagination-sm no-margin pull-right">
-						<li>
-							<a href="#">&laquo;</a>
-						</li>
-						<li>
-							<a href="#">1</a>
-						</li>
-						<li>
-							<a href="#">2</a>
-						</li>
-						<li>
-							<a href="#">3</a>
-						</li>
-						<li>
-							<a href="#">&raquo;</a>
-						</li>
-					</ul>
-				</div>
-				-->
 			</div>
-			<!-- /.box -->
 		</div>
-
 	</div>
-	<!-- /.box-body -->
-	<!-- <div class="box-footer">The footer of the box</div>
--->
-<!-- box-footer -->
-</div>
-<!-- /.box -->
-</div>
-
-</div>
-
-<div class="row">
-<div class="col-md-12">
-<div class="box">
-<div class="box-header with-border">
-	<h3 class="box-title">概要统计</h3>
-	<div class="box-tools pull-right">
-		<!-- Buttons, labels, and many other things can be placed here! -->
-		<!-- Here is a label for example -->
-		<!-- <span class="label label-primary">Label</span>
-	-->
-</div>
-<!-- /.box-tools -->
-</div>
-<!-- /.box-header -->
-<div class="box-body">
-<div id="line" style="height: 400px;"></div>
-</div>
-<!-- /.box-body -->
-<!-- <div class="box-footer">The footer of the box</div>
--->
-<!-- box-footer -->
-</div>
-<!-- /.box -->
-</div>
-
 </div>
 </section>
 <!-- /.content -->
@@ -486,7 +316,110 @@ scratch. This page gets rid of all links and provides the needed markup only.
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the
      fixed layout. -->
-<load href="__PUBLIC__/jk/js/monitor/httpview.js" />
-<script type="text/javascript">//$('#Notifications').text(alarmsnum);</script>
+<!-- <load href="__PUBLIC__/jk/js/monitor/httpview.js" />
+-->
+<script type="text/javascript">//$('#Notifications').text(alarmsnum);
+//变量设置
+var appurl = rooturl + '/ApacheView/';
+
+
+//Date range as a button
+var sdate1 = sdate.split(" ");
+var edate1 = edate.split(" ");
+$('#daterange-btn span').html(sdate1[0] + ' 至 ' + edate1[0]);
+$('#daterange-btn').daterangepicker({
+		maxDate: moment(), //最大时间   
+		showDropdowns: true,
+		timePicker: false, //是否显示小时和分钟 
+		dateLimit: {
+			days: 120
+		},
+		ranges: {
+			'今日': [moment().startOf('day'), moment()],
+			'昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
+			'最近一周': [moment().subtract('days', 6), moment()]
+		},
+		opens: 'right', //日期选择框的弹出位置  
+		format: 'YYYY-MM-DD', //控件中from和to 显示的日期格式  
+		locale: {
+			applyLabel: '确定',
+			cancelLabel: '取消',
+			fromLabel: '起始时间',
+			toLabel: '结束时间',
+			customRangeLabel: '自定义',
+			daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+			monthNames: ['一月', '二月', '三月', '四月', '五月', '六月',
+				'七月', '八月', '九月', '十月', '十一月', '十二月'
+			],
+			firstDay: 1
+		},
+		startDate: moment().subtract(29, 'days'),
+		endDate: moment()
+	},
+	function(start, end) {
+		//$('#daterange-btn span').html(start.format('YYYY-MM-DD') + ' 至 ' + end.format('YYYY-MM-DD'));
+	}
+);
+
+$('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
+	//console.log(picker.startDate.format('YYYY-MM-DD'));
+	//console.log(picker.endDate.format('YYYY-MM-DD'));
+	var sdate = picker.startDate.format('YYYY-MM-DD');
+	var edate = picker.endDate.format('YYYY-MM-DD');
+	var url = appurl + "index/" + "tid/" + tid + "/sdate/" + sdate + "/edate/" + edate;
+	window.location.href = url;
+});
+
+//告警列表
+function createtable(sdate, edate, aid) {
+	var purl = appurl + "getalarmtabledata/tid/" + tid + "/sdate/" + sdate + "/edate/" + edate + "/aid/" + aid + "/limit/2";
+
+	// if(table != ''){
+	// 	$('#alarmtable').dataTable().fnDestroy();
+	// }
+
+	table = $('#alarmtable').dataTable({
+		"ajax": {
+			"url": purl,
+			//默认为data,这里定义为空，则只需要传不带属性的数据
+			"dataSrc": ""
+		},
+		"pageLength": 2,
+		"paging": false,
+		"info": false,
+		"lengthChange": false,
+		"searching": false,
+		"ordering": true,
+		"retrieve": true,
+		"autoWidth": false,
+		"columns": [{
+			"data": 0
+		}, {
+			"data": 1
+		}, {
+			"data": 5
+		}, {
+			"data": 6
+		}, {
+			"data": 7
+		}],
+		"language": {
+			"lengthMenu": "每页 _MENU_ 条记录",
+			"zeroRecords": "近期无告警记录",
+			"info": "第 _PAGE_ 页 ( 总共 _PAGES_ 页 )",
+			"infoEmpty": "无记录",
+			"infoFiltered": "(从 _MAX_ 条记录过滤)",
+			"oPaginate": {
+				"sFirst": "首页",
+				"sPrevious": "上页",
+				"sNext": "下页",
+				"sLast": "末页"
+			}
+		}
+	});
+}
+
+createtable(sdate1[0], edate1[0], 0);
+</script>
 </body>
 </html>

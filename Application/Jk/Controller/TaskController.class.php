@@ -37,6 +37,9 @@ class TaskController extends BaseController {
 			case 'dns' :
 				redirect ( U ( '/DnsView/index/tid/' . $tid ) );
 				break;
+			case 'apache' :
+				redirect ( U ( '/ApacheView/index/tid/' . $tid ) );
+				break;
 		}
 	}
 	public function tasklist() {
@@ -1685,15 +1688,14 @@ class TaskController extends BaseController {
 		// print_r ( $_POST );
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
-	
 	public function oracletaskadd() {
 		$this->is_login ( 1 );
-	
+		
 		$now = date ( "Y-m-d H:i:s" );
 		$sid = 35;
 		$taskModel = D ( 'jk_task' );
 		$taskDetailsModel = D ( 'jk_taskdetails_' . $sid );
-	
+		
 		$taskid = I ( 'post.tid' );
 		$update = FALSE;
 		// $update = I ( 'post.update' );
@@ -1707,7 +1709,7 @@ class TaskController extends BaseController {
 		$labels = I ( 'post.labels' );
 		$frequency = I ( 'post.frequency' );
 		$adv = I ( 'post.adv' );
-	
+		
 		// 数据验证（简单）
 		if (! isset ( $title ) || $title == "") {
 			$this->error ( "任务名不能为空" );
@@ -1715,7 +1717,7 @@ class TaskController extends BaseController {
 		if (! isset ( $target ) || $target == "") {
 			$this->error ( "监控地址不能为空" );
 		}
-	
+		
 		// 添加task表
 		$mid = $mids;
 		$label = "";
@@ -1725,7 +1727,7 @@ class TaskController extends BaseController {
 		// }
 		// $mid = $mid . ":" . $mids [$i] . ":";
 		// }
-	
+		
 		for($i = 0; $i < count ( $labels ); $i ++) {
 			if ($i > 0) {
 				$label = $label . ",";
@@ -1742,9 +1744,9 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"isadv" => $adv
+				"isadv" => $adv 
 		);
-	
+		
 		if ($taskid == "") {
 			$taskid = $taskModel->add ( $data );
 			if (! $taskid) {
@@ -1752,25 +1754,25 @@ class TaskController extends BaseController {
 			}
 		} else {
 			$r = $taskModel->where ( array (
-					"id" => $taskid
+					"id" => $taskid 
 			) )->save ( $data );
 			if (! $r) {
 				$this->error ( "ERROR2" );
 			}
 			$update = TRUE;
 		}
-	
+		
 		// 添加detail表
 		if ($update) {
 			$data = array (
-					"target" => $target
+					"target" => $target 
 			);
 			$r = $taskDetailsModel->where ( array (
 					"taskid" => $taskid,
 					"target" => $target,
 					"username" => $username,
 					"password" => $password,
-					"port" => $port
+					"port" => $port 
 			) )->save ( $data );
 			// if (! $r) {
 			// $this->error ( "ERROR1" );
@@ -1782,14 +1784,14 @@ class TaskController extends BaseController {
 					"target" => $target,
 					"username" => $username,
 					"password" => $password,
-					"port" => $port
+					"port" => $port 
 			);
 			$ssid = $taskDetailsModel->add ( $data );
 			if (! $ssid) {
 				$this->error ( "ERROR1" );
 			}
 		}
-	
+		
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
 		// 添加告警策略 1,gt,123,,,1,并发连接数,大于,
 		if ($alarm_num > 0) {
@@ -1822,13 +1824,13 @@ class TaskController extends BaseController {
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
 						"rrd_name" => $this->getrrdfilename ( $taskid, session ( "uid" ), "4", $sid, "0", $a_itemid ),
-						"is_monitor_avg" => 0
+						"is_monitor_avg" => 0 
 				);
-	
+				
 				// $data['monitor_id'] = $mid;
 				if ($triggerid > 0) {
 					$flag = $triggerModel->where ( array (
-							"id" => $triggerid
+							"id" => $triggerid 
 					) )->save ( $data );
 				} else {
 					$flag = $triggerModel->add ( $data );
@@ -1838,7 +1840,7 @@ class TaskController extends BaseController {
 				$this->error ( "ERROR4" );
 			}
 		}
-	
+		
 		// print_r ( $_POST );
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
@@ -1998,7 +2000,6 @@ class TaskController extends BaseController {
 		// print_r ( $_POST );
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
-	
 	public function tomcattaskadd() {
 		$this->is_login ( 1 );
 		
