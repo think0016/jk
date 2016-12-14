@@ -24,6 +24,19 @@ class MonitorController extends BaseController {
 		return $output;
 	}
 	
+	// 读RRD数据(服务性能)
+	public function rrd_server_get($filename, $sdate, $edate, $data_type = 0, $step = 300) {
+		$stime = strtotime ( $sdate );
+		$etime = strtotime ( $edate );
+		
+		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
+		
+		$c = "sh /var/www/ce/cmd/get_list_data.sh " . $filename . " " . $stime . " " . $etime . " " . $step . " " . $data_type;
+		
+		exec ( $c, $output );
+		return $output;
+	}
+	
 	// 读RRD数据
 	public function rrd_avg($filename, $sdate, $edate, $step = 300) {
 		$stime = strtotime ( $sdate );
@@ -32,7 +45,20 @@ class MonitorController extends BaseController {
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 		$c = "sh /var/www/ce/rrd_avg.sh " . $filename . " " . $stime . " " . $etime . " " . $step;
 		exec ( $c, $output );
-		//print_r($output);
+		// print_r($output);
+		return $output;
+	}
+
+	// 读RRD数据
+	public function rrd_server_avg($filename, $sdate, $edate, $data_type = 0, $step = 300) {
+		$stime = strtotime ( $sdate );
+		$etime = strtotime ( $edate );
+		
+		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
+		
+		$c = "sh /var/www/ce/cmd/rrd_avg.sh " . $filename . " " . $stime . " " . $etime . " " . $step . " " . $data_type;
+		
+		exec ( $c, $output );
 		return $output;
 	}
 	
@@ -66,11 +92,10 @@ class MonitorController extends BaseController {
 		}
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 		$c = "sh /var/www/ce/cmd/getdata.sh \"" . $fn . "\" " . $stime . " " . $etime . " " . $step;
-		//wlog("[rrd_get_m]".$c);
+		// wlog("[rrd_get_m]".$c);
 		exec ( $c, $output );
 		return $output;
 	}
-	
 	public function getrrdfilename($tid, $uid, $mid, $sid, $ssid, $itemid, $type = 0) {
 		$filename = C ( 'rrd_dir' ) . $tid . "_" . $uid . "_" . $mid . "_" . $sid . "_" . $ssid . "_" . $itemid . ".rrd";
 		if ($type == 1) {
@@ -82,19 +107,19 @@ class MonitorController extends BaseController {
 	
 	/**
 	 * 计算时间间隔
-	 * 
+	 *
 	 * @param unknown $param        	
 	 */
-	public function timeinterval($stime, $etime , $sel = "") {
+	public function timeinterval($stime, $etime, $sel = "") {
 		$arr = array ();
 		if ($stime == "" || $etime == "") {
-			if($sel == ""){
+			if ($sel == "") {
 				$sdate = date ( "Y-m-d 00:00:00" );
 				$edate = date ( "Y-m-d H:i:s" );
 				$arr [] = $sdate;
 				$arr [] = $edate;
-			}else if($sel == "w"){//一周前
-				$sdate = date ("Y-m-d 00:00:00", strtotime("-1 week") );
+			} else if ($sel == "w") { // 一周前
+				$sdate = date ( "Y-m-d 00:00:00", strtotime ( "-1 week" ) );
 				$edate = date ( "Y-m-d H:i:s" );
 				$arr [] = $sdate;
 				$arr [] = $edate;
@@ -121,7 +146,7 @@ class MonitorController extends BaseController {
 	
 	/**
 	 * 告警描述
-	 * 
+	 *
 	 * @param unknown $param        	
 	 */
 	public function get_alarm_comment($threshold, $itemname, $iunit, $operator_type) {
