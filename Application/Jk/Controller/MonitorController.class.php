@@ -32,7 +32,7 @@ class MonitorController extends BaseController {
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 		
 		$c = "sh /var/www/ce/cmd/get_list_data.sh " . $filename . " " . $stime . " " . $etime . " " . $step . " " . $data_type;
-		
+		// echo $c;
 		exec ( $c, $output );
 		return $output;
 	}
@@ -48,7 +48,7 @@ class MonitorController extends BaseController {
 		// print_r($output);
 		return $output;
 	}
-
+	
 	// 读RRD数据
 	public function rrd_server_avg($filename, $sdate, $edate, $data_type = 0, $step = 300) {
 		$stime = strtotime ( $sdate );
@@ -69,6 +69,19 @@ class MonitorController extends BaseController {
 		
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 		$c = "sh /var/www/ce/rrd_max.sh " . $filename . " " . $stime . " " . $etime . " " . $step;
+		exec ( $c, $output );
+		return $output;
+	}
+	
+	// 读RRD数据
+	public function rrd_server_max($filename, $sdate, $edate, $data_type = 0, $step = 300) {
+		$stime = strtotime ( $sdate );
+		$etime = strtotime ( $edate );
+	
+		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
+	
+		$c = "sh /var/www/ce/cmd/rrd_max.sh " . $filename . " " . $stime . " " . $etime . " " . $step . " " . $data_type;
+	
 		exec ( $c, $output );
 		return $output;
 	}
@@ -115,12 +128,12 @@ class MonitorController extends BaseController {
 		if ($stime == "" || $etime == "") {
 			if ($sel == "") {
 				$sdate = date ( "Y-m-d 00:00:00" );
-				$edate = date ( "Y-m-d H:i:s" );
+				$edate = date ( "Y-m-d H:i:00" );
 				$arr [] = $sdate;
 				$arr [] = $edate;
 			} else if ($sel == "w") { // 一周前
 				$sdate = date ( "Y-m-d 00:00:00", strtotime ( "-1 week" ) );
-				$edate = date ( "Y-m-d H:i:s" );
+				$edate = date ( "Y-m-d H:i:00" );
 				$arr [] = $sdate;
 				$arr [] = $edate;
 			}

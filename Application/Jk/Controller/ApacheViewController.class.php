@@ -6,14 +6,35 @@ class ApacheViewController extends MonitorController {
 	private $tasktype = 'apache';
 	private $sid = 4;
 	private $defaultitem = "responsetime";
-	private $showitem = array (
-			"status" => 2,
-			// "connecttime" => 2,
-			"responsetime" => 1 
-	);
-	private $showitemunit = array (
-			"2" => '%',
-			"1" => '毫秒' 
+	private $taskitem = array (
+			"1" => array (
+					"name" => "apache_active",
+					"comment" => "并发连接数" 
+			),
+			"2" => array (
+					"name" => "apache_rate",
+					"comment" => "吞吐率" 
+			),
+			"3" => array (
+					"name" => "close_conns",
+					"comment" => "关闭连接数" 
+			),
+			"4" => array (
+					"name" => "wait_conns",
+					"comment" => "等待连接数" 
+			),
+			"5" => array (
+					"name" => "read_conns",
+					"comment" => "读取请求数" 
+			),
+			"6" => array (
+					"name" => "send_replys",
+					"comment" => "发送响应连接数" 
+			),
+			"7" => array (
+					"name" => "keepalives",
+					"comment" => "持久连接数" 
+			) 
 	);
 	public function index() {
 		// 检查登录情况
@@ -50,24 +71,43 @@ class ApacheViewController extends MonitorController {
 		) )->find ();
 		
 		$setime = $this->timeinterval ( $stime, $etime );
-		$stime = $setime [0];
-		$etime = $setime [1];
+		$sdate = $setime [0];
+		$edate = $setime [1];
 		$step = 3600;
 		
+		// 取吞吐率值
+		$mids = $task ['mids'];
+		$mid = str_replace ( ":", "", $mids ); // 服务性能只有一个监控点
+		$uid = session ( "uid" );
+		$ssid = $task ['ssid'];
+		$itemid = 2;
+		$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
+		$ttl_avg = $this->rrd_server_avg ( $rrdfilename, $sdate, $edate, 0, $step );		
+		$ttl_max = $this->rrd_server_max ( $rrdfilename, $sdate, $edate, 0, $step );
+		$ttl_avg = floatval($ttl_avg[0])*100;
+		$ttl_max = floatval($ttl_max[0])*100;
+		// 取并发连接数值
+		$itemid = 1;
+		$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
+		$ljs_avg = $this->rrd_server_avg ( $rrdfilename, $sdate, $edate, 0, $step );
+		$ljs_max = $this->rrd_server_max ( $rrdfilename, $sdate, $edate, 0, $step );
+		
+
 		$this->assignbase ();
 		$this->assign ( "task", $task );
 		$this->assign ( "taskdetails", $taskdetails );
 		$this->assign ( "taskdetailsadv", $taskdetailsadv );
-		$this->assign ( "sdate", $stime );
-		$this->assign ( "edate", $etime );
-		$this->assign ( "itemid", $itemid );
-		$this->assign ( "unit", $this->showitemunit [$itemid] );
+		$this->assign ( "sdate", $sdate );
+		$this->assign ( "edate", $edate );
+		$this->assign ( "ttl_avg", $ttl_avg );
+		$this->assign ( "ttl_max", $ttl_max );
+		$this->assign ( "ljs_avg", intval($ljs_avg[0]) );
+		$this->assign ( "ljs_max", intval($ljs_max[0]) );
+		// $this->assign ( "itemid", $itemid );
 		$this->assign ( "step", $step );
 		$this->display ();
 	}
 	
-
-
 	/**
 	 * 告警记录INDEX
 	 */
@@ -231,19 +271,19 @@ class ApacheViewController extends MonitorController {
 		$return = array_slice ( $return, 0, $limit );
 		echo json_encode ( $return );
 	}
-	
 	public function getlinedata() {
 		if (! $this->is_login ( 0 )) {
 			exit ( "ERROR1" );
 		}
 		
 		$taskid = I ( 'post.tid' );
-		$stime = I ( 'post.sdate' );
-		$etime = I ( 'post.edate' );
+		$sdate = I ( 'post.sdate' );
+		$edate = I ( 'post.edate' );
 		$step = I ( 'post.step' );
-		$itemid = I ( 'post.itemid' );
+		$itemids = I ( 'post.itemid' );
 		
 		$taskModel = D ( 'jk_task' );
+		$taskitemModel = D ( 'jk_taskitem_' . $this->sid );
 		
 		$task = $taskModel->where ( array (
 				"id" => $taskid,
@@ -254,36 +294,103 @@ class ApacheViewController extends MonitorController {
 			$this->error ( "no task" );
 		}
 		
-		$return = array ();
-		$mids = $task ['mids'];
-		$mid = str_replace ( ":", "", $mids );//因为只有一个监控点
-		$uid = session ( "uid" );
-		$ssid = $task ['ssid'];
+		$itemid_arr = explode ( ",", $itemids );
+		$c_series = array ();
+		$xv = array (); // x轴刻度
+		$yAxis = array (); // Y轴单位
+		$yAxis ['type'] = 'value';
+		$yAxis ['name'] = "连接数";
+		$legend = array ();
 		
-		// echo "开始时间:".strtotime($stime).PHP_EOL;
-		// echo "开始时间:".strtotime($etime).PHP_EOL;
-		// echo "间隔:".$step.PHP_EOL;
-		$setime = $this->timeinterval ( $stime, $etime );
-		$stime = $setime [0];
-		$etime = $setime [1];
-		$step = 3600;
-		$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
+		foreach ( $itemid_arr as $itemid ) {
+			// 获取item 信息 以后要用缓存
+			$taskitem = $taskitemModel->where ( array (
+					"itemid" => $itemid 
+			) )->find ();
+			
+			if ($taskitem ['iunit'] == '%') {
+				$yAxis ['name'] = "吞吐率(%)";
+			}
+			$legend [] = $taskitem ['comment'];
+			$return = array ();
+			$mids = $task ['mids'];
+			$mid = str_replace ( ":", "", $mids ); // 服务性能只有一个监控点
+			$uid = session ( "uid" );
+			$ssid = $task ['ssid'];
+			
+			// echo "开始时间:".strtotime($stime).PHP_EOL;
+			// echo "开始时间:".strtotime($etime).PHP_EOL;
+			// echo "间隔:".$step.PHP_EOL;
+			$setime = $this->timeinterval ( $sdate, $edate );
+			$sdate = $setime [0];
+			$edate = $setime [1];
+			// $step = 3600;
+			$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
+			
+			// 开始读数据
+			$rs = $this->rrd_server_get ( $rrdfilename, $sdate, $edate, $taskitem ['datatype'], $step );
+			
+			$value = array (); // 数值
+			$xv_flag = true;
+			if (count ( $xv ) > 0) { // X轴刻度只记一次
+				$xv_flag = false;
+			}
+			foreach ( $rs as $val ) {
+				$temp = explode ( " ", $val );
+				if ($xv_flag) { // X轴刻度只记一次
+					$xv [] = date ( "Y-m-d h:i:s", $temp [0] );
+				}
+				if ($taskitem ['iunit'] == '%') {
+					$yAxis ['name'] = "吞吐率(%)";
+					$vv = ( float ) $temp [1];
+					$value [] = ($vv * 100);
+				} else {
+					$vv = ( int ) $temp [1];
+					$value [] = $vv;
+				}
+			}
+			$c_series [] = array (
+					"name" => $taskitem ['comment'],
+					"type" => "line",
+					"smooth" => true,
+					"smoothMonotone" => "x",
+					"data" => $value 
+			);
+		}
 		
+		$c_title = array ();
+		// "text"=> '堆叠区域图'
+		
+		$c_legend = array (
+				"data" => $legend 
+		);
+		$c_tooltip = array (
+				"trigger" => 'axis' 
+		);
+		$c_toolbox = array (
+				"feature" => array (
+						"saveAsImage" => new \stdClass () 
+				) 
+		);
+		$c_xAxis = array (
+				"type" => "category",
+				"boundaryGap" => false,
+				"interval" => 100,
+				"data" => $xv 
+		);
+		$c_yAxis [] = $yAxis;
 		$return = array ();
-		$c_title=array(
-			"text"=>"实时监控曲线图",
-			"subtext"=>"实时监控曲线图"
-		);
-		$c_tooltip=array(
-				"trigger"=>"axis"
-		);
-		$c_toolbox=array();
-		$c_xAxis=array();
-		$c_yAxis=array("type"=>'value');
-		$c_series=array();
+		
+		$return ['title'] = $c_title;
+		$return ['legend'] = $c_legend;
+		$return ['tooltip'] = $c_tooltip;
+		$return ['toolbox'] = $c_toolbox;
+		$return ['xAxis'] = $c_xAxis;
+		$return ['yAxis'] = $c_yAxis;
+		$return ['series'] = $c_series;
+		
 		echo json_encode ( $return );
 	}
-	
 	protected function alarm_sort($a, $b) {
 		if ($a ['times'] == $b ['times']) {
 			return 0;

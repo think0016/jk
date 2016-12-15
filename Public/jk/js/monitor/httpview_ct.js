@@ -214,7 +214,6 @@ function drewline(param, type) {
 			};
 		}
 
-
 		myline.setOption(option2);
 	});
 };
