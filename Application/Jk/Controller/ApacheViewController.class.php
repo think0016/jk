@@ -308,8 +308,8 @@ class ApacheViewController extends MonitorController {
 					"itemid" => $itemid 
 			) )->find ();
 			
-			if ($taskitem ['iunit'] == '%') {
-				$yAxis ['name'] = "吞吐率(%)";
+			if ($taskitem ['iunit'] != null) {
+				$yAxis ['name'] = $taskitem ['iunit'];
 			}
 			$legend [] = $taskitem ['comment'];
 			$return = array ();
@@ -391,6 +391,7 @@ class ApacheViewController extends MonitorController {
 		
 		echo json_encode ( $return );
 	}
+	
 	protected function alarm_sort($a, $b) {
 		if ($a ['times'] == $b ['times']) {
 			return 0;
