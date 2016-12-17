@@ -2,40 +2,11 @@
 
 namespace Jk\Controller;
 
-class ApacheViewController extends MonitorController {
-	private $tasktype = 'apache';
-	private $sid = 4;
+class NginxViewController extends MonitorController {
+	private $tasktype = 'nginx';
+	private $sid = 5;
 	private $defaultitem = "responsetime";
-	private $taskitem = array (
-			"1" => array (
-					"name" => "apache_active",
-					"comment" => "并发连接数" 
-			),
-			"2" => array (
-					"name" => "apache_rate",
-					"comment" => "吞吐率" 
-			),
-			"3" => array (
-					"name" => "close_conns",
-					"comment" => "关闭连接数" 
-			),
-			"4" => array (
-					"name" => "wait_conns",
-					"comment" => "等待连接数" 
-			),
-			"5" => array (
-					"name" => "read_conns",
-					"comment" => "读取请求数" 
-			),
-			"6" => array (
-					"name" => "send_replys",
-					"comment" => "发送响应连接数" 
-			),
-			"7" => array (
-					"name" => "keepalives",
-					"comment" => "持久连接数" 
-			) 
-	);
+	
 	public function index() {
 		// 检查登录情况
 		$this->is_login ( 1 );
@@ -82,17 +53,18 @@ class ApacheViewController extends MonitorController {
 		$ssid = $task ['ssid'];
 		$itemid = 2;
 		$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
-		$ttl_avg = $this->rrd_server_avg ( $rrdfilename, $sdate, $edate, 0, $step );		
+		$ttl_avg = $this->rrd_server_avg ( $rrdfilename, $sdate, $edate, 0, $step );
 		$ttl_max = $this->rrd_server_max ( $rrdfilename, $sdate, $edate, 0, $step );
-		$ttl_avg = floatval($ttl_avg[0])*100;
-		$ttl_max = floatval($ttl_max[0])*100;
+		// $ttl_avg = floatval($ttl_avg[0])*100;
+		// $ttl_max = floatval($ttl_max[0])*100;
+		$ttl_avg = $ttl_avg [0];
+		$ttl_max = $ttl_max [0];
 		// 取并发连接数值
 		$itemid = 1;
 		$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
 		$ljs_avg = $this->rrd_server_avg ( $rrdfilename, $sdate, $edate, 0, $step );
 		$ljs_max = $this->rrd_server_max ( $rrdfilename, $sdate, $edate, 0, $step );
 		
-
 		$this->assignbase ();
 		$this->assign ( "task", $task );
 		$this->assign ( "taskdetails", $taskdetails );
@@ -101,10 +73,54 @@ class ApacheViewController extends MonitorController {
 		$this->assign ( "edate", $edate );
 		$this->assign ( "ttl_avg", $ttl_avg );
 		$this->assign ( "ttl_max", $ttl_max );
-		$this->assign ( "ljs_avg", intval($ljs_avg[0]) );
-		$this->assign ( "ljs_max", intval($ljs_max[0]) );
+		$this->assign ( "ljs_avg", intval ( $ljs_avg [0] ) );
+		$this->assign ( "ljs_max", intval ( $ljs_max [0] ) );
 		// $this->assign ( "itemid", $itemid );
 		$this->assign ( "step", $step );
+		$this->display ();
+	}
+	
+	/**
+	 * 详细报表
+	 */
+	public function details() {
+		$this->is_login ( 1 );
+		
+		// $sdate = I ( 'get.sdate' );
+		// $edate = I ( 'get.edate' );
+		$taskid = I ( 'get.tid' );
+		
+		if ($taskid == "") {
+			$this->error ( "参数错误1" );
+		}
+		
+		$taskModel = D ( 'jk_task' );
+		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
+		$taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
+		
+		$task = $taskModel->where ( array (
+				"id" => $taskid,
+				"is_del" => 0 
+		) )->find ();
+		
+		if (! $task) {
+			$this->error ( "参数错误2" );
+		}
+		
+		$taskdetails = $taskdetailsModel->where ( array (
+				"taskid" => $taskid 
+		) )->find ();
+		
+		// 假设时间间隔固定
+		$etime = strtotime ( date ( "Y-m-d" ) );
+		$stime = $etime - (86400 * 30); // 30天
+		$step = 86400;
+		
+		$this->assignbase ();
+		$this->assign ( "sdate", date("Y-m-d",$stime) );
+		$this->assign ( "edate", date("Y-m-d",$etime) );
+		$this->assign ( "task", $task );
+		$this->assign ( "taskdetails", $taskdetails );
 		$this->display ();
 	}
 	
@@ -153,8 +169,89 @@ class ApacheViewController extends MonitorController {
 		$this->assign ( "triggerlist", $triggerlist );
 		$this->display ();
 	}
+	
+	
+	public function gedetailstabledata() {
+		if (! $this->is_login ( 0 )) {
+			exit ( "ERROR" );
+		}
+		
+		$taskid = I ( 'get.tid' );
+		// $stime = I ( 'get.sdate' );
+		// $etime = I ( 'get.edate' );
+		$itemid = I ( 'get.itemid' );
+		
+		if ($taskid == "" || $itemid == "") {
+			$this->error ( "参数错误1" );
+		}
+		
+		$taskModel = D ( 'jk_task' );
+		
+		$task = $taskModel->where ( array (
+				"id" => $taskid,
+				"is_del" => 0 
+		) )->find ();
+		
+		if (! $task) {
+			$this->error ( "参数错误2" );
+		}
+		$mids = $task ['mids'];
+		$mid = str_replace ( ":", "", $mids ); // 服务性能只有一个监控点
+		$uid = session ( "uid" );
+		$ssid = $task ['ssid'];
+		
+		// 假设时间间隔固定
+		$etime = strtotime ( date ( "Y-m-d" ) );
+		$stime = $etime - (86400 * 30); // 30天
+		$step = 86400;
+		
+		$filename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
+		
+		$avg_rs = $this->rrd_server_avg_list ( $filename, $stime, $etime, $step );
+		$max_rs = $this->rrd_server_max_list ( $filename, $stime, $etime, $step );
+		$min_rs = $this->rrd_server_min_list ( $filename, $stime, $etime, $step );
+		
+		$return = array();
+		for ($i = count($avg_rs)-1; $i >0 ; $i--) {
+		//for ($i = 0; $i < count($avg_rs) ; $i++) {
+			$row = array();
+			$min_data = 0;
+			$avg_data = 0;
+			$max_data = 0;
+			
+			//算平均
+			$val = $avg_rs[$i];
+			$mtime = explode(" ", $val)[0];
+			$avg_data = (explode(" ", $val)[1]==null)?0:explode(" ", $val)[1];
+			
+			//算最大
+			if(isset($max_rs[$i])){
+				$val = $max_rs[$i];
+				//$mtime = explode(" ", $val)[0];
+				$max_data = (explode(" ", $val)[1]==null)?0:explode(" ", $val)[1];
+			}
+			
+			//算最小
+			if(isset($min_rs[$i])){
+				$val = $min_rs[$i];
+				//$mtime = explode(" ", $val)[0];
+				$min_data = (explode(" ", $val)[1]==null)?0:explode(" ", $val)[1];
+			}
+			
+			$row[]=date("Y年m月d日",$mtime);
+			$row[]=$min_data;
+			$row[]=$avg_data;
+			$row[]=$max_data;
+			$return[] = $row;
+		}
+		
+		//var_dump($return);
+		echo json_encode($return);
+	}
+	
 	public function getalarmtabledata() {
 		if (! $this->is_login ( 0 )) {
+			exit ( "ERROR" );
 		}
 		
 		$taskid = I ( 'get.tid' );
@@ -308,8 +405,8 @@ class ApacheViewController extends MonitorController {
 					"itemid" => $itemid 
 			) )->find ();
 			
-			if ($taskitem ['iunit'] == '%') {
-				$yAxis ['name'] = "吞吐率(%)";
+			if ($taskitem ['iunit'] != '') {
+				$yAxis ['name'] = $taskitem ['iunit'];
 			}
 			$legend [] = $taskitem ['comment'];
 			$return = array ();
@@ -340,14 +437,14 @@ class ApacheViewController extends MonitorController {
 				if ($xv_flag) { // X轴刻度只记一次
 					$xv [] = date ( "Y-m-d h:i:s", $temp [0] );
 				}
-				if ($taskitem ['iunit'] == '%') {
-					$yAxis ['name'] = "吞吐率(%)";
-					$vv = ( float ) $temp [1];
-					$value [] = ($vv * 100);
-				} else {
-					$vv = ( int ) $temp [1];
-					$value [] = $vv;
-				}
+				// if ($taskitem ['iunit'] == '%') {
+				// $yAxis ['name'] = "吞吐率(%)";
+				// $vv = ( float ) $temp [1];
+				// $value [] = ($vv * 100);
+				// } else {
+				$vv = ( float ) $temp [1];
+				$value [] = $vv;
+				// }
 			}
 			$c_series [] = array (
 					"name" => $taskitem ['comment'],

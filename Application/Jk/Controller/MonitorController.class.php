@@ -13,8 +13,12 @@ class MonitorController extends BaseController {
 	
 	// 读RRD数据
 	public function rrd_get($filename, $sdate, $edate, $step = 300) {
-		$stime = strtotime ( $sdate );
-		$etime = strtotime ( $edate );
+		$stime = $sdate;
+		$etime = $edate;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$stime = strtotime ( $sdate );
+			$etime = strtotime ( $edate );
+		}
 		
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 		
@@ -26,8 +30,12 @@ class MonitorController extends BaseController {
 	
 	// 读RRD数据(服务性能)
 	public function rrd_server_get($filename, $sdate, $edate, $data_type = 0, $step = 300) {
-		$stime = strtotime ( $sdate );
-		$etime = strtotime ( $edate );
+		$stime = $sdate;
+		$etime = $edate;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$stime = strtotime ( $sdate );
+			$etime = strtotime ( $edate );
+		}
 		
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 		
@@ -39,8 +47,12 @@ class MonitorController extends BaseController {
 	
 	// 读RRD数据
 	public function rrd_avg($filename, $sdate, $edate, $step = 300) {
-		$stime = strtotime ( $sdate );
-		$etime = strtotime ( $edate );
+		$stime = $sdate;
+		$etime = $edate;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$stime = strtotime ( $sdate );
+			$etime = strtotime ( $edate );
+		}
 		
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 		$c = "sh /var/www/ce/rrd_avg.sh " . $filename . " " . $stime . " " . $etime . " " . $step;
@@ -51,8 +63,12 @@ class MonitorController extends BaseController {
 	
 	// 读RRD数据
 	public function rrd_server_avg($filename, $sdate, $edate, $data_type = 0, $step = 300) {
-		$stime = strtotime ( $sdate );
-		$etime = strtotime ( $edate );
+		$stime = $sdate;
+		$etime = $edate;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$stime = strtotime ( $sdate );
+			$etime = strtotime ( $edate );
+		}
 		
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 		
@@ -62,10 +78,29 @@ class MonitorController extends BaseController {
 		return $output;
 	}
 	
+	// 读RRD数据(list)
+	public function rrd_server_avg_list($filename, $sdate, $edate, $step = 300) {
+		$stime = $sdate;
+		$etime = $edate;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$stime = strtotime ( $sdate );
+			$etime = strtotime ( $edate );
+		}
+		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
+	
+		$c = "/var/www/ce/cmd/get_average_list_data.sh " . $filename . " " . $stime . " " . $etime . " " . $step;
+		exec ( $c, $output );
+		return $output;
+	}
+	
 	// 读RRD数据
 	public function rrd_max($filename, $sdate, $edate, $step = 300) {
-		$stime = strtotime ( $sdate );
-		$etime = strtotime ( $edate );
+		$stime = $sdate;
+		$etime = $edate;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$stime = strtotime ( $sdate );
+			$etime = strtotime ( $edate );
+		}
 		
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 		$c = "sh /var/www/ce/rrd_max.sh " . $filename . " " . $stime . " " . $etime . " " . $step;
@@ -75,12 +110,50 @@ class MonitorController extends BaseController {
 	
 	// 读RRD数据
 	public function rrd_server_max($filename, $sdate, $edate, $data_type = 0, $step = 300) {
-		$stime = strtotime ( $sdate );
-		$etime = strtotime ( $edate );
+		$stime = $sdate;
+		$etime = $edate;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$stime = strtotime ( $sdate );
+			$etime = strtotime ( $edate );
+		}
+		
+		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
+		
+		$c = "sh /var/www/ce/cmd/rrd_max.sh " . $filename . " " . $stime . " " . $etime . " " . $step . " " . $data_type;
+		
+		exec ( $c, $output );
+		return $output;
+	}
+	
+	// 读RRD数据(list)
+	public function rrd_server_max_list($filename, $sdate, $edate,$step = 300) {
+		$stime = $sdate;
+		$etime = $edate;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$stime = strtotime ( $sdate );
+			$etime = strtotime ( $edate );
+		}
 	
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 	
-		$c = "sh /var/www/ce/cmd/rrd_max.sh " . $filename . " " . $stime . " " . $etime . " " . $step . " " . $data_type;
+		$c = "sh /var/www/ce/cmd/get_max_list_data.sh " . $filename . " " . $stime . " " . $etime . " " . $step;
+	
+		exec ( $c, $output );
+		return $output;
+	}
+	
+	// 读RRD数据(list)
+	public function rrd_server_min_list($filename, $sdate, $edate,$step = 300) {
+		$stime = $sdate;
+		$etime = $edate;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$stime = strtotime ( $sdate );
+			$etime = strtotime ( $edate );
+		}
+	
+		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
+	
+		$c = "sh /var/www/ce/cmd/get_min_list_data.sh " . $filename . " " . $stime . " " . $etime . " " . $step;
 	
 		exec ( $c, $output );
 		return $output;
@@ -88,8 +161,12 @@ class MonitorController extends BaseController {
 	
 	// 读RRD数据（多文件）
 	public function rrd_get_m($filename, $sdate, $edate, $step = 300) {
-		$stime = strtotime ( $sdate );
-		$etime = strtotime ( $edate );
+		$stime = $sdate;
+		$etime = $edate;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$stime = strtotime ( $sdate );
+			$etime = strtotime ( $edate );
+		}
 		
 		$fn = "";
 		if (is_array ( $filename )) {

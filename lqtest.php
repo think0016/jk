@@ -4,8 +4,9 @@
 // print_r($output);
 
 
-$m = ":6:,:7:";
-$m2 = str_replace ( ":", "", $m );
-$temp = explode(",", $m2);
-print_r($temp);
+$a = "2016年1月";
+$s = "1481943326";
+
+var_dump(is_numeric($a));
+var_dump(is_numeric($s));
 
