@@ -87,17 +87,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<li class="header">HEADER</li>
 					<!-- Optionally, you can add icons to the links -->
 					<li>
-						<a href="__APP__/ApacheView/index/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+						<a href="__APP__/TomcatView/index/tid/{$task.id}.html"> <i class="fa fa-link"></i>
 							<span>概览</span>
 						</a>
 					</li>
 					<li class="active">
-						<a href="__APP__/ApacheView/details/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+						<a href="__APP__/TomcatView/details/tid/{$task.id}.html"> <i class="fa fa-link"></i>
 							<span>详细报表</span>
 						</a>
 					</li>
 					<li>
-						<a href="__APP__/ApacheView/alarmindex/tid/{$task.id}.html">
+						<a href="__APP__/TomcatView/alarmindex/tid/{$task.id}.html">
 							<i class="fa fa-link"></i>
 							<span>告警信息</span>
 						</a>
@@ -113,7 +113,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
 				<h1>
-					Apache详情
+					Tomcat详情
 					<small>Optional description</small>
 				</h1>
 				<ol class="breadcrumb">
@@ -162,114 +162,186 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<div class="col-md-12">
 					<div class="box">
 						<div class="box-header with-border">
-							<h3 class="box-title">Apache吞吐率</h3>
+							<h3 class="box-title">JVM已用内存</h3>
 
 						</div>
 						<!-- /.box-header -->
 						<div class="box-body">
-							<!-- 								<div class="col-md-12">
-							<div class="box-tools pull-left ">
-								<select class="form-control" id="alarmsel">
-									<option value="0">全部</option>
-									<volist name="triggerlist" id="list">
-										<option value="{$list.id}">{$list.alarmcomment}</option>
-									</volist>
-								</select>
-							</div>
-							<div class="box-tools pull-right ">
-								<button type="button" class="btn btn-default pull-right btn-sm" id="daterange-btn">
-									<span>
-										<i class="fa fa-calendar"></i>
-										时期范围
-									</span>
-									<i class="fa fa-caret-down"></i>
-								</button>
+							<div class="clear"></div>
+							<div class="divider20"></div>
+							<div class="col-md-12">
+								<!-- 告警表格 start-->
+								<table id="dtable1" class="potable table table-bordered table-hover">
+									<thead>
+										<tr>
+											<th style="width: 100px;">日期</th>
+											<th>最小已用内存</th>
+											<th>平均已用内存</th>
+											<th>最大已用内存</th>
+										</tr>
+									</thead>
+								</table>
+								<!-- 告警表格 end-->
 							</div>
 						</div>
-						-->
-						<div class="clear"></div>
-						<div class="divider20"></div>
-						<div class="col-md-12">
-							<!-- 告警表格 start-->
-							<table id="dtable1" class="potable table table-bordered table-hover">
-								<thead>
-									<tr>
-										<th style="width: 100px;">日期</th>
-										<th>最小吞吐率</th>
-										<th>平均吞吐率</th>
-										<th>最大吞吐率</th>
-									</tr>
-								</thead>
-							</table>
-							<!-- 告警表格 end-->
-						</div>
-					</div>
 
-				</div>
-			</div>
-			<div class="col-md-12">
-				<div class="box">
-					<div class="box-header with-border">
-						<h3 class="box-title">Apache连接数</h3>
-
-					</div>
-					<!-- /.box-header -->
-					<div class="box-body">
-						<!-- 								<div class="col-md-12">
-						<div class="box-tools pull-left ">
-							<select class="form-control" id="alarmsel">
-								<option value="0">全部</option>
-								<volist name="triggerlist" id="list">
-									<option value="{$list.id}">{$list.alarmcomment}</option>
-								</volist>
-							</select>
-						</div>
-						<div class="box-tools pull-right ">
-							<button type="button" class="btn btn-default pull-right btn-sm" id="daterange-btn">
-								<span>
-									<i class="fa fa-calendar"></i>
-									时期范围
-								</span>
-								<i class="fa fa-caret-down"></i>
-							</button>
-						</div>
-					</div>
-					-->
-					<div class="clear"></div>
-					<div class="divider20"></div>
-					<div class="col-md-12">
-						<!-- 告警表格 start-->
-						<table id="dtable2" class="potable table table-bordered table-hover">
-							<thead>
-								<tr>
-									<th style="width: 100px;">日期</th>
-									<th>最小连接数</th>
-									<th>平均连接数</th>
-									<th>最大连接数</th>
-								</tr>
-							</thead>
-						</table>
-						<!-- 告警表格 end-->
 					</div>
 				</div>
+				<div class="col-md-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<h3 class="box-title">JVM可用内存</h3>
 
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">
+							<div class="clear"></div>
+							<div class="divider20"></div>
+							<div class="col-md-12">
+								<!-- 告警表格 start-->
+								<table id="dtable2" class="potable table table-bordered table-hover">
+									<thead>
+										<tr>
+											<th style="width: 100px;">日期</th>
+											<th>最小JVM可用内存</th>
+											<th>平均JVM可用内存</th>
+											<th>最大JVM可用内存</th>
+										</tr>
+									</thead>
+								</table>
+								<!-- 告警表格 end-->
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<h3 class="box-title">Tomcat处理时间</h3>
+
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">
+							<div class="clear"></div>
+							<div class="divider20"></div>
+							<div class="col-md-12">
+								<!-- 告警表格 start-->
+								<table id="dtable4" class="potable table table-bordered table-hover">
+									<thead>
+										<tr>
+											<th style="width: 100px;">日期</th>
+											<th>最小Tomcat处理时间</th>
+											<th>平均Tomcat处理时间</th>
+											<th>最大Tomcat处理时间</th>
+										</tr>
+									</thead>
+								</table>
+								<!-- 告警表格 end-->
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<h3 class="box-title">Tomcat请求数</h3>
+
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">
+							<div class="clear"></div>
+							<div class="divider20"></div>
+							<div class="col-md-12">
+								<!-- 告警表格 start-->
+								<table id="dtable5" class="potable table table-bordered table-hover">
+									<thead>
+										<tr>
+											<th style="width: 100px;">日期</th>
+											<th>最小Tomcat请求数</th>
+											<th>平均Tomcat请求数</th>
+											<th>最大Tomcat请求数</th>
+										</tr>
+									</thead>
+								</table>
+								<!-- 告警表格 end-->
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<h3 class="box-title">Tomcat网络流量-入流量</h3>
+
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">
+							<div class="clear"></div>
+							<div class="divider20"></div>
+							<div class="col-md-12">
+								<!-- 告警表格 start-->
+								<table id="dtable6" class="potable table table-bordered table-hover">
+									<thead>
+										<tr>
+											<th style="width: 100px;">日期</th>
+											<th>最小Tomcat网络流量-入流量</th>
+											<th>平均Tomcat网络流量-入流量</th>
+											<th>最大Tomcat网络流量-入流量</th>
+										</tr>
+									</thead>
+								</table>
+								<!-- 告警表格 end-->
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<h3 class="box-title">Tomcat网络流量-出流量</h3>
+
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">
+							<div class="clear"></div>
+							<div class="divider20"></div>
+							<div class="col-md-12">
+								<!-- 告警表格 start-->
+								<table id="dtable7" class="potable table table-bordered table-hover">
+									<thead>
+										<tr>
+											<th style="width: 100px;">日期</th>
+											<th>最小Tomcat网络流量-出流量</th>
+											<th>平均Tomcat网络流量-出流量</th>
+											<th>最大Tomcat网络流量-出流量</th>
+										</tr>
+									</thead>
+								</table>
+								<!-- 告警表格 end-->
+							</div>
+						</div>
+
+					</div>
+				</div>
 			</div>
-		</div>
+		</section>
+		<!-- /.content -->
 	</div>
-</section>
-<!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
+	<!-- /.content-wrapper -->
 
-<!-- Main Footer -->
-<include file="Public/main_footer" />
+	<!-- Main Footer -->
+	<include file="Public/main_footer" />
 
-<!-- Control Sidebar -->
+	<!-- Control Sidebar -->
 
-<!-- /.control-sidebar -->
-<!-- Add the sidebar's background. This div must be placed
+	<!-- /.control-sidebar -->
+	<!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
-<div class="control-sidebar-bg"></div>
+	<div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
 
@@ -298,7 +370,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <script type="text/javascript">
 //Date range as a button
-var appurl = rooturl + '/ApacheView/';
+var appurl = rooturl + '/TomcatView/';
 var table = '';
 var sdate1=sdate.split(" ");
 var edate1=edate.split(" ");
@@ -352,7 +424,12 @@ var edate1=edate.split(" ");
 // });
 
 createtable(2,tid,$('#dtable1'));
-createtable(1,tid,$('#dtable2'));
+createtable(7,tid,$('#dtable2'));
+// createtable(1,tid,$('#dtable3'));
+createtable(4,tid,$('#dtable4'));
+createtable(3,tid,$('#dtable5'));
+createtable(12,tid,$('#dtable6'));
+createtable(6,tid,$('#dtable7'));
 function createtable(itemid,tid,obj){
 	var purl = appurl+"gedetailstabledata/itemid/"+itemid+"/tid/"+tid;
 

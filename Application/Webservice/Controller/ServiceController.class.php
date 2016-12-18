@@ -18,8 +18,8 @@ class ServiceController extends BaseController {
 		if ($type == "appcrash" || $type == "appmem" || $type == "appnet") {
 		} else {
 			
-			if ($type == "tomcat") {
-				wlog ( "(TOMCAT)POST:" . serialize ( $_POST ) );
+			if ($type == "sqlserver") {
+				wlog ( "(sqlserver)POST:" . serialize ( $_POST ) );
 			}
 			
 			// wlog ( "(postwebtask)POST:" . serialize ( $_POST ) );
