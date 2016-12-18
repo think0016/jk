@@ -43,6 +43,9 @@ class TaskController extends BaseController {
 			case 'nginx' :
 				redirect ( U ( '/NginxView/index/tid/' . $tid ) );
 				break;
+			case 'tomcat' :
+				redirect ( U ( '/TomcatView/index/tid/' . $tid ) );
+				break;
 		}
 	}
 	public function tasklist() {

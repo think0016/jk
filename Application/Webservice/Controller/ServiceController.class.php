@@ -18,6 +18,10 @@ class ServiceController extends BaseController {
 		if ($type == "appcrash" || $type == "appmem" || $type == "appnet") {
 		} else {
 			
+			if ($type == "tomcat") {
+				wlog ( "(TOMCAT)POST:" . serialize ( $_POST ) );
+			}
+			
 			// wlog ( "(postwebtask)POST:" . serialize ( $_POST ) );
 			// exit("测试停止");
 			
@@ -115,7 +119,7 @@ class ServiceController extends BaseController {
 					break;
 				case "sqlserver" :
 					$task = $this->getsqlservertask ( $taskval );
-					break;				
+					break;
 				case "oracle" :
 					$task = $this->getoracletask ( $taskval );
 					break; // oracle
@@ -200,6 +204,20 @@ class ServiceController extends BaseController {
 				// $return [] = $this->UpdateRrd ( $filename, $item_name, $rdata );
 				$this->UpdateServiceRrdBysh ( $filename, $lasttime, $item_name, $rdata, $taskid, $frequency, $datatype );
 			}
+			
+			// tomcat
+			if ($post ["type"] == "tomcat") {
+				$taskdetailsModel = D ( "jk_taskdetails_33" );
+				$updatedata = array (
+						"jvm_ver" => $data ['jvm_ver'],
+						"appname" => $data ['appname'],
+						"tomcat_ver" => $data ['tomcat_ver'],
+						"os_ver" => $data ['os_ver'] 
+				);
+				$taskdetailsModel->where ( array (
+						"taskid" => $taskid 
+				) )->save ( $updatedata );
+			}
 		} else {
 			// 调用task_status_process.py
 			$this->task_status_process ( $taskid, $tasklist ["sid"], $status );
@@ -261,7 +279,6 @@ class ServiceController extends BaseController {
 		
 		return $return;
 	}
-
 	private function gettomcattask($taskval) {
 		$sid = 33;
 		$return = array ();
@@ -323,11 +340,10 @@ class ServiceController extends BaseController {
 		
 		return $return;
 	}
-	
 	private function getmysqltask($taskval) {
 		$sid = 7;
 		$return = array ();
-	
+		
 		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
 		// $ssid = $taskval ['ssid'];
 		$tid = $taskval ['id'];
@@ -335,30 +351,29 @@ class ServiceController extends BaseController {
 		$frequency = $taskval ['frequency'];
 		$lasttime = $taskval ['lasttime'];
 		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
-	
+		
 		$return ['id'] = $tid;
 		$return ['frequency'] = $frequency;
 		$return ['lasttime'] = $lasttime;
 		$taskdetail = $taskdetailsModel->where ( array (
-				"taskid" => $tid
+				"taskid" => $tid 
 		) )->find ();
-	
+		
 		if ($taskdetail) {
 			$return ['target'] = $taskdetail ['target'];
 			$return ['username'] = $taskdetail ['username'];
 			$return ['password'] = $taskdetail ['password'];
 			$return ['port'] = $taskdetail ['port'];
 		}
-	
+		
 		$return ['type'] = "mysql"; // 普通任务
-	
+		
 		return $return;
 	}
-	
 	private function getoracletask($taskval) {
 		$sid = 35;
 		$return = array ();
-	
+		
 		$taskdetailsModel = D ( "jk_taskdetails_" . $sid );
 		// $ssid = $taskval ['ssid'];
 		$tid = $taskval ['id'];
@@ -366,23 +381,23 @@ class ServiceController extends BaseController {
 		$frequency = $taskval ['frequency'];
 		$lasttime = $taskval ['lasttime'];
 		$lasttime = $this->rlasttime ( $taskval ['mid'], $lasttime );
-	
+		
 		$return ['id'] = $tid;
 		$return ['frequency'] = $frequency;
 		$return ['lasttime'] = $lasttime;
 		$taskdetail = $taskdetailsModel->where ( array (
-				"taskid" => $tid
+				"taskid" => $tid 
 		) )->find ();
-	
+		
 		if ($taskdetail) {
 			$return ['target'] = $taskdetail ['target'];
 			$return ['username'] = $taskdetail ['username'];
 			$return ['password'] = $taskdetail ['password'];
 			$return ['port'] = $taskdetail ['port'];
 		}
-	
+		
 		$return ['type'] = "oracle"; // 普通任务
-	
+		
 		return $return;
 	}
 }
