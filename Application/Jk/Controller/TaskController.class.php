@@ -46,8 +46,12 @@ class TaskController extends BaseController {
 			case 'tomcat' :
 				redirect ( U ( '/TomcatView/index/tid/' . $tid ) );
 				break;
+			case 'mysql' :
+				redirect ( U ( '/MysqlView/index/tid/' . $tid ) );
+				break;
 		}
 	}
+	
 	public function tasklist() {
 		
 		// 检查登录情况
