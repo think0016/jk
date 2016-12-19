@@ -136,7 +136,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<div class="box">
 							<div class="box-header with-border">
 								<h3 class="box-title">告警信息</h3>
-
+								<div class="box-tools pull-right">
+									<!-- Buttons, labels, and many other things can be placed here! -->
+									<!-- Here is a label for example -->
+									<a href="__APP__/TomcatView/alarmindex/tid/{$taskdetails.taskid}" class="btn btn-sm btn-default">查看全部</a>
+								</div>
 							</div>
 							<!-- /.box-header -->
 							<div class="box-body">
@@ -449,6 +453,7 @@ function createtable(itemid,tid,obj){
 			"searching": false,
 			"ordering": true,
 			"info": true,
+			"order": [ 0, 'desc' ],
 			"retrieve": true,
 			"autoWidth": false,
 			"language": {

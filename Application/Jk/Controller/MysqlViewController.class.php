@@ -10,6 +10,7 @@ class MysqlViewController extends MonitorController {
 		// 检查登录情况
 		$this->is_login ( 1 );
 		
+		//$action = I ( 'get.action' );
 		$taskid = I ( 'get.tid' );
 		$itemid = I ( 'get.itemid' );
 		$stime = I ( 'get.sdate' );
@@ -78,6 +79,227 @@ class MysqlViewController extends MonitorController {
 		// $this->assign ( "itemid", $itemid );
 		$this->assign ( "step", $step );
 		$this->display ();
+
+	}
+	
+	/**
+	 * 查询缓存
+	 */
+	public function cxindex() {
+		// 检查登录情况
+		$this->is_login ( 1 );
+	
+		//$action = I ( 'get.action' );
+		$taskid = I ( 'get.tid' );
+		$itemid = I ( 'get.itemid' );
+		$stime = I ( 'get.sdate' );
+		$etime = I ( 'get.edate' );
+		if ($taskid == "") {
+			$this->error ( "参数错误1" );
+		}
+	
+		// $sid = 1;
+		// $pointModel = D ( 'jk_monitorypoint' );
+		$taskModel = D ( 'jk_task' );
+		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
+		$taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
+	
+		$task = $taskModel->where ( array (
+				"id" => $taskid,
+				"is_del" => 0
+		) )->find ();
+	
+		if (! $task) {
+			$this->error ( "参数错误2" );
+		}
+	
+		$taskdetails = $taskdetailsModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+		$taskdetailsadv = $taskdetailsAdvModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+	
+		$setime = $this->timeinterval ( $stime, $etime );
+		$sdate = $setime [0];
+		$edate = $setime [1];
+		$step = 3600;
+	
+	
+		$this->assignbase ();
+		$this->assign ( "task", $task );
+		$this->assign ( "taskdetails", $taskdetails );
+		$this->assign ( "taskdetailsadv", $taskdetailsadv );
+		$this->assign ( "sdate", $sdate );
+		$this->assign ( "edate", $edate );
+		$this->assign ( "step", $step );
+		$this->display ();
+	
+	}
+	
+	/**
+	 * 索引缓存
+	 */
+	public function syindex() {
+		// 检查登录情况
+		$this->is_login ( 1 );
+	
+		//$action = I ( 'get.action' );
+		$taskid = I ( 'get.tid' );
+		$itemid = I ( 'get.itemid' );
+		$stime = I ( 'get.sdate' );
+		$etime = I ( 'get.edate' );
+		if ($taskid == "") {
+			$this->error ( "参数错误1" );
+		}
+	
+		// $sid = 1;
+		// $pointModel = D ( 'jk_monitorypoint' );
+		$taskModel = D ( 'jk_task' );
+		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
+		$taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
+	
+		$task = $taskModel->where ( array (
+				"id" => $taskid,
+				"is_del" => 0
+		) )->find ();
+	
+		if (! $task) {
+			$this->error ( "参数错误2" );
+		}
+	
+		$taskdetails = $taskdetailsModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+		$taskdetailsadv = $taskdetailsAdvModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+	
+		$setime = $this->timeinterval ( $stime, $etime );
+		$sdate = $setime [0];
+		$edate = $setime [1];
+		$step = 3600;
+	
+	
+		$this->assignbase ();
+		$this->assign ( "task", $task );
+		$this->assign ( "taskdetails", $taskdetails );
+		$this->assign ( "taskdetailsadv", $taskdetailsadv );
+		$this->assign ( "sdate", $sdate );
+		$this->assign ( "edate", $edate );
+		$this->assign ( "step", $step );
+		$this->display ();
+	
+	}
+	
+	/**
+	 * 连接与流量
+	 */
+	public function llindex() {
+		// 检查登录情况
+		$this->is_login ( 1 );
+	
+		//$action = I ( 'get.action' );
+		$taskid = I ( 'get.tid' );
+		$itemid = I ( 'get.itemid' );
+		$stime = I ( 'get.sdate' );
+		$etime = I ( 'get.edate' );
+		if ($taskid == "") {
+			$this->error ( "参数错误1" );
+		}
+	
+		// $sid = 1;
+		// $pointModel = D ( 'jk_monitorypoint' );
+		$taskModel = D ( 'jk_task' );
+		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
+		$taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
+	
+		$task = $taskModel->where ( array (
+				"id" => $taskid,
+				"is_del" => 0
+		) )->find ();
+	
+		if (! $task) {
+			$this->error ( "参数错误2" );
+		}
+	
+		$taskdetails = $taskdetailsModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+		$taskdetailsadv = $taskdetailsAdvModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+	
+		$setime = $this->timeinterval ( $stime, $etime );
+		$sdate = $setime [0];
+		$edate = $setime [1];
+		$step = 3600;
+	
+	
+		$this->assignbase ();
+		$this->assign ( "task", $task );
+		$this->assign ( "taskdetails", $taskdetails );
+		$this->assign ( "taskdetailsadv", $taskdetailsadv );
+		$this->assign ( "sdate", $sdate );
+		$this->assign ( "edate", $edate );
+		$this->assign ( "step", $step );
+		$this->display ();
+	
+	}
+	
+	/**
+	 * 锁定表
+	 */
+	public function lockindex() {
+		// 检查登录情况
+		$this->is_login ( 1 );
+	
+		//$action = I ( 'get.action' );
+		$taskid = I ( 'get.tid' );
+		$itemid = I ( 'get.itemid' );
+		$stime = I ( 'get.sdate' );
+		$etime = I ( 'get.edate' );
+		if ($taskid == "") {
+			$this->error ( "参数错误1" );
+		}
+	
+		// $sid = 1;
+		// $pointModel = D ( 'jk_monitorypoint' );
+		$taskModel = D ( 'jk_task' );
+		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
+		$taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
+	
+		$task = $taskModel->where ( array (
+				"id" => $taskid,
+				"is_del" => 0
+		) )->find ();
+	
+		if (! $task) {
+			$this->error ( "参数错误2" );
+		}
+	
+		$taskdetails = $taskdetailsModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+		$taskdetailsadv = $taskdetailsAdvModel->where ( array (
+				"taskid" => $taskid
+		) )->find ();
+	
+		$setime = $this->timeinterval ( $stime, $etime );
+		$sdate = $setime [0];
+		$edate = $setime [1];
+		$step = 3600;
+	
+	
+		$this->assignbase ();
+		$this->assign ( "task", $task );
+		$this->assign ( "taskdetails", $taskdetails );
+		$this->assign ( "taskdetailsadv", $taskdetailsadv );
+		$this->assign ( "sdate", $sdate );
+		$this->assign ( "edate", $edate );
+		$this->assign ( "step", $step );
+		$this->display ();
+	
 	}
 	
 	/**

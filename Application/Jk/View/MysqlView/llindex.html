@@ -91,18 +91,38 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<ul class="sidebar-menu">
 					<li class="header">HEADER</li>
 					<!-- Optionally, you can add icons to the links -->
-					<li class="active">
-						<a href="__APP__/ApacheView/index/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+					<li>
+						<a href="__APP__/MysqlView/index/tid/{$task.id}.html"> <i class="fa fa-link"></i>
 							<span>概览</span>
 						</a>
 					</li>
 					<li>
-						<a href="__APP__/ApacheView/details/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+						<a href="__APP__/MysqlView/details/tid/{$task.id}.html"> <i class="fa fa-link"></i>
 							<span>详细报表</span>
 						</a>
 					</li>
 					<li>
-						<a href="__APP__/ApacheView/alarmindex/tid/{$task.id}.html">
+						<a href="__APP__/MysqlView/cxindex/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+							<span>查询缓存</span>
+						</a>
+					</li>
+					<li>
+						<a href="__APP__/MysqlView/syindex/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+							<span>索引缓存</span>
+						</a>
+					</li>
+					<li class="active">
+						<a href="__APP__/MysqlView/llindex/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+							<span>连接与流量</span>
+						</a>
+					</li>
+					<li>
+						<a href="__APP__/MysqlView/lockindex/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+							<span>锁定表</span>
+						</a>
+					</li>
+					<li>
+						<a href="__APP__/MysqlView/alarmindex/tid/{$task.id}.html">
 							<i class="fa fa-link"></i>
 							<span>告警信息</span>
 						</a>
@@ -118,7 +138,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
 				<h1>
-					Apache详情
+					Mysql详情——连接与流量
 					<small>Optional description</small>
 				</h1>
 				<ol class="breadcrumb">
@@ -155,7 +175,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										</tr>
 										<tr>
 											<td>监控类型</td>
-											<td>Apache</td>
+											<td>Mysql</td>
 
 										</tr>
 										<tr>
@@ -182,7 +202,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<div class="box-tools pull-right">
 								<!-- Buttons, labels, and many other things can be placed here! -->
 								<!-- Here is a label for example -->
-								<a href="__APP__/ApacheView/alarmindex/tid/{$taskdetails.taskid}" class="btn btn-sm btn-default">查看全部</a>
+								<a href="__APP__/MysqlView/alarmindex/tid/{$taskdetails.taskid}" class="btn btn-sm btn-default">查看全部</a>
 							</div>
 							<!-- /.box-tools -->
 						</div>
@@ -260,79 +280,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				-->
 				<div class="box box-info">
 					<div class="box-header">
-						<h3 class="box-title">Apache吞吐率情况</h3>
+						<h3 class="box-title">Mysql连接吞吐率</h3>
 					</div>
 					<div class="box-body">
-						<div class="col-md-6">
-							<div class="small-box bg-blue">
-								<div class="inner">
-									<h3>
-										{$ttl_max}  
-									</h3>
-
-									<p>最大吞吐率</p>
-								</div>
-								<div class="icon">
-									<i class="ion ion-cloud"></i>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="small-box bg-blue">
-								<div class="inner">
-									<h3>
-										{$ttl_avg}  
-									</h3>
-
-									<p>平均吞吐率</p>
-								</div>
-								<div class="icon">
-									<i class="ion ion-cloud"></i>
-								</div>
-							</div>
-						</div>
 						<div class="col-md-12"><div id="line1" style="height: 400px;"></div></div>
 						
 					</div>
 				</div>
-
 			</div>
 			<div class="col-md-12">
 				<div class="box box-info">
 					<div class="box-header">
-						<h3 class="box-title">Apache并发连接数情况</h3>
+						<h3 class="box-title">Mysql连接缓存命中率</h3>
 					</div>
 					<div class="box-body">
-						<div class="col-md-6">
-							<div class="small-box bg-blue">
-								<div class="inner">
-									<h3>
-										{$ljs_max}
-									</h3>
-
-									<p>最大并发连接数</p>
-								</div>
-								<div class="icon">
-									<i class="ion ion-cloud"></i>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="small-box bg-blue">
-								<div class="inner">
-									<h3>
-										{$ljs_avg}
-									</h3>
-
-									<p>平均并发连接数</p>
-								</div>
-								<div class="icon">
-									<i class="ion ion-cloud"></i>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-12"><div id="line2" style="height: 400px;"></div></div>
-						
+						<div id="line2" style="height: 400px;"></div>
 					</div>
 				</div>
 
@@ -340,10 +302,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="col-md-12">
 				<div class="box box-info">
 					<div class="box-header">
-						<h3 class="box-title">Apache其他指标统计</h3>
+						<h3 class="box-title">Mysql并发连接</h3>
 					</div>
 					<div class="box-body">
 						<div id="line3" style="height: 400px;"></div>
+					</div>
+				</div>
+
+			</div>
+			<div class="col-md-12">
+				<div class="box box-info">
+					<div class="box-header">
+						<h3 class="box-title">Mysql流量统计</h3>
+					</div>
+					<div class="box-body">
+						<div id="line4" style="height: 400px;"></div>
 					</div>
 				</div>
 
@@ -394,7 +367,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <script type="text/javascript">//$('#Notifications').text(alarmsnum);
 //变量设置
-var appurl = rooturl + '/ApacheView/';
+var appurl = rooturl + '/MysqlView/';
 
 
 //Date range as a button
@@ -440,7 +413,7 @@ $('#daterange-btn').on('apply.daterangepicker', function(ev, picker) {
 	//console.log(picker.endDate.format('YYYY-MM-DD'));
 	var sdate = picker.startDate.format('YYYY-MM-DD');
 	var edate = picker.endDate.format('YYYY-MM-DD');
-	var url = appurl + "index/" + "tid/" + tid + "/sdate/" + sdate + "/edate/" + edate;
+	var url = appurl + "llindex/" + "tid/" + tid + "/sdate/" + sdate + "/edate/" + edate;
 	window.location.href = url;
 });
 
@@ -512,9 +485,10 @@ function createline(domid,itemid) {
 
 
 }
-createline('line1','2');
-createline('line2','1');
-createline('line3','3,4,5,6,7');
+createline('line1','10,21');
+createline('line2','22');
+createline('line3','25,26,27,28,29');
+createline('line4','11,12');
 createtable(sdate1[0], edate1[0], 0);
 
 
