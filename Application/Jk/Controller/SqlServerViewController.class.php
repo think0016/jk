@@ -2,15 +2,14 @@
 
 namespace Jk\Controller;
 
-class MysqlViewController extends MonitorController {
-	private $tasktype = 'mysql';
-	private $sid = 7;
+class SqlServerViewController extends MonitorController {
+	private $tasktype = 'sqlserver';
+	private $sid = 34;
 	private $defaultitem = "responsetime";
 	public function index() {
 		// 检查登录情况
 		$this->is_login ( 1 );
 		
-		//$action = I ( 'get.action' );
 		$taskid = I ( 'get.tid' );
 		$itemid = I ( 'get.itemid' );
 		$stime = I ( 'get.sdate' );
@@ -46,22 +45,24 @@ class MysqlViewController extends MonitorController {
 		$edate = $setime [1];
 		$step = 3600;
 		
-		// 取最大已用内存
+		// 取吞吐率值
 		// $mids = $task ['mids'];
 		// $mid = str_replace ( ":", "", $mids ); // 服务性能只有一个监控点
 		// $uid = session ( "uid" );
 		// $ssid = $task ['ssid'];
 		// $itemid = 2;
 		// $rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
-		// $usedmemory = $this->rrd_server_avg ( $rrdfilename, $sdate, $edate, 0, $step )[0];
-		// // // 取最大可用内存
-		// $itemid = 7;
+		// $ttl_avg = $this->rrd_server_avg ( $rrdfilename, $sdate, $edate, 0, $step );
+		// $ttl_max = $this->rrd_server_max ( $rrdfilename, $sdate, $edate, 0, $step );
+		// // $ttl_avg = floatval($ttl_avg[0])*100;
+		// // $ttl_max = floatval($ttl_max[0])*100;
+		// $ttl_avg = $ttl_avg [0];
+		// $ttl_max = $ttl_max [0];
+		// // 取并发连接数值
+		// $itemid = 1;
 		// $rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
-		// $freememory = $this->rrd_server_avg ( $rrdfilename, $sdate, $edate, 0, $step )[0];
-		// // 取请求最大处理时间
-		// $itemid = 5;
-		// $rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
-		// $processingtime = $this->rrd_server_avg ( $rrdfilename, $sdate, $edate, 0, $step )[0];
+		// $ljs_avg = $this->rrd_server_avg ( $rrdfilename, $sdate, $edate, 0, $step );
+		// $ljs_max = $this->rrd_server_max ( $rrdfilename, $sdate, $edate, 0, $step );
 		
 		$this->assignbase ();
 		$this->assign ( "task", $task );
@@ -69,9 +70,6 @@ class MysqlViewController extends MonitorController {
 		$this->assign ( "taskdetailsadv", $taskdetailsadv );
 		$this->assign ( "sdate", $sdate );
 		$this->assign ( "edate", $edate );
-		// $this->assign ( "usedmemory", $usedmemory );
-		// $this->assign ( "freememory", $freememory );
-		// $this->assign ( "processingtime", $processingtime );
 		// $this->assign ( "ttl_avg", $ttl_avg );
 		// $this->assign ( "ttl_max", $ttl_max );
 		// $this->assign ( "ljs_avg", intval ( $ljs_avg [0] ) );
@@ -79,17 +77,15 @@ class MysqlViewController extends MonitorController {
 		// $this->assign ( "itemid", $itemid );
 		$this->assign ( "step", $step );
 		$this->display ();
-
 	}
 	
 	/**
-	 * 查询缓存
+	 * 整体概况
 	 */
-	public function cxindex() {
+	public function allindex() {
 		// 检查登录情况
 		$this->is_login ( 1 );
 	
-		//$action = I ( 'get.action' );
 		$taskid = I ( 'get.tid' );
 		$itemid = I ( 'get.itemid' );
 		$stime = I ( 'get.sdate' );
@@ -125,6 +121,7 @@ class MysqlViewController extends MonitorController {
 		$edate = $setime [1];
 		$step = 3600;
 	
+		// 取吞吐率值
 	
 		$this->assignbase ();
 		$this->assign ( "task", $task );
@@ -134,17 +131,15 @@ class MysqlViewController extends MonitorController {
 		$this->assign ( "edate", $edate );
 		$this->assign ( "step", $step );
 		$this->display ();
-	
 	}
 	
 	/**
-	 * 索引缓存
+	 * 整体概况
 	 */
-	public function syindex() {
+	public function dbindex() {
 		// 检查登录情况
 		$this->is_login ( 1 );
 	
-		//$action = I ( 'get.action' );
 		$taskid = I ( 'get.tid' );
 		$itemid = I ( 'get.itemid' );
 		$stime = I ( 'get.sdate' );
@@ -180,6 +175,7 @@ class MysqlViewController extends MonitorController {
 		$edate = $setime [1];
 		$step = 3600;
 	
+		// 取吞吐率值
 	
 		$this->assignbase ();
 		$this->assign ( "task", $task );
@@ -189,117 +185,6 @@ class MysqlViewController extends MonitorController {
 		$this->assign ( "edate", $edate );
 		$this->assign ( "step", $step );
 		$this->display ();
-	
-	}
-	
-	/**
-	 * 连接与流量
-	 */
-	public function llindex() {
-		// 检查登录情况
-		$this->is_login ( 1 );
-	
-		//$action = I ( 'get.action' );
-		$taskid = I ( 'get.tid' );
-		$itemid = I ( 'get.itemid' );
-		$stime = I ( 'get.sdate' );
-		$etime = I ( 'get.edate' );
-		if ($taskid == "") {
-			$this->error ( "参数错误1" );
-		}
-	
-		// $sid = 1;
-		// $pointModel = D ( 'jk_monitorypoint' );
-		$taskModel = D ( 'jk_task' );
-		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
-		$taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
-	
-		$task = $taskModel->where ( array (
-				"id" => $taskid,
-				"is_del" => 0
-		) )->find ();
-	
-		if (! $task) {
-			$this->error ( "参数错误2" );
-		}
-	
-		$taskdetails = $taskdetailsModel->where ( array (
-				"taskid" => $taskid
-		) )->find ();
-		$taskdetailsadv = $taskdetailsAdvModel->where ( array (
-				"taskid" => $taskid
-		) )->find ();
-	
-		$setime = $this->timeinterval ( $stime, $etime );
-		$sdate = $setime [0];
-		$edate = $setime [1];
-		$step = 3600;
-	
-	
-		$this->assignbase ();
-		$this->assign ( "task", $task );
-		$this->assign ( "taskdetails", $taskdetails );
-		$this->assign ( "taskdetailsadv", $taskdetailsadv );
-		$this->assign ( "sdate", $sdate );
-		$this->assign ( "edate", $edate );
-		$this->assign ( "step", $step );
-		$this->display ();
-	
-	}
-	
-	/**
-	 * 锁定表
-	 */
-	public function lockindex() {
-		// 检查登录情况
-		$this->is_login ( 1 );
-	
-		//$action = I ( 'get.action' );
-		$taskid = I ( 'get.tid' );
-		$itemid = I ( 'get.itemid' );
-		$stime = I ( 'get.sdate' );
-		$etime = I ( 'get.edate' );
-		if ($taskid == "") {
-			$this->error ( "参数错误1" );
-		}
-	
-		// $sid = 1;
-		// $pointModel = D ( 'jk_monitorypoint' );
-		$taskModel = D ( 'jk_task' );
-		$taskdetailsModel = D ( 'jk_taskdetails_' . $this->sid );
-		$taskdetailsAdvModel = D ( 'jk_taskdetails_adv_' . $this->sid );
-	
-		$task = $taskModel->where ( array (
-				"id" => $taskid,
-				"is_del" => 0
-		) )->find ();
-	
-		if (! $task) {
-			$this->error ( "参数错误2" );
-		}
-	
-		$taskdetails = $taskdetailsModel->where ( array (
-				"taskid" => $taskid
-		) )->find ();
-		$taskdetailsadv = $taskdetailsAdvModel->where ( array (
-				"taskid" => $taskid
-		) )->find ();
-	
-		$setime = $this->timeinterval ( $stime, $etime );
-		$sdate = $setime [0];
-		$edate = $setime [1];
-		$step = 3600;
-	
-	
-		$this->assignbase ();
-		$this->assign ( "task", $task );
-		$this->assign ( "taskdetails", $taskdetails );
-		$this->assign ( "taskdetailsadv", $taskdetailsadv );
-		$this->assign ( "sdate", $sdate );
-		$this->assign ( "edate", $edate );
-		$this->assign ( "step", $step );
-		$this->display ();
-	
 	}
 	
 	/**
@@ -391,7 +276,6 @@ class MysqlViewController extends MonitorController {
 		$this->assign ( "triggerlist", $triggerlist );
 		$this->display ();
 	}
-	
 	public function gedetailstabledata() {
 		if (! $this->is_login ( 0 )) {
 			exit ( "ERROR" );
@@ -469,115 +353,6 @@ class MysqlViewController extends MonitorController {
 		// var_dump($return);
 		echo json_encode ( $return );
 	}
-	
-	//流量
-	public function gedetailstabledatax() {
-		if (! $this->is_login ( 0 )) {
-			exit ( "ERROR" );
-		}
-	
-		$taskid = I ( 'get.tid' );
-		// $stime = I ( 'get.sdate' );
-		// $etime = I ( 'get.edate' );
-		$itemid = I ( 'get.itemid' );
-	
-		if ($taskid == "" || $itemid == "") {
-			$this->error ( "参数错误1" );
-		}
-	
-		$taskModel = D ( 'jk_task' );
-	
-		$task = $taskModel->where ( array (
-				"id" => $taskid,
-				"is_del" => 0
-		) )->find ();
-	
-		if (! $task) {
-			$this->error ( "参数错误2" );
-		}
-		$mids = $task ['mids'];
-		$mid = str_replace ( ":", "", $mids ); // 服务性能只有一个监控点
-		$uid = session ( "uid" );
-		$ssid = $task ['ssid'];
-	
-		// 假设时间间隔固定
-		$etime = strtotime ( date ( "Y-m-d" ) );
-		$stime = $etime - (86400 * 30); // 30天
-		$step = 86400;
-	
-		$filename1 = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, 11 );//流出
-		$filename2 = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, 12 );//流入
-	
-		$avg_rs1 = $this->rrd_server_avg_list ( $filename1, $stime, $etime, $step );
-		$max_rs1 = $this->rrd_server_max_list ( $filename1, $stime, $etime, $step );
-		$min_rs1 = $this->rrd_server_min_list ( $filename1, $stime, $etime, $step );
-		$avg_rs2 = $this->rrd_server_avg_list ( $filename2, $stime, $etime, $step );
-		$max_rs2 = $this->rrd_server_max_list ( $filename2, $stime, $etime, $step );
-		$min_rs2 = $this->rrd_server_min_list ( $filename2, $stime, $etime, $step );
-			
-		$return = array ();
-		for($i = count ( $avg_rs1 ) - 1; $i > 0; $i --) {
-			// for ($i = 0; $i < count($avg_rs) ; $i++) {
-			$row = array ();
-			$min_data1 = 0;
-			$avg_data1 = 0;
-			$max_data1 = 0;
-			$min_data2 = 0;
-			$avg_data2 = 0;
-			$max_data2 = 0;
-			;
-			// 算平均
-			$val = $avg_rs1 [$i];
-			$mtime = explode ( " ", $val )[0];
-			$avg_data1 = (explode ( " ", $val ) == null) ? 0 : explode ( " ", $val )[1];
-				
-			// 算最大
-			if (isset ( $max_rs1 [$i] )) {
-				$val = $max_rs1 [$i];
-				// $mtime = explode(" ", $val)[0];
-				$max_data1 = (explode ( " ", $val ) == null) ? 0 : explode ( " ", $val )[1];
-			}
-				
-			// 算最小
-			if (isset ( $min_rs1 [$i] )) {
-				$val = $min_rs1 [$i];
-				// $mtime = explode(" ", $val)[0];
-				$min_data1 = (explode ( " ", $val ) == null) ? 0 : explode ( " ", $val )[1];
-			}
-				
-			// 算平均
-			$val = $avg_rs2 [$i];
-			$mtime = explode ( " ", $val )[0];
-			$avg_data2 = (explode ( " ", $val ) == null) ? 0 : explode ( " ", $val )[1];
-			
-			// 算最大
-			if (isset ( $max_rs2 [$i] )) {
-				$val = $max_rs2 [$i];
-				// $mtime = explode(" ", $val)[0];
-				$max_data2 = (explode ( " ", $val ) == null) ? 0 : explode ( " ", $val )[1];
-			}
-			
-			// 算最小
-			if (isset ( $min_rs2 [$i] )) {
-				$val = $min_rs2 [$i];
-				// $mtime = explode(" ", $val)[0];
-				$min_data2 = (explode ( " ", $val ) == null) ? 0 : explode ( " ", $val )[1];
-			}
-			
-			$row [] = date ( "Y年m月d日", $mtime );
-			$row [] = $min_data2;
-			$row [] = $avg_data2;
-			$row [] = $max_data2;
-			$row [] = $min_data1;
-			$row [] = $avg_data1;
-			$row [] = $max_data1;
-			$return [] = $row;
-		}
-	
-		// var_dump($return);
-		echo json_encode ( $return );
-	}
-	
 	public function getalarmtabledata() {
 		if (! $this->is_login ( 0 )) {
 			exit ( "ERROR" );
@@ -778,7 +553,6 @@ class MysqlViewController extends MonitorController {
 			$c_series [] = array (
 					"name" => $taskitem ['comment'],
 					"type" => "line",
-					// "areaStyle"=>array("normal"=>new \stdClass()),
 					"smooth" => true,
 					"smoothMonotone" => "x",
 					"data" => $value 

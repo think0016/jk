@@ -49,9 +49,11 @@ class TaskController extends BaseController {
 			case 'mysql' :
 				redirect ( U ( '/MysqlView/index/tid/' . $tid ) );
 				break;
+			case 'sqlserver' :
+				redirect ( U ( '/SqlServerView/index/tid/' . $tid ) );
+				break;
 		}
 	}
-	
 	public function tasklist() {
 		
 		// 检查登录情况

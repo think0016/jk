@@ -87,41 +87,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<li class="header">HEADER</li>
 					<!-- Optionally, you can add icons to the links -->
 					<li>
-						<a href="__APP__/MysqlView/index/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+						<a href="__APP__/SqlServerView/index/tid/{$task.id}.html"> <i class="fa fa-link"></i>
 							<span>概览</span>
 						</a>
 					</li>
 					<li class="active">
-						<a href="__APP__/MysqlView/details/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+						<a href="__APP__/SqlServerView/details/tid/{$task.id}.html"> <i class="fa fa-link"></i>
 							<span>详细报表</span>
 						</a>
 					</li>
 					<li>
-						<a href="__APP__/MysqlView/cxindex/tid/{$task.id}.html">
-							<i class="fa fa-link"></i>
-							<span>查询缓存</span>
+						<a href="__APP__/SqlServerView/allindex/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+							<span>整体情况</span>
 						</a>
 					</li>
 					<li>
-						<a href="__APP__/MysqlView/syindex/tid/{$task.id}.html">
-							<i class="fa fa-link"></i>
-							<span>索引缓存</span>
+						<a href="__APP__/SqlServerView/dbindex/tid/{$task.id}.html"> <i class="fa fa-link"></i>
+							<span>数据库概况</span>
 						</a>
 					</li>
 					<li>
-						<a href="__APP__/MysqlView/llindex/tid/{$task.id}.html">
-							<i class="fa fa-link"></i>
-							<span>连接与流量</span>
-						</a>
-					</li>
-					<li>
-						<a href="__APP__/MysqlView/lockindex/tid/{$task.id}.html">
-							<i class="fa fa-link"></i>
-							<span>锁定表</span>
-						</a>
-					</li>
-					<li>
-						<a href="__APP__/MysqlView/alarmindex/tid/{$task.id}.html">
+						<a href="__APP__/SqlServerView/alarmindex/tid/{$task.id}.html">
 							<i class="fa fa-link"></i>
 							<span>告警信息</span>
 						</a>
@@ -137,7 +123,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
 				<h1>
-					Mysql详情
+					SqlServer详情
 					<small>Optional description</small>
 				</h1>
 				<ol class="breadcrumb">
@@ -163,7 +149,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<div class="box-tools pull-right">
 									<!-- Buttons, labels, and many other things can be placed here! -->
 									<!-- Here is a label for example -->
-									<a href="__APP__/MysqlView/alarmindex/tid/{$taskdetails.taskid}" class="btn btn-sm btn-default">查看全部</a>
+									<a href="__APP__/SqlServerView/alarmindex/tid/{$taskdetails.taskid}" class="btn btn-sm btn-default">查看全部</a>
 								</div>
 							</div>
 							<!-- /.box-header -->
@@ -190,109 +176,102 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<div class="col-md-12">
 					<div class="box">
 						<div class="box-header with-border">
-							<h3 class="box-title">Mysql连接吞吐率</h3>
+							<h3 class="box-title">SqlServer连接数</h3>
 
 						</div>
 						<!-- /.box-header -->
 						<div class="box-body">
-							<div class="clear"></div>
-							<div class="divider20"></div>
-							<div class="col-md-12">
-								<!-- 告警表格 start-->
-								<table id="dtable1" class="potable table table-bordered table-hover">
-									<thead>
-										<tr>
-											<th style="width: 100px;">日期</th>
-											<th>最小吞吐率</th>
-											<th>平均吞吐率</th>
-											<th>最大吞吐率</th>
-										</tr>
-									</thead>
-								</table>
-								<!-- 告警表格 end-->
-							</div>
+						<div class="clear"></div>
+						<div class="divider20"></div>
+						<div class="col-md-12">
+							<!-- 告警表格 start-->
+							<table id="dtable1" class="potable table table-bordered table-hover">
+								<thead>
+									<tr>
+										<th style="width: 100px;">日期</th>
+										<th>最小连接数</th>
+										<th>平均连接数</th>
+										<th>最大连接数</th>
+									</tr>
+								</thead>
+							</table>
+							<!-- 告警表格 end-->
 						</div>
-
 					</div>
-				</div>
-				<div class="col-md-12">
-					<div class="box">
-						<div class="box-header with-border">
-							<h3 class="box-title">Mysql流量</h3>
 
-						</div>
-						<!-- /.box-header -->
-						<div class="box-body">
-							<div class="clear"></div>
-							<div class="divider20"></div>
-							<div class="col-md-12">
-								<!-- 告警表格 start-->
-								<table id="dtable2" class="potable table table-bordered table-hover">
-									<thead>
-										<tr>
-											<th style="width: 100px;" rowspan="2">日期</th>
-											<th colspan="3">流入</th>
-											<th colspan="3">流出</th>
-										</tr>
-										<tr>
-											<th>最小</th>
-											<th>平均</th>
-											<th>最大</th>
-											<th>最小</th>
-											<th>平均</th>
-											<th>最大</th>
-										</tr>
-									</thead>
-								</table>
-								<!-- 告警表格 end-->
-							</div>
-						</div>
-
-					</div>
-				</div>
-				<div class="col-md-12">
-					<div class="box">
-						<div class="box-header with-border">
-							<h3 class="box-title">Mysql并发连接数</h3>
-
-						</div>
-						<!-- /.box-header -->
-						<div class="box-body">
-							<div class="clear"></div>
-							<div class="divider20"></div>
-							<div class="col-md-12">
-								<!-- 告警表格 start-->
-								<table id="dtable3" class="potable table table-bordered table-hover">
-									<thead>
-										<tr>
-											<th style="width: 100px;">日期</th>
-											<th>最小</th>
-											<th>平均</th>
-											<th>最大</th>
-										</tr>
-									</thead>
-								</table>
-								<!-- 告警表格 end-->
-							</div>
-						</div>
-
-					</div>
 				</div>
 			</div>
-		</section>
-		<!-- /.content -->
+			<div class="col-md-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<h3 class="box-title">请求频率</h3>
+
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">
+						<div class="clear"></div>
+						<div class="divider20"></div>
+						<div class="col-md-12">
+							<!-- 告警表格 start-->
+							<table id="dtable2" class="potable table table-bordered table-hover">
+								<thead>
+									<tr>
+										<th style="width: 100px;">日期</th>
+										<th>最小请求频率(次/分钟)</th>
+										<th>平均请求频率(次/分钟)</th>
+										<th>最大请求频率(次/分钟)</th>
+									</tr>
+								</thead>
+							</table>
+							<!-- 告警表格 end-->
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="col-md-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<h3 class="box-title">SqlServer消耗的动态内存数</h3>
+
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">
+						<div class="clear"></div>
+						<div class="divider20"></div>
+						<div class="col-md-12">
+							<!-- 告警表格 start-->
+							<table id="dtable3" class="potable table table-bordered table-hover">
+								<thead>
+									<tr>
+										<th style="width: 100px;">日期</th>
+										<th>最小消耗的动态内存数(次/分钟)</th>
+										<th>平均消耗的动态内存数(次/分钟)</th>
+										<th>最大消耗的动态内存数(次/分钟)</th>
+									</tr>
+								</thead>
+							</table>
+							<!-- 告警表格 end-->
+						</div>
+					</div>
+
+				</div>
+			</div>
 	</div>
-	<!-- /.content-wrapper -->
+</section>
+<!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
 
-	<!-- Main Footer -->
-	<include file="Public/main_footer" />
+<!-- Main Footer -->
+<include file="Public/main_footer" />
 
-	<!-- Control Sidebar -->
+<!-- Control Sidebar -->
 
-	<!-- /.control-sidebar -->
-	<!-- Add the sidebar's background. This div must be placed
+<!-- /.control-sidebar -->
+<!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
-	<div class="control-sidebar-bg"></div>
+<div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
 
@@ -321,7 +300,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <script type="text/javascript">
 //Date range as a button
-var appurl = rooturl + '/MysqlView/';
+var appurl = rooturl + '/SqlServerView/';
 var table = '';
 var sdate1=sdate.split(" ");
 var edate1=edate.split(" ");
@@ -374,14 +353,12 @@ var edate1=edate.split(" ");
 // 	createtable(sdate,edate,0);
 // });
 
-createtable(10,tid,$('#dtable1'),0);
-createtable(28,tid,$('#dtable2'),1);
-createtable(28,tid,$('#dtable3'),0);
-function createtable(itemid,tid,obj,type){
+createtable(1,tid,$('#dtable1'));
+createtable(2,tid,$('#dtable2'));
+createtable(7,tid,$('#dtable3'));
+function createtable(itemid,tid,obj){
 	var purl = appurl+"gedetailstabledata/itemid/"+itemid+"/tid/"+tid;
-	if(type){
-		purl = appurl+"gedetailstabledatax/itemid/"+itemid+"/tid/"+tid;
-	}
+
 	if(table != ''){
 		obj.dataTable().fnDestroy();
 	}
