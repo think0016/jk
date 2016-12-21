@@ -260,13 +260,33 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							</div>
 							<div class="col-sm-1"></div>
 						</div>
-						<!-- 							<div class="form-group">
-						<label for="input3" class="col-sm-2 control-label"></label>
-						<div class="col-sm-10">
-							<button id="" onclick="adv_show();" type="button" class="btn btn-info pull-left">高级选项</button>
-						</div>
-					</div>
-					-->
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">通知组</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="alarm_group" >
+                                        <volist id="grouplist" name="grouplist">
+                                        <option value="{$grouplist.id}"<eq name="task.alarm_group" value="$grouplist.id">selected="select"</eq>>{$grouplist.name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" onclick="self.location='__APP__/Alarmgroup';" class="btn btn-info pull-left">添加</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">通知次数</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="warntimes" >
+                                        <option value="1" <eq name="task.warntimes" value="1">selected="select"</eq>>1次</option>
+                                        <option value="2" <eq name="task.warntimes" value="2">selected="select"</eq>>2次</option>
+                                        <option value="3" <eq name="task.warntimes" value="3">selected="select"</eq>>3次</option>
+                                        <option value="5" <eq name="task.warntimes" value="5">selected="select"</eq>>5次</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" onclick="self.location='__APP__/Alarmgroup';" class="btn btn-info pull-left">添加</button>
+                                </div>
+                            </div>
 				</div>
 				<!-- /.box-body -->
 				<div class="box-footer">
