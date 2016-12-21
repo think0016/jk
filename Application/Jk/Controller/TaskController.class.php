@@ -59,15 +59,28 @@ class TaskController extends BaseController {
 		// 检查登录情况
 		$this->is_login ( 1 );
 		
+		$tasktype = I ( "get.type" );			
+		
 		$taskModel = D ( "jk_task" );
 		$map ['uid'] = session ( "uid" );
 		$map ['is_del'] = 0;
+		if($tasktype != ""){
+			$map ['jk_tasktype.name'] = $tasktype;
+		}else{
+			$map ['jk_tasktype.stype'] = '1';
+		}
 		$tasklist = $taskModel->where ( $map )->join ( 'jk_tasktype ON jk_task.sid = jk_tasktype.sid' )->select ();
+		
+		if($tasktype != ""){
+			$tasktype = D ( "jk_tasktype" )->where(array("name"=>$tasktype))->find();
+		}
 		
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
 		$this->assign ( "tasklist", $tasklist );
+		$this->assign ( "tasktype", $tasktype );
 		$this->display ();
 	}
+	
 	public function create() {
 		$this->is_login ( 1 );
 		

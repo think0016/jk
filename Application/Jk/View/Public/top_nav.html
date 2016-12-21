@@ -1,9 +1,9 @@
         <div>
           <ul class="nav navbar-nav">
             <li>
-              <a href="#">概览</a>
+              <a href="__APP__">概览</a>
             </li>
-            <li>
+            <li style="display: none;">
               <a href="#">体验</a>
             </li>
             <li class="dropdown">
@@ -30,13 +30,45 @@
               </ul>
             </li>
             <li>
-              <a href="#">告警</a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                告警
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="__APP__/Alarmnoticeset.html">告警通知设置</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <!--a href="__APP__/Alarmset.html">告警设置</a-->
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <a href="__APP__/Alarmshow.html">告警浏览</a>
+                </li>
+              </ul>
             </li>
-            <li>
+            <li style="display: none;">
               <a href="#">分析</a>
             </li>
             <li>
-              <a href="__APP__/Task/tasklist.html">用户与设置</a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      用户与设置
+              <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="__APP__/Task/tasklist.html">监控设置</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <a href="__APP__/Usercenter/index.html">用户中心设置</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <a href="__APP__/Lables.html">标签设置</a>
+                </li>
+              </ul>
             </li>
             <li>
               <a href="__APP__/Index/test.html">帮助</a>

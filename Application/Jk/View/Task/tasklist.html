@@ -179,7 +179,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
      fixed layout. -->
 </body>
   <script type="text/javascript">
+  var mtype = '{$tasktype[name]}';
+  var menuid = '{$tasktype[stype]}';
   var delurl = '__APP__/Task/delete';
+
+  // $(document).ready(function(){
+  //   $('#menu-http').addClass("active");
+  //   $('#menu-web').addClass("active");
+  // });  
+
+  console.log('#menu-'+mtype);
+
+  $('#menu-'+mtype).addClass('active');
+  $('#menu-'+menuid).addClass('active');
 
   function del(id) {
     $.post(delurl, {
