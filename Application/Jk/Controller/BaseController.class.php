@@ -5,11 +5,22 @@ namespace Jk\Controller;
 use Think\Controller;
 
 class BaseController extends Controller {
+	public $level = "";
+	
 	/*
 	 *
 	 */
 	function _initialize() {
 		$this->is_login ( 1 );
+		
+		//获取level
+		$userlist = $this->getUserinfo(session("uid"));
+		if($userlist['level'] != ""){
+			$this->level=$userlist['level'];
+		}else{
+			$this->level=1;
+		}
+		
 	}
 	
 	/**
@@ -21,8 +32,7 @@ class BaseController extends Controller {
 	public function is_login($type = 0) {
 		$uid = session ( "uid" );
 		
-		if (isset ( $uid )) {
-			
+		if (isset ( $uid )) {			
 			return true;
 		} else {
 			if ($type == 0) {
@@ -85,11 +95,11 @@ class BaseController extends Controller {
 	 * @param int $uid        	
 	 */
 	public function getUserinfo($uid = "") {
-		$model = D ( "jk_user" );
+		$userModel = D ( "jk_user" );
 		if ($uid !== "") {
 			$map ['id'] = $uid;
-			$map ['status'] = 1;
-			return $model->where ( $map )->find ();
+			$map ['status'] = 0;
+			return $userModel->where ( $map )->find ();
 		} else {
 			return array ();
 		}

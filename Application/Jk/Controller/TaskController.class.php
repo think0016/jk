@@ -3,6 +3,36 @@
 namespace Jk\Controller;
 
 class TaskController extends BaseController {
+	private $qxcfg = array (
+			"1" => array (
+					"stype1" => 2,
+					"stype2" => 1,
+					"stype3" => 2,
+					"mnum" => 3,
+					"minfrequency" => 10 
+			),
+			"2" => array (
+					"stype1" => 4,
+					"stype2" => 2,
+					"stype3" => 4,
+					"mnum" => 6,
+					"minfrequency" => 5 
+			),
+			"3" => array (
+					"stype1" => 6,
+					"stype2" => 4,
+					"stype3" => 8,
+					"mnum" => 10,
+					"minfrequency" => 5 
+			),
+			"10" => array (
+					"stype1" => 100,
+					"stype2" => 100,
+					"stype3" => 100,
+					"mnum" => 100,
+					"minfrequency" => 1 
+			) 
+	);
 	public function index() {
 		
 		// 检查登录情况
@@ -54,26 +84,32 @@ class TaskController extends BaseController {
 				break;
 		}
 	}
-	
+	public function test() {
+		$this->is_login ( 1 );
+		echo "AAA";
+		echo $this->level;
+	}
 	public function tasklist() {
 		
 		// 检查登录情况
 		$this->is_login ( 1 );
 		
-		$tasktype = I ( "get.type" );			
+		$tasktype = I ( "get.type" );
 		
 		$taskModel = D ( "jk_task" );
 		$map ['uid'] = session ( "uid" );
 		$map ['is_del'] = 0;
-		if($tasktype != ""){
+		if ($tasktype != "") {
 			$map ['jk_tasktype.name'] = $tasktype;
-		}else{
+		} else {
 			$map ['jk_tasktype.stype'] = '1';
 		}
 		$tasklist = $taskModel->where ( $map )->join ( 'jk_tasktype ON jk_task.sid = jk_tasktype.sid' )->select ();
 		
-		if($tasktype != ""){
-			$tasktype = D ( "jk_tasktype" )->where(array("name"=>$tasktype))->find();
+		if ($tasktype != "") {
+			$tasktype = D ( "jk_tasktype" )->where ( array (
+					"name" => $tasktype 
+			) )->find ();
 		}
 		
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
@@ -81,7 +117,6 @@ class TaskController extends BaseController {
 		$this->assign ( "tasktype", $tasktype );
 		$this->display ();
 	}
-	
 	public function create() {
 		$this->is_login ( 1 );
 		
@@ -98,6 +133,9 @@ class TaskController extends BaseController {
 			$this->error ( "请求错误" );
 		}
 		
+		//验证任务数量是否超期
+		$this->verify_tasknum($tasktype['stype']);
+		
 		// 监控点
 		$mps = $this->getMonitoryPoint ();
 		// 监控报警项
@@ -105,7 +143,9 @@ class TaskController extends BaseController {
 				"is_alarm" => 1 
 		) )->select ();
 		
-		$this->assign("grouplist", D("Alarmgroup")->where(array("uid"=>session("uid")))->select());
+		$this->assign ( "grouplist", D ( "Alarmgroup" )->where ( array (
+				"uid" => session ( "uid" ) 
+		) )->select () );
 		$this->assign ( "alarmitems", $alarmitems );
 		$this->assign ( "mps", $mps );
 		switch ($tasktype_name) {
@@ -301,7 +341,9 @@ class TaskController extends BaseController {
 		$this->assign ( "triggers", $triggers );
 		$this->assign ( "alarmitems", $alarmitems );
 		$this->assign ( "mps", $mps );
-		$this->assign("grouplist", D("Alarmgroup")->where(array("uid"=>session("uid")))->select());
+		$this->assign ( "grouplist", D ( "Alarmgroup" )->where ( array (
+				"uid" => session ( "uid" ) 
+		) )->select () );
 		switch ($sid) {
 			case 1 :
 				// http任务
@@ -405,6 +447,9 @@ class TaskController extends BaseController {
 			$this->error ( "监控地址不能为空" );
 		}
 		
+		//验证监控点数量是否超期
+		$this->verify_pointnum($mids);
+		
 		// 添加task表
 		$mid = $mids;
 		$label = "";
@@ -432,8 +477,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"labels" => $label,
 				"isadv" => $adv,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group 
 		);
 		
 		if ($taskid == "") {
@@ -571,6 +616,8 @@ class TaskController extends BaseController {
 		if (! isset ( $target ) || $target == "") {
 			$this->error ( "监控地址不能为空" );
 		}
+		//验证监控点数量是否超期
+		$this->verify_pointnum($mids);
 		
 		// 添加task表
 		$mid = $mids;
@@ -598,8 +645,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group,
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group,
 				"isadv" => $adv 
 		);
 		
@@ -757,7 +804,6 @@ class TaskController extends BaseController {
 		$alarm_group = I ( 'post.alarm_group' );
 		$warntimes = I ( 'post.warntimes' );
 		
-		
 		// 数据验证（简单）
 		if ($mids == "") {
 			$this->error ( "监控点不能为空" );
@@ -777,6 +823,9 @@ class TaskController extends BaseController {
 		if (! isset ( $fpassword ) || $fpassword == "") {
 			$this->error ( "密码不能为空" );
 		}
+		
+		//验证监控点数量是否超期
+		$this->verify_pointnum($mids);
 		
 		// 添加task表
 		$mid = $mids;
@@ -804,8 +853,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group,
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group,
 				"isadv" => $adv 
 		);
 		
@@ -934,7 +983,6 @@ class TaskController extends BaseController {
 		$alarm_group = I ( 'post.alarm_group' );
 		$warntimes = I ( 'post.warntimes' );
 		
-		
 		// 数据验证（简单）
 		if ($mids == "") {
 			$this->error ( "监控点不能为空" );
@@ -948,6 +996,9 @@ class TaskController extends BaseController {
 		if (! isset ( $port ) || $port == "") {
 			$this->error ( "端口不能为空" );
 		}
+		
+		//验证监控点数量是否超期
+		$this->verify_pointnum($mids);
 		
 		// 添加task表
 		$mid = $mids;
@@ -975,8 +1026,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group,
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group,
 				"isadv" => $adv 
 		);
 		
@@ -1103,7 +1154,6 @@ class TaskController extends BaseController {
 		$alarm_group = I ( 'post.alarm_group' );
 		$warntimes = I ( 'post.warntimes' );
 		
-		
 		// 数据验证（简单）
 		if ($mids == "") {
 			$this->error ( "监控点不能为空" );
@@ -1117,6 +1167,9 @@ class TaskController extends BaseController {
 		if (! isset ( $port ) || $port == "") {
 			$this->error ( "端口不能为空" );
 		}
+
+		//验证监控点数量是否超期
+		$this->verify_pointnum($mids);
 		
 		// 添加task表
 		$mid = $mids;
@@ -1144,8 +1197,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group,
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group,
 				"isadv" => $adv 
 		);
 		
@@ -1282,7 +1335,6 @@ class TaskController extends BaseController {
 		$alarm_group = I ( 'post.alarm_group' );
 		$warntimes = I ( 'post.warntimes' );
 		
-		
 		// 数据验证（简单）
 		if ($mids == "") {
 			$this->error ( "监控点不能为空" );
@@ -1293,6 +1345,9 @@ class TaskController extends BaseController {
 		if (! isset ( $target ) || $target == "") {
 			$this->error ( "监控地址不能为空" );
 		}
+
+		//验证监控点数量是否超期
+		$this->verify_pointnum($mids);
 		
 		// 添加task表
 		$mid = $mids;
@@ -1320,8 +1375,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group,
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group,
 				"isadv" => $adv 
 		);
 		
@@ -1462,7 +1517,6 @@ class TaskController extends BaseController {
 		$alarm_group = I ( 'post.alarm_group' );
 		$warntimes = I ( 'post.warntimes' );
 		
-		
 		// 数据验证（简单）
 		if (! isset ( $title ) || $title == "") {
 			$this->error ( "任务名不能为空" );
@@ -1497,8 +1551,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group,
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group,
 				"isadv" => $adv 
 		);
 		
@@ -1523,7 +1577,7 @@ class TaskController extends BaseController {
 					"target" => $target 
 			);
 			$r = $taskDetailsModel->where ( array (
-					"taskid" => $taskid
+					"taskid" => $taskid 
 			) )->save ( $data );
 			// if (! $r) {
 			// $this->error ( "ERROR1" );
@@ -1620,7 +1674,6 @@ class TaskController extends BaseController {
 		$alarm_group = I ( 'post.alarm_group' );
 		$warntimes = I ( 'post.warntimes' );
 		
-		
 		// 数据验证（简单）
 		if (! isset ( $title ) || $title == "") {
 			$this->error ( "任务名不能为空" );
@@ -1655,8 +1708,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group,
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group,
 				"isadv" => $adv 
 		);
 		
@@ -1681,7 +1734,7 @@ class TaskController extends BaseController {
 					"target" => $target 
 			);
 			$r = $taskDetailsModel->where ( array (
-					"taskid" => $taskid
+					"taskid" => $taskid 
 			) )->save ( $data );
 			// if (! $r) {
 			// $this->error ( "ERROR1" );
@@ -1751,7 +1804,6 @@ class TaskController extends BaseController {
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
 	public function oracletaskadd() {
-
 	}
 	public function mysqltaskadd() {
 		$this->is_login ( 1 );
@@ -1811,8 +1863,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group,
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group,
 				"isadv" => $adv 
 		);
 		
@@ -1837,10 +1889,10 @@ class TaskController extends BaseController {
 					"target" => $target,
 					"username" => $username,
 					"password" => $password,
-					"port" => $port
+					"port" => $port 
 			);
 			$r = $taskDetailsModel->where ( array (
-					"taskid" => $taskid
+					"taskid" => $taskid 
 			) )->save ( $data );
 			// if (! $r) {
 			// $this->error ( "ERROR1" );
@@ -1939,7 +1991,6 @@ class TaskController extends BaseController {
 		$alarm_group = I ( 'post.alarm_group' );
 		$warntimes = I ( 'post.warntimes' );
 		
-		
 		// 数据验证（简单）
 		if (! isset ( $title ) || $title == "") {
 			$this->error ( "任务名不能为空" );
@@ -1974,8 +2025,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group,
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group,
 				"isadv" => $adv 
 		);
 		
@@ -2004,8 +2055,7 @@ class TaskController extends BaseController {
 			);
 			$r = $taskDetailsModel->where ( array (
 					"taskid" => $taskid 
-			)
-			 )->save ( $data );
+			) )->save ( $data );
 			// if (! $r) {
 			// $this->error ( "ERROR1" );
 			// }
@@ -2104,7 +2154,6 @@ class TaskController extends BaseController {
 		$alarm_group = I ( 'post.alarm_group' );
 		$warntimes = I ( 'post.warntimes' );
 		
-		
 		// 数据验证（简单）
 		if (! isset ( $title ) || $title == "") {
 			$this->error ( "任务名不能为空" );
@@ -2139,8 +2188,8 @@ class TaskController extends BaseController {
 				"frequency" => $frequency,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
-				"warntimes"=>$warntimes,
-				"alarm_group"=>$alarm_group,
+				"warntimes" => $warntimes,
+				"alarm_group" => $alarm_group,
 				"isadv" => $adv 
 		);
 		
@@ -2265,5 +2314,51 @@ class TaskController extends BaseController {
 			$return [$val] = time ();
 		}
 		return serialize ( $return );
+	}
+	
+	/**
+	 * 验证任务数量是否超期
+	 * 
+	 * @param
+	 *        	$stype
+	 */
+	private function verify_tasknum($stype) {
+		$uid = session ( "uid" );
+		
+		$taskModel = D ( "jk_task" );
+		$where ["jk_task.uid"] = $uid;
+		$where ["jk_tasktype.stype"] = $stype;
+		$num = $taskModel->join ( 'jk_tasktype ON jk_tasktype.sid = jk_task.sid' )->where ( $where )->count ();
+		
+		$key = "stype" . $stype;
+		$dnum = $this->qxcfg [$this->level] [$key];
+		
+		if ($num >= $dnum) {
+			$this->error ( "任务设置已达到上限" );
+		}
+	}
+	
+	/**
+	 * 验证监控点数量是否超期
+	 * 
+	 * @param
+	 *        	$mids
+	 */
+	private function verify_pointnum($mids) {
+		$uid = session ( "uid" );
+		$arr = explode(",", $mids);
+		
+		
+		// $taskModel = D("jk_task");
+		// $where["jk_task.uid"]=$uid;
+		// $where["jk_tasktype.stype"]=$stype;
+		// $num = $taskModel->join('jk_tasktype ON jk_tasktype.sid = jk_task.sid')->where($where)->count();
+		
+		// $key = "stype".$stype;
+		$dnum = $this->qxcfg[$this->level]["mnum"];
+		
+		if(count($arr) >= $dnum){
+		$this->error("监控点数量选择不能超过".$dnum."个");
+		}
 	}
 }
