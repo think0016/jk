@@ -95,32 +95,47 @@ class TaskController extends BaseController {
 		$this->is_login ( 1 );
 		
 		$tasktype = I ( "get.type" );
+		if ($tasktype == "") {
+			$tasktype = "web";
+		}
 		
 		$taskModel = D ( "jk_task" );
 		$map ['uid'] = session ( "uid" );
 		$map ['is_del'] = 0;
-		if ($tasktype != "") {
-			$map ['jk_tasktype.name'] = $tasktype;
-		} else {
+		
+		$menu =array();
+		if ($tasktype == "web") {
 			$map ['jk_tasktype.stype'] = '1';
+			$menu["name"]="web";
+			$menu["stype"]="1";
+		} else if ($tasktype == "server") {
+			$map ['jk_tasktype.stype'] = '3';
+			$menu["name"]="server";
+			$menu["stype"]="3";
+		} else {
+			$map ['jk_tasktype.name'] = $tasktype;
+			$menu = D ( "jk_tasktype" )->where ( array (
+					"name" => $tasktype
+			) )->find ();
 		}
 		$tasklist = $taskModel->where ( $map )->join ( 'jk_tasktype ON jk_task.sid = jk_tasktype.sid' )->select ();
 		
-		if ($tasktype != "") {
-			$tasktype = D ( "jk_tasktype" )->where ( array (
-					"name" => $tasktype 
-			) )->find ();
-		}
+// 		if ($tasktype != "web" && $tasktype != "server") {
+// 			$tasktype = D ( "jk_tasktype" )->where ( array (
+// 					"name" => $tasktype 
+// 			) )->find ();
+// 		}
 		
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
 		$this->assign ( "tasklist", $tasklist );
-		$this->assign ( "tasktype", $tasktype );
+		$this->assign ( "tasktype", $menu );
 		$this->display ();
 	}
 	public function create() {
 		$this->is_login ( 1 );
 		
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
+		$this->assign ( "userlevel", $this->level );
 		$tasktype_name = I ( "get.ttype" );
 		
 		if (! isset ( $tasktype_name ) || $tasktype_name == "") {
@@ -133,8 +148,8 @@ class TaskController extends BaseController {
 			$this->error ( "请求错误" );
 		}
 		
-		//验证任务数量是否超期
-		$this->verify_tasknum($tasktype['stype']);
+		// 验证任务数量是否超期
+		$this->verify_tasknum ( $tasktype ['stype'] );
 		
 		// 监控点
 		$mps = $this->getMonitoryPoint ();
@@ -447,8 +462,8 @@ class TaskController extends BaseController {
 			$this->error ( "监控地址不能为空" );
 		}
 		
-		//验证监控点数量是否超期
-		$this->verify_pointnum($mids);
+		// 验证监控点数量是否超期
+		$this->verify_pointnum ( $mids );
 		
 		// 添加task表
 		$mid = $mids;
@@ -550,7 +565,7 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -616,8 +631,8 @@ class TaskController extends BaseController {
 		if (! isset ( $target ) || $target == "") {
 			$this->error ( "监控地址不能为空" );
 		}
-		//验证监控点数量是否超期
-		$this->verify_pointnum($mids);
+		// 验证监控点数量是否超期
+		$this->verify_pointnum ( $mids );
 		
 		// 添加task表
 		$mid = $mids;
@@ -753,7 +768,7 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -824,8 +839,8 @@ class TaskController extends BaseController {
 			$this->error ( "密码不能为空" );
 		}
 		
-		//验证监控点数量是否超期
-		$this->verify_pointnum($mids);
+		// 验证监控点数量是否超期
+		$this->verify_pointnum ( $mids );
 		
 		// 添加task表
 		$mid = $mids;
@@ -934,7 +949,7 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -997,8 +1012,8 @@ class TaskController extends BaseController {
 			$this->error ( "端口不能为空" );
 		}
 		
-		//验证监控点数量是否超期
-		$this->verify_pointnum($mids);
+		// 验证监控点数量是否超期
+		$this->verify_pointnum ( $mids );
 		
 		// 添加task表
 		$mid = $mids;
@@ -1103,7 +1118,7 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -1167,9 +1182,9 @@ class TaskController extends BaseController {
 		if (! isset ( $port ) || $port == "") {
 			$this->error ( "端口不能为空" );
 		}
-
-		//验证监控点数量是否超期
-		$this->verify_pointnum($mids);
+		
+		// 验证监控点数量是否超期
+		$this->verify_pointnum ( $mids );
 		
 		// 添加task表
 		$mid = $mids;
@@ -1282,7 +1297,7 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -1345,9 +1360,9 @@ class TaskController extends BaseController {
 		if (! isset ( $target ) || $target == "") {
 			$this->error ( "监控地址不能为空" );
 		}
-
-		//验证监控点数量是否超期
-		$this->verify_pointnum($mids);
+		
+		// 验证监控点数量是否超期
+		$this->verify_pointnum ( $mids );
 		
 		// 添加task表
 		$mid = $mids;
@@ -1469,7 +1484,7 @@ class TaskController extends BaseController {
 						"data_times" => $atimes,
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -1626,7 +1641,7 @@ class TaskController extends BaseController {
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
 						"rrd_name" => $this->getrrdfilename ( $taskid, session ( "uid" ), "4", $sid, "0", $a_itemid ),
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -1783,7 +1798,7 @@ class TaskController extends BaseController {
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
 						"rrd_name" => $this->getrrdfilename ( $taskid, session ( "uid" ), "4", $sid, "0", $a_itemid ),
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -1944,7 +1959,7 @@ class TaskController extends BaseController {
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
 						"rrd_name" => $this->getrrdfilename ( $taskid, session ( "uid" ), "4", $sid, "0", $a_itemid ),
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -2106,7 +2121,7 @@ class TaskController extends BaseController {
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
 						"rrd_name" => $this->getrrdfilename ( $taskid, session ( "uid" ), "4", $sid, "0", $a_itemid ),
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -2271,7 +2286,7 @@ class TaskController extends BaseController {
 						"index_id" => $a_itemid,
 						"monitor_id" => $monitor_id,
 						"rrd_name" => $this->getrrdfilename ( $taskid, session ( "uid" ), "4", $sid, "0", $a_itemid ),
-						"is_monitor_avg" => 0 
+						"is_monitor_avg" => $calc 
 				);
 				
 				// $data['monitor_id'] = $mid;
@@ -2318,7 +2333,7 @@ class TaskController extends BaseController {
 	
 	/**
 	 * 验证任务数量是否超期
-	 * 
+	 *
 	 * @param
 	 *        	$stype
 	 */
@@ -2340,14 +2355,13 @@ class TaskController extends BaseController {
 	
 	/**
 	 * 验证监控点数量是否超期
-	 * 
+	 *
 	 * @param
 	 *        	$mids
 	 */
 	private function verify_pointnum($mids) {
 		$uid = session ( "uid" );
-		$arr = explode(",", $mids);
-		
+		$arr = explode ( ",", $mids );
 		
 		// $taskModel = D("jk_task");
 		// $where["jk_task.uid"]=$uid;
@@ -2355,10 +2369,10 @@ class TaskController extends BaseController {
 		// $num = $taskModel->join('jk_tasktype ON jk_tasktype.sid = jk_task.sid')->where($where)->count();
 		
 		// $key = "stype".$stype;
-		$dnum = $this->qxcfg[$this->level]["mnum"];
+		$dnum = $this->qxcfg [$this->level] ["mnum"];
 		
-		if(count($arr) >= $dnum){
-		$this->error("监控点数量选择不能超过".$dnum."个");
+		if (count ( $arr ) >= $dnum) {
+			$this->error ( "监控点数量选择不能超过" . $dnum . "个" );
 		}
 	}
 }

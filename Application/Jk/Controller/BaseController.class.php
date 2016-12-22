@@ -106,6 +106,7 @@ class BaseController extends Controller {
 	}
 	public function assignbase() {
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
+		$this->assign ( "userlevel", $this->level );
 	}
 	
 	/**

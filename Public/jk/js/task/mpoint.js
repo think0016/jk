@@ -5,49 +5,49 @@ var layer1;
 var mapposturl = rooturl + "/Utils/getmpdata";
 var pointlist = new Array();
 
-
-layui.use(['layer'], function() {
+layui.use([ 'layer' ], function() {
 	layer = layui.layer;
-	//layer.msg('Hello World');
+	// layer.msg('Hello World');
 });
 
 function smp() {
-	//初始化模态框
+	// 初始化模态框
 	layer1 = layer.open({
-		area: ['1200px', '700px'],
-		title: '选择监控点',
-		resize: false,
-		type: 1,
-		content: $('#pointdiv') //这里content是一个普通的String
+		area : [ '1200px', '700px' ],
+		title : '选择监控点',
+		resize : false,
+		type : 1,
+		content : $('#pointdiv')
+	// 这里content是一个普通的String
 	});
 
-	//初始化地图
+	// 初始化地图
 	var str = gcheck();
 	$.post(mapposturl, {
-		mids: str
+		mids : str
 	}, function(data, textStatus, xhr) {
-		/*optional stuff to do after success */
+		/* optional stuff to do after success */
 		ddata = jQuery.parseJSON(data);
 
 		var option = {
-			title: {
-				text: '全国监控点地图'
+			title : {
+				text : '全国监控点地图'
 			},
-			series: [{
-				name: '中国',
-				type: 'map',
-				mapType: 'china',
+			series : [ {
+				name : '中国',
+				type : 'map',
+				mapType : 'china',
 				// selectedMode : 'false',
-				label: {
-					normal: {
-						show: true
+				label : {
+					normal : {
+						show : true
 					},
-					emphasis: {
-						show: true
+					emphasis : {
+						show : true
 					}
 				},
-				data: ddata
-			}]
+				data : ddata
+			} ]
 		};
 
 		myChart.setOption(option);
@@ -55,7 +55,7 @@ function smp() {
 }
 
 function smpcls() {
-	//console.log(pointlist);
+	// console.log(pointlist);
 	layer.close(layer1);
 }
 
@@ -64,30 +64,30 @@ $("input[name='cmpoint']").click(function(event) {
 	var str = gcheck();
 
 	$.post(mapposturl, {
-		mids: str
+		mids : str
 	}, function(data, textStatus, xhr) {
-		/*optional stuff to do after success */
+		/* optional stuff to do after success */
 		ddata = jQuery.parseJSON(data);
 
 		var option = {
-			title: {
-				text: '全国监控点地图'
+			title : {
+				text : '全国监控点地图'
 			},
-			series: [{
-				name: '中国',
-				type: 'map',
-				mapType: 'china',
+			series : [ {
+				name : '中国',
+				type : 'map',
+				mapType : 'china',
 				// selectedMode : 'false',
-				label: {
-					normal: {
-						show: true
+				label : {
+					normal : {
+						show : true
 					},
-					emphasis: {
-						show: true
+					emphasis : {
+						show : true
 					}
 				},
-				data: ddata
-			}]
+				data : ddata
+			} ]
 		};
 
 		myChart.setOption(option);
@@ -96,7 +96,7 @@ $("input[name='cmpoint']").click(function(event) {
 });
 
 function savepoint() {
-	//var n = 0;
+	// var n = 0;
 	pointlist = new Array();
 	$("input[name='cmpoint']:checked").each(function(index, el) {
 		var temp = new Array();
@@ -104,12 +104,12 @@ function savepoint() {
 		temp[1] = $(this).attr("mname");
 		pointlist[index] = temp;
 
-		//console.log(pointlist);
+		// console.log(pointlist);
 
 		// if (str !== '') {
-		// 	str = str + ',' + ":" + $(this).val() + ":";
+		// str = str + ',' + ":" + $(this).val() + ":";
 		// } else {
-		// 	str = str + ":" + $(this).val() + ":";
+		// str = str + ":" + $(this).val() + ":";
 		// }
 	});
 	midinfo();
@@ -127,20 +127,29 @@ function gcheck() {
 			}
 		});
 	}
-	//  else {
-	// 	var mids = $("input[name='mids']").val();
-	// 	if (mids != '') {
-	// 		// mids = mids.replace(/:/g, "");
-	// 		// var m = mids.split(',',mids);
-	// 		str = mids;
-	// 	}
+	// else {
+	// var mids = $("input[name='mids']").val();
+	// if (mids != '') {
+	// // mids = mids.replace(/:/g, "");
+	// // var m = mids.split(',',mids);
+	// str = mids;
+	// }
 
 	// }
 	return str;
 }
 
-function midinfo(){
-	$('#midinfo').text("已配置"+pointlist.length+"个监控点");
+function midinfo() {
+	var mnum = pointlist.length;
+	if (userlevel == 1 && mnum > 3) {
+		$('#midinfo').html("<font color=\"red\">监控点数超过限制</font>");
+	} else if (userlevel == 2 && mnum > 6) {
+		$('#midinfo').html("<font color=\"red\">监控点数超过限制</font>");
+	} else if (userlevel == 3 && mnum > 10) {
+		$('#midinfo').html("<font color=\"red\">监控点数超过限制</font>");
+	} else {
+		$('#midinfo').text("已配置" + pointlist.length + "个监控点");
+	}
 }
 
 $("input[name='cmpoint']:checked").each(function(index, el) {
@@ -148,7 +157,7 @@ $("input[name='cmpoint']:checked").each(function(index, el) {
 	temp[0] = $(this).val();
 	temp[1] = $(this).attr("mname");
 	pointlist[index] = temp;
-	
+
 });
 
 midinfo();
