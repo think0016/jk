@@ -807,6 +807,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				function(data, status) {
 					var d = jQuery.parseJSON(data);
 					if (d.status == 1) {
+						$("#item_id").attr('disabled', '');
 						if (d.data.comment == '每秒请求数' || d.data.comment == '处理时间' || d.data.comment == '每秒流出量' || d.data.comment == '最大内存' || d.data.comment == '当前繁忙线程数' || d.data.comment == '每秒流入量') {
 							$("#op1").val(d.data.operator_type);
 							$("#threshold1").val(d.data.threshold);
@@ -864,6 +865,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			$("input[name='alermajax']").val(0);
 			$('.alarmv2').css('display', 'none');
 			$('.alarmv1').css('display', 'block');
+			$("#item_id").removeAttr('disabled');
 			//$("#form2")[0].reset();
 		});
 

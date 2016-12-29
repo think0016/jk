@@ -858,6 +858,7 @@ function updatealarm(index, type) {
 				var d = jQuery.parseJSON(data);
 				console.log(d.data);
 				if (d.status == 1) {
+					$("#item_id").attr('disabled', '');
 					if (d.data.comment == '当前响应时间') {
 						$("#op1").val(d.data.operator_type);
 						$("#threshold1").val(d.data.threshold);
@@ -915,6 +916,7 @@ $('#addalarm').on('hidden.bs.modal',
 		//$("#form2")[0].reset();
 		$('.alarmv1').css('display', 'block');
 		$('.alarmv2').css('display', 'none');
+		$("#item_id").removeAttr('disabled');
 	});
 
 	//监控频率js
