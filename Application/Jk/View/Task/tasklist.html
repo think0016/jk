@@ -25,6 +25,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         apply the skin class to the body tag so the changes take effect.
   -->
   <load href="__PUBLIC__/dist/css/skins/skin-blue.min.css" />
+  <!-- private css -->
+  <load href="__PUBLIC__/jk/css/style.css" />
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -106,6 +108,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </div>
               <!-- /.box-header -->
               <div class="box-body table-responsive no-padding">
+              	<div class="divider20"></div>
                 <div class="col-xs-12">
                   <table id="tlist" class="table table-hover">
                     <thead>
@@ -219,8 +222,15 @@ $('#tlist').DataTable({
   "lengthChange": false,
   "searching": false,
   "ordering": false,
+  "dom": '<"pttt"p>t<"ifff"i><"pfff"p>',
   "info": true,
+  "pagingType": "full_numbers",
   "autoWidth": false,
+  "initComplete": function(settings, json) {
+    $(".ifff").addClass('col-xs-4');
+    $(".pfff").addClass('col-xs-8');
+    $(".tfff").addClass('col-xs-8');
+  },
   "language": {
     "lengthMenu": "每页 _MENU_ 条记录",
     "zeroRecords": "没有找到记录",
