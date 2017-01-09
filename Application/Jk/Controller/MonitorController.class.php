@@ -87,7 +87,7 @@ class MonitorController extends BaseController {
 			$etime = strtotime ( $edate );
 		}
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
-	
+		
 		$c = "/var/www/ce/cmd/get_average_list_data.sh " . $filename . " " . $stime . " " . $etime . " " . $step;
 		exec ( $c, $output );
 		return $output;
@@ -126,35 +126,35 @@ class MonitorController extends BaseController {
 	}
 	
 	// 读RRD数据(list)
-	public function rrd_server_max_list($filename, $sdate, $edate,$step = 300) {
+	public function rrd_server_max_list($filename, $sdate, $edate, $step = 300) {
 		$stime = $sdate;
 		$etime = $edate;
 		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
 			$stime = strtotime ( $sdate );
 			$etime = strtotime ( $edate );
 		}
-	
+		
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
-	
+		
 		$c = "sh /var/www/ce/cmd/get_max_list_data.sh " . $filename . " " . $stime . " " . $etime . " " . $step;
-	
+		
 		exec ( $c, $output );
 		return $output;
 	}
 	
 	// 读RRD数据(list)
-	public function rrd_server_min_list($filename, $sdate, $edate,$step = 300) {
+	public function rrd_server_min_list($filename, $sdate, $edate, $step = 300) {
 		$stime = $sdate;
 		$etime = $edate;
 		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
 			$stime = strtotime ( $sdate );
 			$etime = strtotime ( $edate );
 		}
-	
+		
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
-	
+		
 		$c = "sh /var/www/ce/cmd/get_min_list_data.sh " . $filename . " " . $stime . " " . $etime . " " . $step;
-	
+		
 		exec ( $c, $output );
 		return $output;
 	}
@@ -252,5 +252,26 @@ class MonitorController extends BaseController {
 				$comment = $itemname . "等于" . $threshold . $iunit;
 		}
 		return $comment;
+	}
+	
+	/**
+	 * 计算时间间隔
+	 *
+	 * @param unknown $sdate        	
+	 * @param unknown $edate        	
+	 */
+	public function getstep($sdate, $edate, $frequency = 300) {
+		$step = $frequency;
+		if (! is_numeric ( $sdate ) || ! is_numeric ( $edate )) {
+			$sdate = strtotime ( $sdate );
+			$edate = strtotime ( $edate );
+		}
+		$t = $edate - $sdate;
+		if ($t > 1296000) {
+			$step = 86400;
+		}else if($t > 86400 && $t <= 1296000){
+			$step = 3600;
+		}
+		return $step;
 	}
 }
