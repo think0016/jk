@@ -2371,7 +2371,7 @@ class TaskController extends BaseController {
 		// $key = "stype".$stype;
 		$dnum = $this->qxcfg [$this->level] ["mnum"];
 		
-		if (count ( $arr ) >= $dnum) {
+		if (count ( $arr ) > $dnum) {
 			$this->error ( "监控点数量选择不能超过" . $dnum . "个" );
 		}
 	}

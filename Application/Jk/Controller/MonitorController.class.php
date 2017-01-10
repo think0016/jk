@@ -182,7 +182,6 @@ class MonitorController extends BaseController {
 		}
 		// $c="/usr/bin/rrdtool fetch ".$filename." AVERAGE -r 300 -s ".$stime." -e ".$etime;
 		$c = "sh /var/www/ce/cmd/getdata.sh \"" . $fn . "\" " . $stime . " " . $etime . " " . $step;
-		// wlog("[rrd_get_m]".$c);
 		exec ( $c, $output );
 		return $output;
 	}
