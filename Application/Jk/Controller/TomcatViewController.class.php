@@ -43,8 +43,8 @@ class TomcatViewController extends MonitorController {
 		$setime = $this->timeinterval ( $stime, $etime );
 		$sdate = $setime [0];
 		$edate = $setime [1];
-		$step = 3600;
-		
+		//$step = 3600;
+		$step = $this->getstep($stime, $etime,$task['frequency']);
 		// 取最大已用内存
 		$mids = $task ['mids'];
 		$mid = str_replace ( ":", "", $mids ); // 服务性能只有一个监控点
@@ -115,7 +115,8 @@ class TomcatViewController extends MonitorController {
 		// 假设时间间隔固定
 		$etime = strtotime ( date ( "Y-m-d" ) );
 		$stime = $etime - (86400 * 30); // 30天
-		$step = 86400;
+		//$step = 86400;
+		$step = $this->getstep($stime, $etime,$task['frequency']);
 		
 		$this->assignbase ();
 		$this->assign ( "sdate", date("Y-m-d",$stime) );
@@ -204,7 +205,9 @@ class TomcatViewController extends MonitorController {
 		// 假设时间间隔固定
 		$etime = strtotime ( date ( "Y-m-d" ) );
 		$stime = $etime - (86400 * 30); // 30天
-		$step = 86400;
+		//$step = 86400;
+		$step = $this->getstep($stime, $etime,$task['frequency']);
+		
 		
 		$filename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
 		
@@ -423,6 +426,7 @@ class TomcatViewController extends MonitorController {
 			$sdate = $setime [0];
 			$edate = $setime [1];
 			// $step = 3600;
+			$step = $this->getstep($sdate, $edate,$task['frequency']);
 			$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
 			
 			// 开始读数据

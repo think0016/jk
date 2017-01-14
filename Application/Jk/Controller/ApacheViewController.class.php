@@ -73,7 +73,8 @@ class ApacheViewController extends MonitorController {
 		$setime = $this->timeinterval ( $stime, $etime );
 		$sdate = $setime [0];
 		$edate = $setime [1];
-		$step = 3600;
+		//$step = 3600;
+		$step = $this->getstep($sdate, $edate,$task['frequency']);
 		
 		// 取吞吐率值
 		$mids = $task ['mids'];
@@ -451,6 +452,8 @@ class ApacheViewController extends MonitorController {
 			$sdate = $setime [0];
 			$edate = $setime [1];
 			// $step = 3600;
+			$step = $this->getstep($sdate, $edate,$task['frequency']);
+			
 			$rrdfilename = $this->getrrdfilename ( $taskid, $uid, $mid, $this->sid, $ssid, $itemid );
 			
 			// 开始读数据
