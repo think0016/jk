@@ -33,6 +33,9 @@ class TaskController extends BaseController {
 					"minfrequency" => 1 
 			) 
 	);
+	
+	//private $addtaskurl = "";//任务新增接口
+	
 	public function index() {
 		
 		// 检查登录情况
@@ -2374,5 +2377,27 @@ class TaskController extends BaseController {
 		if (count ( $arr ) > $dnum) {
 			$this->error ( "监控点数量选择不能超过" . $dnum . "个" );
 		}
+	}
+	
+	private function curl_post($url,$postdata) {
+		//$url = "http://120.52.96.45:58/lqtest.php";
+		$output = array();
+		
+		if($url != null && $url != "" ){
+			//$post_data = array ("username" => "bob","key" => "12345");
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			// post数据
+			curl_setopt($ch, CURLOPT_POST, 1);
+			// post的变量
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+			$output = curl_exec($ch);
+			curl_close($ch);
+			//打印获得的数据
+			//print_r($output);
+		}
+		
+		return $output;
 	}
 }

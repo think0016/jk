@@ -559,4 +559,44 @@ class IndexController extends BaseController {
 		
 		return $return;
 	}
+	
+	
+	/**
+	 * 刷新探针（测试版）
+	 */
+	public function refreshpoint(){
+		$url = "http://111.198.98.28:9099/dataproxy/proxy/probe/v2/list?source_id=110201743";
+		$ch = curl_init();
+		//设置选项，包括URL
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		//执行并获取HTML文档内容
+		$output = curl_exec($ch);
+		//释放curl句柄
+		curl_close($ch);
+		//打印获得的数据
+		$output = json_decode($output);
+		//var_dump($output);
+		
+		if($output->status_code==0){
+			$pointModel = D("jk_monitorypoint");
+			$pointModel ->where(array("point_type"=>1))->delete();
+			
+			foreach ($output->probes as $probe){
+				$data = array();
+				$data["title"] = $probe->probe_name;
+				$data["operator"] = "联通";
+				$data["province"] = $probe->region_pro_name;
+				$data["city"] = $probe->region_city_name;
+				$data["point_type"] = 1;
+				//echo $probe->id;
+				//echo number_format($probe->id,0,'','');
+				$data["probe_id"] = number_format($probe->id,0,'','');
+				$data["probe_last_heartbeat_time"] = $probe->last_heartbeat_time;
+				$data["isdefault"] = 0;				
+				$pointModel->add($data);
+			}
+		}		
+	}
 }

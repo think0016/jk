@@ -51,8 +51,8 @@ class HttpViewController extends MonitorController {
 		$setime = $this->timeinterval ( $stime, $etime );
 		$stime = $setime [0];
 		$etime = $setime [1];
-		//$step = 3600;
-		$step = $this->getstep($stime, $etime,$task['frequency']);
+		$step = 3600;
+		//$step = $this->getstep($stime, $etime,$task['frequency']);
 		if ($itemid == "") {
 			$itemid = $this->defaultitem; // 默认响应时间
 			// $itemid = "status"; // 默认响应时间
@@ -254,8 +254,8 @@ class HttpViewController extends MonitorController {
 		
 		// 最慢排名表单
 		
-		//$step = 3600;
-		$step = $this->getstep($stime, $etime,$task['frequency']);
+		$step = 3600;
+		//$step = $this->getstep($stime, $etime,$task['frequency']);
 		$mids = $task ['mids'];
 		$uid = $task ['uid'];
 		$mids_arr = explode ( ",", $mids );
@@ -423,8 +423,8 @@ class HttpViewController extends MonitorController {
 		) )->find ();
 		
 		// 最慢排名表单
-		//$step = 3600;
-		$step = $this->getstep($stime, $etime,$task['frequency']);
+		$step = 3600;
+		//$step = $this->getstep($stime, $etime,$task['frequency']);
 		
 		$itemid = "status"; // 默认响应时间
 		$mids = $task ['mids'];
@@ -770,7 +770,7 @@ class HttpViewController extends MonitorController {
 			$this->error ( "no task" );
 		}
 		
-		$step = $this->getstep($stime, $etime,$task['frequency']);
+		//$step = $this->getstep($stime, $etime,$task['frequency']);
 		$return = array ();
 		$mids = $task ['mids'];
 		$uid = $task ['uid'];
@@ -846,7 +846,7 @@ class HttpViewController extends MonitorController {
 			$this->error ( "no task" );
 		}
 		
-		$step = $this->getstep($stime, $etime,$task['frequency']);
+		//$step = $this->getstep($stime, $etime,$task['frequency']);
 		$return = array ();
 		$mids = $task ['mids'];
 		$uid = session ( "uid" );
@@ -939,7 +939,7 @@ class HttpViewController extends MonitorController {
 			$this->error ( "no task" );
 		}
 		
-		$step = $this->getstep($stime, $etime,$task['frequency']);
+		//$step = $this->getstep($stime, $etime,$task['frequency']);
 		$return = array ();
 		$mids = $task ['mids'];
 		$uid = session ( "uid" );
