@@ -365,11 +365,13 @@ class TaskController extends BaseController {
 		switch ($sid) {
 			case 1 :
 				// http任务
-				$this->display ( 'httpadd' );
+				$this->error ( "当前任务已被锁定，不能修改！" );
+				//$this->display ( 'httpadd' );
 				break;
 			case 2 :
 			case 3 :
-				$this->display ( 'pingadd' );
+				$this->error ( "当前任务已被锁定，不能修改！" );
+				//$this->display ( 'pingadd' );
 				break;
 			case 4 :
 				$this->display ( 'apacheadd' );
@@ -379,21 +381,26 @@ class TaskController extends BaseController {
 				break;
 			case 6 :
 				// ftp任务
-				$this->display ( 'ftpadd' );
+				$this->error ( "当前任务已被锁定，不能修改！" );
+				//$this->display ( 'ftpadd' );
 				break;
 			case 7 :
 				$this->display ( 'mysqladd' );
 				break;
 			case 8 :
 				// tcp任务
-				$this->display ( 'tcpadd' );
+				$this->error ( "当前任务已被锁定，不能修改！" );
+				//$this->display ( 'tcpadd' );
 				break;
 			case 9 :
 				// udp任务
-				$this->display ( 'udpadd' );
+				$this->error ( "当前任务已被锁定，不能修改！" );
+				//$this->display ( 'udpadd' );
 				break;
 			case 13 :
 				// dns任务
+				$this->error ( "当前任务已被锁定，不能修改！" );
+				
 				$ip = $taskdetail ['ip'];
 				$server = $taskdetail ['server'];
 				$cbip = 0;
@@ -447,7 +454,7 @@ class TaskController extends BaseController {
 		$alarm_num = I ( 'post.alarm_num' );
 		$title = I ( 'post.title' );
 		$target = I ( 'post.target' );
-		$mids = I ( 'post.mids' );
+		$mid = I ( 'post.mids' );
 		$labels = I ( 'post.labels' );
 		$frequency = I ( 'post.frequency' );
 		$adv = I ( 'post.adv' );
@@ -455,7 +462,7 @@ class TaskController extends BaseController {
 		$warntimes = I ( 'post.warntimes' );
 		
 		// 数据验证（简单）
-		if ($mids == "") {
+		if ($mid == "") {
 			$this->error ( "监控点不能为空" );
 		}
 		if (! isset ( $title ) || $title == "") {
@@ -466,10 +473,9 @@ class TaskController extends BaseController {
 		}
 		
 		// 验证监控点数量是否超期
-		$this->verify_pointnum ( $mids );
+		$this->verify_pointnum ( $mid );
 		
 		// 添加task表
-		$mid = $mids;
 		$label = "";
 		// for($i = 0; $i < count ( $mids ); $i ++) {
 		// if ($i > 0) {
@@ -537,10 +543,34 @@ class TaskController extends BaseController {
 			}
 		}
 		
+		
+		$monitor_id = str_replace ( ":", "", $mid );
+		//调任务接口新增START
+		$mid_arr = explode ( ",", $monitor_id );
+		foreach ($mid_arr as $val){
+			$mid_temp = $val;
+			$mid_temp_rs = $this->getMonitoryPoint($mid_temp,0);
+			if($mid_temp_rs['point_type']==1){
+				$posturl = "";
+				$postdata = array();
+				$postdata["task_type_id"]=1;
+				$postdata["task_id"]=$taskid;
+				$postdata["dest_addr"]=$target;
+				$postdata["probe_id"]=$mid_temp_rs["probe_id"];
+				$postdata["test_slot_rule"]=1;
+				$postdata["dest_addr"]=$target;
+				$postdata["task_param"]=array("pkt_size"=>64,"pkt_count"=>3,"pkt_interval"=>2);
+				
+				
+			}
+		}
+		
+		exit;
+		//调任务接口新增END		
+		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
-		if ($alarm_num > 0) {
-			$monitor_id = str_replace ( ":", "", $mid );
+		if ($alarm_num > 0) {			
 			$flag = 0;
 			$triggerModel = D ( 'jk_trigger_ruls' );
 			for($i = 0; $i < $alarm_num; $i ++) {
@@ -584,6 +614,8 @@ class TaskController extends BaseController {
 				$this->error ( "ERROR4" );
 			}
 		}
+		
+		
 		
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
