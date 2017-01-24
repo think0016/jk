@@ -34,8 +34,7 @@ class TaskController extends BaseController {
 			) 
 	);
 	
-	//private $addtaskurl = "";//任务新增接口
-	
+	// private $addtaskurl = "";//任务新增接口
 	public function index() {
 		
 		// 检查登录情况
@@ -106,28 +105,28 @@ class TaskController extends BaseController {
 		$map ['uid'] = session ( "uid" );
 		$map ['is_del'] = 0;
 		
-		$menu =array();
+		$menu = array ();
 		if ($tasktype == "web") {
 			$map ['jk_tasktype.stype'] = '1';
-			$menu["name"]="web";
-			$menu["stype"]="1";
+			$menu ["name"] = "web";
+			$menu ["stype"] = "1";
 		} else if ($tasktype == "server") {
 			$map ['jk_tasktype.stype'] = '3';
-			$menu["name"]="server";
-			$menu["stype"]="3";
+			$menu ["name"] = "server";
+			$menu ["stype"] = "3";
 		} else {
 			$map ['jk_tasktype.name'] = $tasktype;
 			$menu = D ( "jk_tasktype" )->where ( array (
-					"name" => $tasktype
+					"name" => $tasktype 
 			) )->find ();
 		}
 		$tasklist = $taskModel->where ( $map )->join ( 'jk_tasktype ON jk_task.sid = jk_tasktype.sid' )->select ();
 		
-// 		if ($tasktype != "web" && $tasktype != "server") {
-// 			$tasktype = D ( "jk_tasktype" )->where ( array (
-// 					"name" => $tasktype 
-// 			) )->find ();
-// 		}
+		// if ($tasktype != "web" && $tasktype != "server") {
+		// $tasktype = D ( "jk_tasktype" )->where ( array (
+		// "name" => $tasktype
+		// ) )->find ();
+		// }
 		
 		$this->assign ( "sitetitle", C ( 'sitetitle' ) );
 		$this->assign ( "tasklist", $tasklist );
@@ -219,17 +218,39 @@ class TaskController extends BaseController {
 		}
 		
 		$taskModel = D ( "jk_task" );
+		$flag = "1";
+		
+		// 先查询是否需要调用接口删除任务
+		$task = $taskModel->field ( 'id,mids,is_syc' )->where ( array (
+				"id" => $taskid 
+		) )->find ();
+		
+		if (count ( $task ) == 0) {
+			// $this->error("请求错误");
+			exit ( "请求错误" );
+		}
+		
+		if ($task ["is_syc"] != 0) {
+			$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/delete";
+			
+			$mids = $task ["mids"];
+			$monitor_id = str_replace ( ":", "", $mids );
+			
+			// $temp_data = array();
+			// $temp_data["source_id"]=110201743;
+			// $temp_data["url"]=$posturl;
+			// $temp_data["task_id"]=$task["id"];
+			// $temp_data["task_type_id"]="";
+			// $temp_data["probe_id"]="";
+		}
+		
 		$data ["is_del"] = 1;
 		$data ["status"] = 2;
 		$n = $taskModel->where ( array (
 				"id" => $taskid 
 		) )->save ( $data );
-		if ($n) {
-			// $this->success("删除成功",U("Task/tasklist"));
-			echo "1";
-		} else {
-			echo "2";
-		}
+		
+		echo $flag;
 	}
 	public function updatealarm() {
 		$r = $this->is_login ( 0 );
@@ -366,12 +387,12 @@ class TaskController extends BaseController {
 			case 1 :
 				// http任务
 				$this->error ( "当前任务已被锁定，不能修改！" );
-				//$this->display ( 'httpadd' );
+				// $this->display ( 'httpadd' );
 				break;
 			case 2 :
 			case 3 :
 				$this->error ( "当前任务已被锁定，不能修改！" );
-				//$this->display ( 'pingadd' );
+				// $this->display ( 'pingadd' );
 				break;
 			case 4 :
 				$this->display ( 'apacheadd' );
@@ -382,7 +403,7 @@ class TaskController extends BaseController {
 			case 6 :
 				// ftp任务
 				$this->error ( "当前任务已被锁定，不能修改！" );
-				//$this->display ( 'ftpadd' );
+				// $this->display ( 'ftpadd' );
 				break;
 			case 7 :
 				$this->display ( 'mysqladd' );
@@ -390,12 +411,12 @@ class TaskController extends BaseController {
 			case 8 :
 				// tcp任务
 				$this->error ( "当前任务已被锁定，不能修改！" );
-				//$this->display ( 'tcpadd' );
+				// $this->display ( 'tcpadd' );
 				break;
 			case 9 :
 				// udp任务
 				$this->error ( "当前任务已被锁定，不能修改！" );
-				//$this->display ( 'udpadd' );
+				// $this->display ( 'udpadd' );
 				break;
 			case 13 :
 				// dns任务
@@ -543,34 +564,58 @@ class TaskController extends BaseController {
 			}
 		}
 		
-		
 		$monitor_id = str_replace ( ":", "", $mid );
-		//调任务接口新增START
+		// 调任务接口新增START
 		$mid_arr = explode ( ",", $monitor_id );
-		foreach ($mid_arr as $val){
+		foreach ( $mid_arr as $val ) {
 			$mid_temp = $val;
-			$mid_temp_rs = $this->getMonitoryPoint($mid_temp,0);
-			if($mid_temp_rs['point_type']==1){
-				$posturl = "";
-				$postdata = array();
-				$postdata["task_type_id"]=1;
-				$postdata["task_id"]=$taskid;
-				$postdata["dest_addr"]=$target;
-				$postdata["probe_id"]=$mid_temp_rs["probe_id"];
-				$postdata["test_slot_rule"]=1;
-				$postdata["dest_addr"]=$target;
-				$postdata["task_param"]=array("pkt_size"=>64,"pkt_count"=>3,"pkt_interval"=>2);
+			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
+			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
+				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$temp_data = array ();
+				$temp_data ["source_id"] = 110201743;
+				$temp_data ["task_type_id"] = 1;
+				$temp_data ["task_id"] = $taskid;
+				$temp_data ["dest_addr"] = $target;
+				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
+				$temp_data ["test_slot_rule"] = 1;
+				$temp_data ["task_param"] = array (
+						"pkt_size" => 64,
+						"pkt_count" => 3,
+						"pkt_interval" => 2 
+				);
+				$postdata = array (
+						$temp_data 
+				);
+				// echo json_encode($postdata);
+				$output = $this->curl_post ( $url, $postdata );
+				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
+				$temp = json_decode ( $output );
 				
+				// 标记入库
+				if ($temp ['status_code'] == 0) {
+					$data = array (
+							"is_syc" => 1 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				} else {
+					$data = array (
+							"is_syc" => 2 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				}
 			}
 		}
-		
-		exit;
-		//调任务接口新增END		
+		// 调任务接口新增END
 		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
-		if ($alarm_num > 0) {			
+		if ($alarm_num > 0) {
 			$flag = 0;
 			$triggerModel = D ( 'jk_trigger_ruls' );
 			for($i = 0; $i < $alarm_num; $i ++) {
@@ -614,8 +659,6 @@ class TaskController extends BaseController {
 				$this->error ( "ERROR4" );
 			}
 		}
-		
-		
 		
 		$this->success ( "保存成功", U ( "Task/tasklist" ) );
 	}
@@ -772,10 +815,57 @@ class TaskController extends BaseController {
 			}
 		}
 		
+		$monitor_id = str_replace ( ":", "", $mid );
+		// 调任务接口新增START
+		$mid_arr = explode ( ",", $monitor_id );
+		foreach ( $mid_arr as $val ) {
+			$mid_temp = $val;
+			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
+			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
+				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$temp_data = array ();
+				$temp_data ["source_id"] = 110201743;
+				$temp_data ["task_type_id"] = 3; // http
+				$temp_data ["task_id"] = $taskid;
+				$temp_data ["dest_addr"] = $target;
+				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
+				$temp_data ["test_slot_rule"] = 1;
+				$temp_data ["task_param"] = array (
+						"max_download_timeout" => 3 
+				);
+				$postdata = array (
+						$temp_data 
+				);
+				// echo json_encode($postdata);
+				$output = $this->curl_post ( $url, $postdata );
+				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
+				
+				$temp = json_decode ( $output );
+				
+				// 标记入库
+				if ($temp ['status_code'] == 0) {
+					$data = array (
+							"is_syc" => 1 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				} else {
+					$data = array (
+							"is_syc" => 2 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				}
+			}
+		}
+		// 调任务接口新增END
+		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
 		if ($alarm_num > 0) {
-			$monitor_id = str_replace ( ":", "", $mid );
+			// $monitor_id = str_replace ( ":", "", $mid );
 			$flag = 0;
 			$triggerModel = D ( 'jk_trigger_ruls' );
 			for($i = 0; $i < $alarm_num; $i ++) {
@@ -953,10 +1043,60 @@ class TaskController extends BaseController {
 			}
 		}
 		
+		$monitor_id = str_replace ( ":", "", $mid );
+		// 调任务接口新增START
+		$mid_arr = explode ( ",", $monitor_id );
+		foreach ( $mid_arr as $val ) {
+			$mid_temp = $val;
+			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
+			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
+				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$temp_data = array ();
+				$temp_data ["source_id"] = 110201743;
+				$temp_data ["task_type_id"] = 4; // FTP
+				$temp_data ["task_id"] = $taskid;
+				$temp_data ["dest_addr"] = $target;
+				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
+				$temp_data ["test_slot_rule"] = 1;
+				$temp_data ["task_param"] = array (
+						"dest_port" => $port,
+						"task_user" => $fusername,
+						"task_pwd" => $fpassword,
+						"file_name" => "" 
+				);
+				$postdata = array (
+						$temp_data 
+				);
+				// echo json_encode($postdata);
+				$output = $this->curl_post ( $url, $postdata );
+				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
+				
+				$temp = json_decode ( $output );
+				
+				// 标记入库
+				if ($temp ['status_code'] == 0) {
+					$data = array (
+							"is_syc" => 1 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				} else {
+					$data = array (
+							"is_syc" => 2 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				}
+			}
+		}
+		// 调任务接口新增END
+		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
 		if ($alarm_num > 0) {
-			$monitor_id = str_replace ( ":", "", $mid );
+			// $monitor_id = str_replace ( ":", "", $mid );
 			$flag = 0;
 			$triggerModel = D ( 'jk_trigger_ruls' );
 			for($i = 0; $i < $alarm_num; $i ++) {
@@ -1122,10 +1262,60 @@ class TaskController extends BaseController {
 			}
 		}
 		
+		$monitor_id = str_replace ( ":", "", $mid );
+		// 调任务接口新增START
+		$mid_arr = explode ( ",", $monitor_id );
+		foreach ( $mid_arr as $val ) {
+			$mid_temp = $val;
+			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
+			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
+				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$temp_data = array ();
+				$temp_data ["source_id"] = 110201743;
+				$temp_data ["task_type_id"] = 6; // TCP
+				$temp_data ["task_id"] = $taskid;
+				$temp_data ["dest_addr"] = $target;
+				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
+				$temp_data ["test_slot_rule"] = 1;
+				$temp_data ["task_param"] = array (
+						"pkt_size" => 50,
+						"pkt_count" => 2,
+						"pkt_timeout" => 2,
+						"pkt_interval" => 100 
+				);
+				$postdata = array (
+						$temp_data 
+				);
+				// echo json_encode($postdata);
+				$output = $this->curl_post ( $url, $postdata );
+				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
+				
+				$temp = json_decode ( $output );
+				
+				// 标记入库
+				if ($temp ['status_code'] == 0) {
+					$data = array (
+							"is_syc" => 1 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				} else {
+					$data = array (
+							"is_syc" => 2 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				}
+			}
+		}
+		// 调任务接口新增END
+		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
 		if ($alarm_num > 0) {
-			$monitor_id = str_replace ( ":", "", $mid );
+			// $monitor_id = str_replace ( ":", "", $mid );
 			$flag = 0;
 			$triggerModel = D ( 'jk_trigger_ruls' );
 			for($i = 0; $i < $alarm_num; $i ++) {
@@ -1300,6 +1490,55 @@ class TaskController extends BaseController {
 				$this->error ( "ERROR1" );
 			}
 		}
+		
+		$monitor_id = str_replace ( ":", "", $mid );
+		// 调任务接口新增START
+		$mid_arr = explode ( ",", $monitor_id );
+		foreach ( $mid_arr as $val ) {
+			$mid_temp = $val;
+			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
+			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
+				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$temp_data = array ();
+				$temp_data ["source_id"] = 110201743;
+				$temp_data ["task_type_id"] = 5; // UDP
+				$temp_data ["task_id"] = $taskid;
+				$temp_data ["dest_addr"] = $target;
+				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
+				$temp_data ["test_slot_rule"] = 1;
+				$temp_data ["task_param"] = array (
+						"pkt_size" => 50,
+						"pkt_count" => 2,
+						"pkt_interval" => 100 
+				);
+				$postdata = array (
+						$temp_data 
+				);
+				// echo json_encode($postdata);
+				$output = $this->curl_post ( $url, $postdata );
+				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
+				
+				$temp = json_decode ( $output );
+				
+				// 标记入库
+				if ($temp ['status_code'] == 0) {
+					$data = array (
+							"is_syc" => 1 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				} else {
+					$data = array (
+							"is_syc" => 2 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				}
+			}
+		}
+		// 调任务接口新增END
 		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
@@ -1488,10 +1727,60 @@ class TaskController extends BaseController {
 			}
 		}
 		
+		$monitor_id = str_replace ( ":", "", $mid );
+		// 调任务接口新增START
+		$mid_arr = explode ( ",", $monitor_id );
+		foreach ( $mid_arr as $val ) {
+			$mid_temp = $val;
+			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
+			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
+				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$temp_data = array ();
+				$temp_data ["source_id"] = 110201743;
+				$temp_data ["task_type_id"] = 2; // DNS
+				$temp_data ["task_id"] = $taskid;
+				$temp_data ["dest_addr"] = $target;
+				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
+				$temp_data ["test_slot_rule"] = 1;
+				$ips2 = str_replace ( ",", ";", $ips1 );
+				$temp_data ["task_param"] = array (
+						"dns_domain" => $ips2,
+						"pkt_count" => 2,
+						"pkt_interval" => 2 
+				);
+				$postdata = array (
+						$temp_data 
+				);
+				// echo json_encode($postdata);
+				$output = $this->curl_post ( $url, $postdata );
+				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
+				
+				$temp = json_decode ( $output );
+				
+				// 标记入库
+				if ($temp ['status_code'] == 0) {
+					$data = array (
+							"is_syc" => 1 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				} else {
+					$data = array (
+							"is_syc" => 2 
+					);
+					$r = $taskModel->where ( array (
+							"id" => $taskid 
+					) )->save ( $data );
+				}
+			}
+		}
+		// 调任务接口新增END
+		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
 		// 添加告警策略 2,gt,111111,ms,1,1,链接时间,大于,2;3;4
 		if ($alarm_num > 0) {
-			$monitor_id = str_replace ( ":", "", $mid );
+			// $monitor_id = str_replace ( ":", "", $mid );
 			$flag = 0;
 			$triggerModel = D ( 'jk_trigger_ruls' );
 			for($i = 0; $i < $alarm_num; $i ++) {
@@ -2410,24 +2699,23 @@ class TaskController extends BaseController {
 			$this->error ( "监控点数量选择不能超过" . $dnum . "个" );
 		}
 	}
-	
-	private function curl_post($url,$postdata) {
-		//$url = "http://120.52.96.45:58/lqtest.php";
-		$output = array();
+	private function curl_post($url, $postdata) {
+		// $url = "http://120.52.96.45:58/lqtest.php";
+		$output = array ();
 		
-		if($url != null && $url != "" ){
-			//$post_data = array ("username" => "bob","key" => "12345");
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		if ($url != null && $url != "") {
+			// $post_data = array ("username" => "bob","key" => "12345");
+			$ch = curl_init ();
+			curl_setopt ( $ch, CURLOPT_URL, $url );
+			curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
 			// post数据
-			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt ( $ch, CURLOPT_POST, 1 );
 			// post的变量
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-			$output = curl_exec($ch);
-			curl_close($ch);
-			//打印获得的数据
-			//print_r($output);
+			curl_setopt ( $ch, CURLOPT_POSTFIELDS, $post_data );
+			$output = curl_exec ( $ch );
+			curl_close ( $ch );
+			// 打印获得的数据
+			// print_r($output);
 		}
 		
 		return $output;
