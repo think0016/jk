@@ -34,6 +34,10 @@ class TaskController extends BaseController {
 			) 
 	);
 	
+	private $task_type_ids = array(
+	    "1"=>3,"3"=>1,"6"=>4,"8"=>6,"9"=>5,"13"=>2
+	);
+	
 	// private $addtaskurl = "";//任务新增接口
 	public function index() {
 		
@@ -232,16 +236,31 @@ class TaskController extends BaseController {
 		
 		if ($task ["is_syc"] != 0) {
 			$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/delete";
-			
+						
 			$mids = $task ["mids"];
 			$monitor_id = str_replace ( ":", "", $mids );
+			$monitor_id_arr = explode(",", $monitor_id);
 			
-			// $temp_data = array();
-			// $temp_data["source_id"]=110201743;
-			// $temp_data["url"]=$posturl;
-			// $temp_data["task_id"]=$task["id"];
-			// $temp_data["task_type_id"]="";
-			// $temp_data["probe_id"]="";
+			foreach ($monitor_id_arr as $val){
+			    $point = $this->getMonitoryPoint($val,0);
+			    if($point['point_type']==1){
+			        //联通接口
+			        $temp_data = array();
+			        $temp_data["source_id"]=110201743;
+			        $temp_data["url"]=$posturl;
+			        $temp_data["task_id"]=$task["id"];
+			        $temp_data["task_type_id"]=$this->task_type_ids[$task["sid"]];
+			        $temp_data["probe_id"]=$point['probe_id'];
+			        $postdata = array (
+			            $temp_data
+			        );
+			        $output = $this->curl_post ( $posturl, $postdata );
+			        wlog ( "[DELTASK]-" . "<" . $taskid . ">" . $output );
+			    };
+			    
+			    
+			}
+
 		}
 		
 		$data ["is_del"] = 1;
@@ -588,7 +607,7 @@ class TaskController extends BaseController {
 						$temp_data 
 				);
 				// echo json_encode($postdata);
-				$output = $this->curl_post ( $url, $postdata );
+				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -837,7 +856,7 @@ class TaskController extends BaseController {
 						$temp_data 
 				);
 				// echo json_encode($postdata);
-				$output = $this->curl_post ( $url, $postdata );
+				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -1068,7 +1087,7 @@ class TaskController extends BaseController {
 						$temp_data 
 				);
 				// echo json_encode($postdata);
-				$output = $this->curl_post ( $url, $postdata );
+				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -1287,7 +1306,7 @@ class TaskController extends BaseController {
 						$temp_data 
 				);
 				// echo json_encode($postdata);
-				$output = $this->curl_post ( $url, $postdata );
+				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -1515,7 +1534,7 @@ class TaskController extends BaseController {
 						$temp_data 
 				);
 				// echo json_encode($postdata);
-				$output = $this->curl_post ( $url, $postdata );
+				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -1752,7 +1771,7 @@ class TaskController extends BaseController {
 						$temp_data 
 				);
 				// echo json_encode($postdata);
-				$output = $this->curl_post ( $url, $postdata );
+				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -2711,7 +2730,7 @@ class TaskController extends BaseController {
 			// post数据
 			curl_setopt ( $ch, CURLOPT_POST, 1 );
 			// post的变量
-			curl_setopt ( $ch, CURLOPT_POSTFIELDS, $post_data );
+			curl_setopt ( $ch, CURLOPT_POSTFIELDS, $postdata );
 			$output = curl_exec ( $ch );
 			curl_close ( $ch );
 			// 打印获得的数据
