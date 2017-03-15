@@ -565,7 +565,7 @@ class IndexController extends BaseController {
 	 * 刷新探针（测试版）
 	 */
 	public function refreshpoint(){
-		$url = "http://111.198.98.28:9099/dataproxy/proxy/probe/v2/list?source_id=110201743";
+		$url = "http://211.94.164.50:10225/dataproxy/proxy/probe/v2/list?source_id=110201743";
 		$ch = curl_init();
 		//设置选项，包括URL
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -581,8 +581,7 @@ class IndexController extends BaseController {
 		
 		if($output->status_code==0){
 			$pointModel = D("jk_monitorypoint");
-			$pointModel ->where(array("point_type"=>1))->delete();
-			
+			$pointModel ->where(array("point_type"=>1))->delete();			
 			foreach ($output->probes as $probe){
 				$data = array();
 				$data["title"] = $probe->probe_name;
@@ -592,7 +591,7 @@ class IndexController extends BaseController {
 				$data["point_type"] = 1;
 				//echo $probe->id;
 				//echo number_format($probe->id,0,'','');
-				$data["probe_id"] = number_format($probe->id,0,'','');
+				$data["probe_id"] = number_format($probe->probe_id,0,'','');
 				$data["probe_last_heartbeat_time"] = $probe->last_heartbeat_time;
 				$data["isdefault"] = 0;				
 				$pointModel->add($data);

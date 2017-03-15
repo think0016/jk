@@ -34,11 +34,21 @@ class TaskController extends BaseController {
 			) 
 	);
 	
-	private $task_type_ids = array(
-	    "1"=>3,"3"=>1,"6"=>4,"8"=>6,"9"=>5,"13"=>2
-	);
-	
-	// private $addtaskurl = "";//任务新增接口
+	// //联通监控点type
+	// private $task_type_ids = array(
+	// "1"=>3,//http
+	// "3"=>1,//ping
+	// "6"=>12,//ftp
+	// "8"=>6,//tcp
+	// "9"=>5,//udp
+	// "13"=>10//dns
+	// );
+	// //联通监控点任务添加接口地址
+	// private $addTaskUrl_Unicom = "http://211.94.164.50:10225/dataproxy/proxy/task/v2/add";
+	// //联通监控点任务删除接口地址
+	// private $delTaskUrl_Unicom = "http://211.94.164.50:10225/dataproxy/proxy/task/v2/delete";
+	// //联通监控点任务source_id
+	// private $source_id_Unicom = 110201743;
 	public function index() {
 		
 		// 检查登录情况
@@ -235,32 +245,31 @@ class TaskController extends BaseController {
 		}
 		
 		if ($task ["is_syc"] != 0) {
-			$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/delete";
-						
+			$posturl = C('delTaskUrl_Unicom');
+			$task_type_ids = C("task_type_ids_Unicom");
+			
 			$mids = $task ["mids"];
 			$monitor_id = str_replace ( ":", "", $mids );
-			$monitor_id_arr = explode(",", $monitor_id);
+			$monitor_id_arr = explode ( ",", $monitor_id );
 			
-			foreach ($monitor_id_arr as $val){
-			    $point = $this->getMonitoryPoint($val,0);
-			    if($point['point_type']==1){
-			        //联通接口
-			        $temp_data = array();
-			        $temp_data["source_id"]=110201743;
-			        $temp_data["url"]=$posturl;
-			        $temp_data["task_id"]=$task["id"];
-			        $temp_data["task_type_id"]=$this->task_type_ids[$task["sid"]];
-			        $temp_data["probe_id"]=$point['probe_id'];
-			        $postdata = array (
-			            $temp_data
-			        );
-			        $output = $this->curl_post ( $posturl, $postdata );
-			        wlog ( "[DELTASK]-" . "<" . $taskid . ">" . $output );
-			    };
-			    
-			    
+			foreach ( $monitor_id_arr as $val ) {
+				$point = $this->getMonitoryPoint ( $val, 0 );
+				if ($point ['point_type'] == 1) {
+					// 联通接口
+					$temp_data = array ();
+					$temp_data ["source_id"] = C("source_id_Unicom");
+					$temp_data ["url"] = $posturl;
+					$temp_data ["task_id"] = $task ["id"];
+					$temp_data ["task_type_id"] = $task_type_ids[$task ["sid"]];
+					$temp_data ["probe_id"] = $point ['probe_id'];
+					$postdata = array (
+							$temp_data 
+					);
+					$output = $this->curl_post ( $posturl, $postdata );
+					wlog ( "[DELTASK]-" . "<" . $taskid . ">" . $output );
+				}
+				;
 			}
-
 		}
 		
 		$data ["is_del"] = 1;
@@ -590,28 +599,33 @@ class TaskController extends BaseController {
 			$mid_temp = $val;
 			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
 			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
-				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$posturl = C ( "addTaskUrl_Unicom" );
+				$task_type_ids = C ( "task_type_ids_Unicom" );
+				
 				$temp_data = array ();
-				$temp_data ["source_id"] = 110201743;
-				$temp_data ["task_type_id"] = 1;
-				$temp_data ["task_id"] = $taskid;
+				$temp_data ["source_id"] = C ( "source_id_Unicom" );
+				$temp_data ["task_type_id"] = $task_type_ids [$sid];
+				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
+				$temp_data ["task_id"] = intval($taskid);
 				$temp_data ["dest_addr"] = $target;
-				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
-				$temp_data ["test_slot_rule"] = 1;
-				$temp_data ["task_param"] = array (
-						"pkt_size" => 64,
-						"pkt_count" => 3,
-						"pkt_interval" => 2 
+				$temp_data ["probe_id"] = intval($mid_temp_rs ["probe_id"]);
+				$temp_data ["test_slot_rule"] = '1';
+				$task_param = array (
+						"pkt_timeout"=>"2",
+						"pkt_size" => "64",
+						"pkt_count" => "3",
+						"pkt_interval" => "2"
 				);
-				$postdata = array (
-						$temp_data 
-				);
-				// echo json_encode($postdata);
+				//$temp_data ["task_param"] = json_encode($task_param);
+				$temp_data ["task_param"] = $task_param;
+				$postdata = array ("data"=>json_encode(array($temp_data)));
+				
 				$output = $this->curl_post ( $posturl, $postdata );
-				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
+				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );				
 				
 				$temp = json_decode ( $output );
-				
+				exit();
 				// 标记入库
 				if ($temp ['status_code'] == 0) {
 					$data = array (
@@ -630,6 +644,7 @@ class TaskController extends BaseController {
 				}
 			}
 		}
+		
 		// 调任务接口新增END
 		
 		// 添加告警策略 2,gt,111111,ms,0,1,链接时间,大于
@@ -841,10 +856,13 @@ class TaskController extends BaseController {
 			$mid_temp = $val;
 			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
 			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
-				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$posturl = C ( "addTaskUrl_Unicom" );
+				$task_type_ids = C ( "task_type_ids_Unicom" );
 				$temp_data = array ();
-				$temp_data ["source_id"] = 110201743;
-				$temp_data ["task_type_id"] = 3; // http
+				$temp_data = array ();
+				$temp_data ["source_id"] = C ( "source_id_Unicom" );
+				$temp_data ["task_type_id"] = $task_type_ids [$sid];//http				
 				$temp_data ["task_id"] = $taskid;
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
@@ -1069,10 +1087,12 @@ class TaskController extends BaseController {
 			$mid_temp = $val;
 			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
 			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
-				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				//$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$posturl = C("addTaskUrl_Unicom");
+				$task_type_ids = C("task_type_ids_Unicom");
 				$temp_data = array ();
-				$temp_data ["source_id"] = 110201743;
-				$temp_data ["task_type_id"] = 4; // FTP
+				$temp_data ["source_id"] = C("source_id_Unicom");
+				$temp_data ["task_type_id"] = $task_type_ids[$sid];//ftp
 				$temp_data ["task_id"] = $taskid;
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
@@ -1288,10 +1308,12 @@ class TaskController extends BaseController {
 			$mid_temp = $val;
 			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
 			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
-				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				//$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$posturl = C("addTaskUrl_Unicom");
+				$task_type_ids = C("task_type_ids_Unicom");
 				$temp_data = array ();
-				$temp_data ["source_id"] = 110201743;
-				$temp_data ["task_type_id"] = 6; // TCP
+				$temp_data ["source_id"] = C("source_id_Unicom");
+				$temp_data ["task_type_id"] = $task_type_ids[$sid];// TCP				
 				$temp_data ["task_id"] = $taskid;
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
@@ -1517,10 +1539,12 @@ class TaskController extends BaseController {
 			$mid_temp = $val;
 			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
 			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
-				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				//$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$posturl = C("addTaskUrl_Unicom");
+				$task_type_ids = C("task_type_ids_Unicom");
 				$temp_data = array ();
-				$temp_data ["source_id"] = 110201743;
-				$temp_data ["task_type_id"] = 5; // UDP
+				$temp_data ["source_id"] = C("source_id_Unicom");
+				$temp_data ["task_type_id"] = $task_type_ids[$sid]; // UDP				
 				$temp_data ["task_id"] = $taskid;
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
@@ -1753,10 +1777,12 @@ class TaskController extends BaseController {
 			$mid_temp = $val;
 			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
 			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
-				$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				//$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$posturl = C("addTaskUrl_Unicom");
+				$task_type_ids = C("task_type_ids_Unicom");
 				$temp_data = array ();
-				$temp_data ["source_id"] = 110201743;
-				$temp_data ["task_type_id"] = 2; // DNS
+				$temp_data ["source_id"] = C("source_id_Unicom");
+				$temp_data ["task_type_id"] = $task_type_ids[$sid]; // DNS				
 				$temp_data ["task_id"] = $taskid;
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
@@ -2720,6 +2746,9 @@ class TaskController extends BaseController {
 	}
 	private function curl_post($url, $postdata) {
 		// $url = "http://120.52.96.45:58/lqtest.php";
+		
+		print_r($url);
+		print_r($postdata);
 		$output = array ();
 		
 		if ($url != null && $url != "") {
@@ -2736,7 +2765,7 @@ class TaskController extends BaseController {
 			// 打印获得的数据
 			// print_r($output);
 		}
-		
+		print_r($output);
 		return $output;
 	}
 }
