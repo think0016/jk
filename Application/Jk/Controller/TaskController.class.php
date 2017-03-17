@@ -2748,7 +2748,11 @@ class TaskController extends BaseController {
 		// $url = "http://120.52.96.45:58/lqtest.php";
 		
 		print_r($url);
-		print_r($postdata);
+		//print_r($postdata);
+		
+		$poststr = "data=".$postdata["data"];
+		print_r($poststr);
+		
 		$output = array ();
 		
 		if ($url != null && $url != "") {
@@ -2759,7 +2763,11 @@ class TaskController extends BaseController {
 			// post数据
 			curl_setopt ( $ch, CURLOPT_POST, 1 );
 			// post的变量
-			curl_setopt ( $ch, CURLOPT_POSTFIELDS, $postdata );
+// 			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+// 			    'Content-Type: application/json',
+// 			    'Content-Length: ' . strlen($postdata))
+// 			);
+			curl_setopt ( $ch, CURLOPT_POSTFIELDS, $poststr );
 			$output = curl_exec ( $ch );
 			curl_close ( $ch );
 			// 打印获得的数据
