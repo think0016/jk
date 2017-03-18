@@ -235,7 +235,7 @@ class TaskController extends BaseController {
 		$flag = "1";
 		
 		// 先查询是否需要调用接口删除任务
-		$task = $taskModel->field ( 'id,mids,is_syc' )->where ( array (
+		$task = $taskModel->field ( 'id,sid,mids,is_syc' )->where ( array (
 				"id" => $taskid 
 		) )->find ();
 		
@@ -244,9 +244,10 @@ class TaskController extends BaseController {
 			exit ( "请求错误" );
 		}
 		
-		if ($task ["is_syc"] != 0) {
-			$posturl = C('delTaskUrl_Unicom');
-			$task_type_ids = C("task_type_ids_Unicom");
+		$updatedata = array();
+		if ($task ["is_syc"] != 0) {//开始删除
+			$posturl = C ( 'delTaskUrl_Unicom' );
+			$task_type_ids = C ( "task_type_ids_Unicom" );
 			
 			$mids = $task ["mids"];
 			$monitor_id = str_replace ( ":", "", $mids );
@@ -257,26 +258,28 @@ class TaskController extends BaseController {
 				if ($point ['point_type'] == 1) {
 					// 联通接口
 					$temp_data = array ();
-					$temp_data ["source_id"] = C("source_id_Unicom");
-					$temp_data ["url"] = $posturl;
+					$temp_data ["source_id"] = C ( "source_id_Unicom" );
+					$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
 					$temp_data ["task_id"] = $task ["id"];
-					$temp_data ["task_type_id"] = $task_type_ids[$task ["sid"]];
+					$temp_data ["task_type_id"] = $task_type_ids [$task ["sid"]];
 					$temp_data ["probe_id"] = $point ['probe_id'];
-					$postdata = array (
-							$temp_data 
-					);
+					$postdata = "data=" . json_encode (array($temp_data));					
 					$output = $this->curl_post ( $posturl, $postdata );
 					wlog ( "[DELTASK]-" . "<" . $taskid . ">" . $output );
-				}
-				;
+					$temp = json_decode ( $output );
+					// 标记入库
+					if ($temp->status_code == 0) {
+						$updatedata ["is_syc"] = 0;
+					}
+				};
 			}
 		}
 		
-		$data ["is_del"] = 1;
-		$data ["status"] = 2;
+		$updatedata ["is_del"] = 1;
+		$updatedata ["status"] = 2;
 		$n = $taskModel->where ( array (
 				"id" => $taskid 
-		) )->save ( $data );
+		) )->save ( $updatedata );
 		
 		echo $flag;
 	}
@@ -607,27 +610,26 @@ class TaskController extends BaseController {
 				$temp_data ["source_id"] = C ( "source_id_Unicom" );
 				$temp_data ["task_type_id"] = $task_type_ids [$sid];
 				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
-				$temp_data ["task_id"] = intval($taskid);
+				$temp_data ["task_id"] = intval ( $taskid );
 				$temp_data ["dest_addr"] = $target;
-				$temp_data ["probe_id"] = intval($mid_temp_rs ["probe_id"]);
+				$temp_data ["probe_id"] = intval ( $mid_temp_rs ["probe_id"] );
 				$temp_data ["test_slot_rule"] = '1';
 				$task_param = array (
-						"pkt_timeout"=>"2",
+						"pkt_timeout" => "2",
 						"pkt_size" => "64",
 						"pkt_count" => "3",
-						"pkt_interval" => "2"
+						"pkt_interval" => "2" 
 				);
-				//$temp_data ["task_param"] = json_encode($task_param);
+				// $temp_data ["task_param"] = json_encode($task_param);
 				$temp_data ["task_param"] = $task_param;
-				$postdata = array ("data"=>json_encode(array($temp_data)));
+				$postdata = "data=" . json_encode (array($temp_data));
 				
 				$output = $this->curl_post ( $posturl, $postdata );
-				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );				
+				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
-				exit();
 				// 标记入库
-				if ($temp ['status_code'] == 0) {
+				if ($temp->status_code == 0) {
 					$data = array (
 							"is_syc" => 1 
 					);
@@ -862,17 +864,16 @@ class TaskController extends BaseController {
 				$temp_data = array ();
 				$temp_data = array ();
 				$temp_data ["source_id"] = C ( "source_id_Unicom" );
-				$temp_data ["task_type_id"] = $task_type_ids [$sid];//http				
+				$temp_data ["task_type_id"] = $task_type_ids [$sid]; // http
 				$temp_data ["task_id"] = $taskid;
+				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
 				$temp_data ["test_slot_rule"] = 1;
 				$temp_data ["task_param"] = array (
 						"max_download_timeout" => 3 
 				);
-				$postdata = array (
-						$temp_data 
-				);
+				$postdata = "data=" . json_encode (array($temp_data));
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -880,7 +881,7 @@ class TaskController extends BaseController {
 				$temp = json_decode ( $output );
 				
 				// 标记入库
-				if ($temp ['status_code'] == 0) {
+				if ($temp->status_code == 0) {
 					$data = array (
 							"is_syc" => 1 
 					);
@@ -1087,14 +1088,15 @@ class TaskController extends BaseController {
 			$mid_temp = $val;
 			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
 			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
-				//$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
-				$posturl = C("addTaskUrl_Unicom");
-				$task_type_ids = C("task_type_ids_Unicom");
+			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$posturl = C ( "addTaskUrl_Unicom" );
+				$task_type_ids = C ( "task_type_ids_Unicom" );
 				$temp_data = array ();
-				$temp_data ["source_id"] = C("source_id_Unicom");
-				$temp_data ["task_type_id"] = $task_type_ids[$sid];//ftp
+				$temp_data ["source_id"] = C ( "source_id_Unicom" );
+				$temp_data ["task_type_id"] = $task_type_ids [$sid]; // ftp
 				$temp_data ["task_id"] = $taskid;
 				$temp_data ["dest_addr"] = $target;
+				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
 				$temp_data ["test_slot_rule"] = 1;
 				$temp_data ["task_param"] = array (
@@ -1103,9 +1105,7 @@ class TaskController extends BaseController {
 						"task_pwd" => $fpassword,
 						"file_name" => "" 
 				);
-				$postdata = array (
-						$temp_data 
-				);
+				$postdata = "data=" . json_encode (array($temp_data));
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -1113,7 +1113,7 @@ class TaskController extends BaseController {
 				$temp = json_decode ( $output );
 				
 				// 标记入库
-				if ($temp ['status_code'] == 0) {
+				if ($temp->status_code == 0) {
 					$data = array (
 							"is_syc" => 1 
 					);
@@ -1308,14 +1308,15 @@ class TaskController extends BaseController {
 			$mid_temp = $val;
 			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
 			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
-				//$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
-				$posturl = C("addTaskUrl_Unicom");
-				$task_type_ids = C("task_type_ids_Unicom");
+			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$posturl = C ( "addTaskUrl_Unicom" );
+				$task_type_ids = C ( "task_type_ids_Unicom" );
 				$temp_data = array ();
-				$temp_data ["source_id"] = C("source_id_Unicom");
-				$temp_data ["task_type_id"] = $task_type_ids[$sid];// TCP				
+				$temp_data ["source_id"] = C ( "source_id_Unicom" );
+				$temp_data ["task_type_id"] = $task_type_ids [$sid]; // TCP
 				$temp_data ["task_id"] = $taskid;
 				$temp_data ["dest_addr"] = $target;
+				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
 				$temp_data ["test_slot_rule"] = 1;
 				$temp_data ["task_param"] = array (
@@ -1324,9 +1325,7 @@ class TaskController extends BaseController {
 						"pkt_timeout" => 2,
 						"pkt_interval" => 100 
 				);
-				$postdata = array (
-						$temp_data 
-				);
+				$postdata = "data=" . json_encode (array($temp_data));
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -1334,7 +1333,7 @@ class TaskController extends BaseController {
 				$temp = json_decode ( $output );
 				
 				// 标记入库
-				if ($temp ['status_code'] == 0) {
+				if ($temp->status_code == 0) {
 					$data = array (
 							"is_syc" => 1 
 					);
@@ -1539,12 +1538,13 @@ class TaskController extends BaseController {
 			$mid_temp = $val;
 			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
 			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
-				//$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
-				$posturl = C("addTaskUrl_Unicom");
-				$task_type_ids = C("task_type_ids_Unicom");
+			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$posturl = C ( "addTaskUrl_Unicom" );
+				$task_type_ids = C ( "task_type_ids_Unicom" );
 				$temp_data = array ();
-				$temp_data ["source_id"] = C("source_id_Unicom");
-				$temp_data ["task_type_id"] = $task_type_ids[$sid]; // UDP				
+				$temp_data ["source_id"] = C ( "source_id_Unicom" );
+				$temp_data ["task_type_id"] = $task_type_ids [$sid]; // UDP
+				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
 				$temp_data ["task_id"] = $taskid;
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
@@ -1554,9 +1554,7 @@ class TaskController extends BaseController {
 						"pkt_count" => 2,
 						"pkt_interval" => 100 
 				);
-				$postdata = array (
-						$temp_data 
-				);
+				$postdata = "data=" . json_encode (array($temp_data));
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -1564,7 +1562,7 @@ class TaskController extends BaseController {
 				$temp = json_decode ( $output );
 				
 				// 标记入库
-				if ($temp ['status_code'] == 0) {
+				if ($temp->status_code == 0) {
 					$data = array (
 							"is_syc" => 1 
 					);
@@ -1777,13 +1775,14 @@ class TaskController extends BaseController {
 			$mid_temp = $val;
 			$mid_temp_rs = $this->getMonitoryPoint ( $mid_temp, 0 );
 			if ($mid_temp_rs ['point_type'] == 1) { // 联通接口
-				//$posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
-				$posturl = C("addTaskUrl_Unicom");
-				$task_type_ids = C("task_type_ids_Unicom");
+			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
+				$posturl = C ( "addTaskUrl_Unicom" );
+				$task_type_ids = C ( "task_type_ids_Unicom" );
 				$temp_data = array ();
-				$temp_data ["source_id"] = C("source_id_Unicom");
-				$temp_data ["task_type_id"] = $task_type_ids[$sid]; // DNS				
+				$temp_data ["source_id"] = C ( "source_id_Unicom" );
+				$temp_data ["task_type_id"] = $task_type_ids [$sid]; // DNS
 				$temp_data ["task_id"] = $taskid;
+				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
 				$temp_data ["test_slot_rule"] = 1;
@@ -1793,9 +1792,7 @@ class TaskController extends BaseController {
 						"pkt_count" => 2,
 						"pkt_interval" => 2 
 				);
-				$postdata = array (
-						$temp_data 
-				);
+				$postdata = "data=" . json_encode (array($temp_data));
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -1803,7 +1800,7 @@ class TaskController extends BaseController {
 				$temp = json_decode ( $output );
 				
 				// 标记入库
-				if ($temp ['status_code'] == 0) {
+				if ($temp->status_code == 0) {
 					$data = array (
 							"is_syc" => 1 
 					);
@@ -2744,14 +2741,17 @@ class TaskController extends BaseController {
 			$this->error ( "监控点数量选择不能超过" . $dnum . "个" );
 		}
 	}
-	private function curl_post($url, $postdata) {
+	private function curl_post($url, $postdata, $c = 0) {
 		// $url = "http://120.52.96.45:58/lqtest.php";
 		
-		print_r($url);
-		//print_r($postdata);
+		print_r($postdata);
+		$poststr = $postdata;
 		
-		$poststr = "data=".$postdata["data"];
-		print_r($poststr);
+		// 转换array
+		// if (is_array ( $postdata ) && $c == 0) {
+		// foreach ($postdata as $k => $v){
+		// }
+		// }
 		
 		$output = array ();
 		
@@ -2763,10 +2763,10 @@ class TaskController extends BaseController {
 			// post数据
 			curl_setopt ( $ch, CURLOPT_POST, 1 );
 			// post的变量
-// 			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-// 			    'Content-Type: application/json',
-// 			    'Content-Length: ' . strlen($postdata))
-// 			);
+			// curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			// 'Content-Type: application/json',
+			// 'Content-Length: ' . strlen($postdata))
+			// );
 			curl_setopt ( $ch, CURLOPT_POSTFIELDS, $poststr );
 			$output = curl_exec ( $ch );
 			curl_close ( $ch );
