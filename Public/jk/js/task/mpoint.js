@@ -180,6 +180,7 @@ function fix_frequency_button(fixflag){
 			$(".frequency[time='15']").addClass("disabled").attr("dis","1");
 			//$(".frequency[time='30']").addClass("disabled");
 			//$(".frequency[time='60']").addClass("disabled");
+			$("input[name='frequency']").val(10);
 	}else{
 			$('.frequency').removeClass('active');
 			$('.frequency').removeClass('disabled');
@@ -192,6 +193,7 @@ function fix_frequency_button(fixflag){
 			$(".frequency[time='15']").attr("dis","0");
 			$(".frequency[time='30']").attr("dis","0");
 			$(".frequency[time='60']").attr("dis","0");
+			$("input[name='frequency']").val(10);
 		}else{
 			$(".frequency[time='1']").addClass("disabled").attr("dis","1");
 			$(".frequency[time='2']").addClass("disabled").attr("dis","1");
@@ -201,6 +203,8 @@ function fix_frequency_button(fixflag){
 			$(".frequency[time='15']").attr("dis","0");
 			$(".frequency[time='30']").attr("dis","0");
 			$(".frequency[time='60']").attr("dis","0");
+			$("input[name='frequency']").val(5);
+
 		}
 	}
 

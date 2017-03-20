@@ -544,8 +544,8 @@ class TaskController extends BaseController {
 				$label = $label . ",";
 			}
 			$label = $label . ":" . $labels [$i] . ":";
-		}
-		$frequency = $frequency * 60;
+		}		
+		$frequency_s = $frequency * 60;
 		$data = array (
 				"sid" => $sid,
 				"mids" => $mid,
@@ -553,7 +553,7 @@ class TaskController extends BaseController {
 				"addtime" => $now,
 				"title" => $title,
 				"lasttime" => $this->initlasttime ( $mid ),
-				"frequency" => $frequency,
+				"frequency" => $frequency_s,
 				"labels" => $label,
 				"isadv" => $adv,
 				"warntimes" => $warntimes,
@@ -772,14 +772,14 @@ class TaskController extends BaseController {
 			}
 			$label = $label . ":" . $labels [$i] . ":";
 		}
-		$frequency = $frequency * 60;
+		$frequency_s = $frequency * 60;
 		$data = array (
 				"sid" => 1,
 				"mids" => $mid,
 				"uid" => session ( "uid" ),
 				"addtime" => $now,
 				"title" => $title,
-				"frequency" => $frequency,
+				"frequency" => $frequency_s,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"warntimes" => $warntimes,
@@ -1035,14 +1035,14 @@ class TaskController extends BaseController {
 			}
 			$label = $label . ":" . $labels [$i] . ":";
 		}
-		$frequency = $frequency * 60;
+		$frequency_s = $frequency * 60;
 		$data = array (
 				"sid" => $sid,
 				"mids" => $mid,
 				"uid" => session ( "uid" ),
 				"addtime" => $now,
 				"title" => $title,
-				"frequency" => $frequency,
+				"frequency" => $frequency_s,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"warntimes" => $warntimes,
@@ -1265,14 +1265,14 @@ class TaskController extends BaseController {
 			}
 			$label = $label . ":" . $labels [$i] . ":";
 		}
-		$frequency = $frequency * 60;
+		$frequency_s = $frequency * 60;
 		$data = array (
 				"sid" => $sid,
 				"mids" => $mid,
 				"uid" => session ( "uid" ),
 				"addtime" => $now,
 				"title" => $title,
-				"frequency" => $frequency,
+				"frequency" => $frequency_s,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"warntimes" => $warntimes,
@@ -1493,14 +1493,14 @@ class TaskController extends BaseController {
 			}
 			$label = $label . ":" . $labels [$i] . ":";
 		}
-		$frequency = $frequency * 60;
+		$frequency_s = $frequency * 60;
 		$data = array (
 				"sid" => $sid,
 				"mids" => $mid,
 				"uid" => session ( "uid" ),
 				"addtime" => $now,
 				"title" => $title,
-				"frequency" => $frequency,
+				"frequency" => $frequency_s,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"warntimes" => $warntimes,
@@ -1727,14 +1727,14 @@ class TaskController extends BaseController {
 			}
 			$label = $label . ":" . $labels [$i] . ":";
 		}
-		$frequency = $frequency * 60;
+		$frequency_s = $frequency * 60;
 		$data = array (
 				"sid" => $sid,
 				"mids" => $mid,
 				"uid" => session ( "uid" ),
 				"addtime" => $now,
 				"title" => $title,
-				"frequency" => $frequency,
+				"frequency" => $frequency_s,
 				"lasttime" => $this->initlasttime ( $mid ),
 				"labels" => $label,
 				"warntimes" => $warntimes,
