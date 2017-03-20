@@ -244,8 +244,8 @@ class TaskController extends BaseController {
 			exit ( "请求错误" );
 		}
 		
-		$updatedata = array();
-		if ($task ["is_syc"] != 0) {//开始删除
+		$updatedata = array ();
+		if ($task ["is_syc"] != 0) { // 开始删除
 			$posturl = C ( 'delTaskUrl_Unicom' );
 			$task_type_ids = C ( "task_type_ids_Unicom" );
 			
@@ -263,7 +263,9 @@ class TaskController extends BaseController {
 					$temp_data ["task_id"] = $task ["id"];
 					$temp_data ["task_type_id"] = $task_type_ids [$task ["sid"]];
 					$temp_data ["probe_id"] = $point ['probe_id'];
-					$postdata = "data=" . json_encode (array($temp_data));					
+					$postdata = "data=" . json_encode ( array (
+							$temp_data 
+					) );
 					$output = $this->curl_post ( $posturl, $postdata );
 					wlog ( "[DELTASK]-" . "<" . $taskid . ">" . $output );
 					$temp = json_decode ( $output );
@@ -271,7 +273,8 @@ class TaskController extends BaseController {
 					if ($temp->status_code == 0) {
 						$updatedata ["is_syc"] = 0;
 					}
-				};
+				}
+				;
 			}
 		}
 		
@@ -605,7 +608,7 @@ class TaskController extends BaseController {
 			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
 				$posturl = C ( "addTaskUrl_Unicom" );
 				$task_type_ids = C ( "task_type_ids_Unicom" );
-				
+				$test_slot_rule = C ( "test_slot_rule_Unicom" );
 				$temp_data = array ();
 				$temp_data ["source_id"] = C ( "source_id_Unicom" );
 				$temp_data ["task_type_id"] = $task_type_ids [$sid];
@@ -613,7 +616,10 @@ class TaskController extends BaseController {
 				$temp_data ["task_id"] = intval ( $taskid );
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = intval ( $mid_temp_rs ["probe_id"] );
-				$temp_data ["test_slot_rule"] = '1';
+				$temp_data ["test_slot_rule"] = $test_slot_rule [$frequency];
+				if (! $test_slot_rule [$frequency]) {
+					$this->error ( "监控频率不匹配" );
+				}
 				$task_param = array (
 						"pkt_timeout" => "2",
 						"pkt_size" => "64",
@@ -622,7 +628,9 @@ class TaskController extends BaseController {
 				);
 				// $temp_data ["task_param"] = json_encode($task_param);
 				$temp_data ["task_param"] = $task_param;
-				$postdata = "data=" . json_encode (array($temp_data));
+				$postdata = "data=" . json_encode ( array (
+						$temp_data 
+				) );
 				
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -861,6 +869,7 @@ class TaskController extends BaseController {
 			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
 				$posturl = C ( "addTaskUrl_Unicom" );
 				$task_type_ids = C ( "task_type_ids_Unicom" );
+				$test_slot_rule = C ( "test_slot_rule_Unicom" );
 				$temp_data = array ();
 				$temp_data = array ();
 				$temp_data ["source_id"] = C ( "source_id_Unicom" );
@@ -869,11 +878,16 @@ class TaskController extends BaseController {
 				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
-				$temp_data ["test_slot_rule"] = 1;
+				$temp_data ["test_slot_rule"] = $test_slot_rule [$frequency];
+				if (! $test_slot_rule [$frequency]) {
+					$this->error ( "监控频率不匹配" );
+				}
 				$temp_data ["task_param"] = array (
 						"max_download_timeout" => 3 
 				);
-				$postdata = "data=" . json_encode (array($temp_data));
+				$postdata = "data=" . json_encode ( array (
+						$temp_data 
+				) );
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -1091,6 +1105,7 @@ class TaskController extends BaseController {
 			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
 				$posturl = C ( "addTaskUrl_Unicom" );
 				$task_type_ids = C ( "task_type_ids_Unicom" );
+				$test_slot_rule = C ( "test_slot_rule_Unicom" );
 				$temp_data = array ();
 				$temp_data ["source_id"] = C ( "source_id_Unicom" );
 				$temp_data ["task_type_id"] = $task_type_ids [$sid]; // ftp
@@ -1098,14 +1113,19 @@ class TaskController extends BaseController {
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
-				$temp_data ["test_slot_rule"] = 1;
+				$temp_data ["test_slot_rule"] = $test_slot_rule [$frequency];
+				if (! $test_slot_rule [$frequency]) {
+					$this->error ( "监控频率不匹配" );
+				}
 				$temp_data ["task_param"] = array (
 						"dest_port" => $port,
 						"task_user" => $fusername,
 						"task_pwd" => $fpassword,
 						"file_name" => "" 
 				);
-				$postdata = "data=" . json_encode (array($temp_data));
+				$postdata = "data=" . json_encode ( array (
+						$temp_data 
+				) );
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -1311,6 +1331,7 @@ class TaskController extends BaseController {
 			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
 				$posturl = C ( "addTaskUrl_Unicom" );
 				$task_type_ids = C ( "task_type_ids_Unicom" );
+				$test_slot_rule = C ( "test_slot_rule_Unicom" );
 				$temp_data = array ();
 				$temp_data ["source_id"] = C ( "source_id_Unicom" );
 				$temp_data ["task_type_id"] = $task_type_ids [$sid]; // TCP
@@ -1318,14 +1339,19 @@ class TaskController extends BaseController {
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
-				$temp_data ["test_slot_rule"] = 1;
+				$temp_data ["test_slot_rule"] = $test_slot_rule [$frequency];
+				if (! $test_slot_rule [$frequency]) {
+					$this->error ( "监控频率不匹配" );
+				}
 				$temp_data ["task_param"] = array (
 						"pkt_size" => 50,
 						"pkt_count" => 2,
 						"pkt_timeout" => 2,
 						"pkt_interval" => 100 
 				);
-				$postdata = "data=" . json_encode (array($temp_data));
+				$postdata = "data=" . json_encode ( array (
+						$temp_data 
+				) );
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -1541,6 +1567,7 @@ class TaskController extends BaseController {
 			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
 				$posturl = C ( "addTaskUrl_Unicom" );
 				$task_type_ids = C ( "task_type_ids_Unicom" );
+				$test_slot_rule = C ( "test_slot_rule_Unicom" );
 				$temp_data = array ();
 				$temp_data ["source_id"] = C ( "source_id_Unicom" );
 				$temp_data ["task_type_id"] = $task_type_ids [$sid]; // UDP
@@ -1548,13 +1575,18 @@ class TaskController extends BaseController {
 				$temp_data ["task_id"] = $taskid;
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
-				$temp_data ["test_slot_rule"] = 1;
+				$temp_data ["test_slot_rule"] = $test_slot_rule [$frequency];
+				if (! $test_slot_rule [$frequency]) {
+					$this->error ( "监控频率不匹配" );
+				}
 				$temp_data ["task_param"] = array (
 						"pkt_size" => 50,
 						"pkt_count" => 2,
 						"pkt_interval" => 100 
 				);
-				$postdata = "data=" . json_encode (array($temp_data));
+				$postdata = "data=" . json_encode ( array (
+						$temp_data 
+				) );
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -1778,6 +1810,7 @@ class TaskController extends BaseController {
 			                                        // $posturl = "http://111.198.98.28:9099/dataproxy/proxy/task/v2/add";
 				$posturl = C ( "addTaskUrl_Unicom" );
 				$task_type_ids = C ( "task_type_ids_Unicom" );
+				$test_slot_rule = C ( "test_slot_rule_Unicom" );
 				$temp_data = array ();
 				$temp_data ["source_id"] = C ( "source_id_Unicom" );
 				$temp_data ["task_type_id"] = $task_type_ids [$sid]; // DNS
@@ -1785,14 +1818,19 @@ class TaskController extends BaseController {
 				$temp_data ["url"] = "http://120.52.96.45:8000/upload/";
 				$temp_data ["dest_addr"] = $target;
 				$temp_data ["probe_id"] = $mid_temp_rs ["probe_id"];
-				$temp_data ["test_slot_rule"] = 1;
+				$temp_data ["test_slot_rule"] = $test_slot_rule [$frequency];
+				if (! $test_slot_rule [$frequency]) {
+					$this->error ( "监控频率不匹配" );
+				}
 				$ips2 = str_replace ( ",", ";", $ips1 );
 				$temp_data ["task_param"] = array (
 						"dns_domain" => $ips2,
 						"pkt_count" => 2,
 						"pkt_interval" => 2 
 				);
-				$postdata = "data=" . json_encode (array($temp_data));
+				$postdata = "data=" . json_encode ( array (
+						$temp_data 
+				) );
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
@@ -2743,8 +2781,7 @@ class TaskController extends BaseController {
 	}
 	private function curl_post($url, $postdata, $c = 0) {
 		// $url = "http://120.52.96.45:58/lqtest.php";
-		
-		print_r($postdata);
+		print_r ( $postdata );
 		$poststr = $postdata;
 		
 		// 转换array
@@ -2773,7 +2810,7 @@ class TaskController extends BaseController {
 			// 打印获得的数据
 			// print_r($output);
 		}
-		print_r($output);
+		print_r ( $output );
 		return $output;
 	}
 }

@@ -97,6 +97,7 @@ $("input[name='cmpoint']").click(function(event) {
 
 function savepoint() {
 	// var n = 0;
+	fixflag = false;
 	pointlist = new Array();
 	$("input[name='cmpoint']:checked").each(function(index, el) {
 		var temp = new Array();
@@ -104,6 +105,10 @@ function savepoint() {
 		temp[1] = $(this).attr("mname");
 		pointlist[index] = temp;
 
+		var pointtype = $(this).attr("pointtype");
+		if(pointtype == 1 ){
+			fixflag = true;
+		}
 		// console.log(pointlist);
 
 		// if (str !== '') {
@@ -112,6 +117,8 @@ function savepoint() {
 		// str = str + ":" + $(this).val() + ":";
 		// }
 	});
+
+	fix_frequency_button(fixflag);//修正联通点和测试点同步问题
 	midinfo();
 	smpcls();
 }
@@ -159,5 +166,44 @@ $("input[name='cmpoint']:checked").each(function(index, el) {
 	pointlist[index] = temp;
 
 });
+
+//修正联通点和测试点同步问题
+function fix_frequency_button(fixflag){
+	if(fixflag){
+			$('.frequency').removeClass('active');
+			$('.frequency').removeClass('disabled');
+			$(".frequency[time='1']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='2']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='3']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='5']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='10']").addClass("active").attr("dis","0");
+			$(".frequency[time='15']").addClass("disabled").attr("dis","1");
+			//$(".frequency[time='30']").addClass("disabled");
+			//$(".frequency[time='60']").addClass("disabled");
+	}else{
+			$('.frequency').removeClass('active');
+			$('.frequency').removeClass('disabled');
+		if(userlevel == 1){
+			$(".frequency[time='1']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='2']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='3']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='5']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='10']").addClass("active").attr("dis","0");
+			$(".frequency[time='15']").attr("dis","0");
+			$(".frequency[time='30']").attr("dis","0");
+			$(".frequency[time='60']").attr("dis","0");
+		}else{
+			$(".frequency[time='1']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='2']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='3']").addClass("disabled").attr("dis","1");
+			$(".frequency[time='5']").addClass("active").attr("dis","0");
+			$(".frequency[time='10']").attr("dis","0");
+			$(".frequency[time='15']").attr("dis","0");
+			$(".frequency[time='30']").attr("dis","0");
+			$(".frequency[time='60']").attr("dis","0");
+		}
+	}
+
+}
 
 midinfo();

@@ -6,7 +6,7 @@
 		</div>
 		<div class="col-sm-5" style="height: 500px;">
 			<foreach name="mps" item="vo" >
-			<input type="checkbox" name="cmpoint" value="{$vo.id}" mname="{$vo.title}" <if condition="($vo.isdefault eq 1)">checked=""</if>>{$vo.title}<br/>
+			<input type="checkbox" name="cmpoint" value="{$vo.id}" pointtype="{$vo.point_type}" mname="{$vo.title}" <if condition="($vo.isdefault eq 1)">checked=""</if>>{$vo.title}<br/>
 			</foreach>
 		</div>
 	</div>
