@@ -592,6 +592,7 @@ class IndexController extends BaseController {
 				//echo $probe->id;
 				//echo number_format($probe->id,0,'','');
 				$data["probe_id"] = number_format($probe->probe_id,0,'','');
+				$data["id"] = $data["probe_id"];
 				$data["probe_last_heartbeat_time"] = $probe->last_heartbeat_time;
 				$data["isdefault"] = 0;				
 				$pointModel->add($data);

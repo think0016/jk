@@ -2747,6 +2747,7 @@ class TaskController extends BaseController {
 		$taskModel = D ( "jk_task" );
 		$where ["jk_task.uid"] = $uid;
 		$where ["jk_tasktype.stype"] = $stype;
+		$where ["jk_task.is_del"] = 1;
 		$num = $taskModel->join ( 'jk_tasktype ON jk_tasktype.sid = jk_task.sid' )->where ( $where )->count ();
 		
 		$key = "stype" . $stype;
