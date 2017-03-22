@@ -633,6 +633,7 @@ class TaskController extends BaseController {
 				) );
 				
 				$output = $this->curl_post ( $posturl, $postdata );
+				wlog ( "[ADDTASKPOST]-" . "<" . $taskid . ">" . $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -890,6 +891,7 @@ class TaskController extends BaseController {
 				) );
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
+				wlog ( "[ADDTASKPOST]-" . "<" . $taskid . ">" . $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -1128,6 +1130,7 @@ class TaskController extends BaseController {
 				) );
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
+				wlog ( "[ADDTASKPOST]-" . "<" . $taskid . ">" . $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -1354,6 +1357,7 @@ class TaskController extends BaseController {
 				) );
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
+				wlog ( "[ADDTASKPOST]-" . "<" . $taskid . ">" . $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -1589,6 +1593,7 @@ class TaskController extends BaseController {
 				) );
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
+				wlog ( "[ADDTASKPOST]-" . "<" . $taskid . ">" . $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
@@ -1833,6 +1838,7 @@ class TaskController extends BaseController {
 				) );
 				// echo json_encode($postdata);
 				$output = $this->curl_post ( $posturl, $postdata );
+				wlog ( "[ADDTASKPOST]-" . "<" . $taskid . ">" . $postdata );
 				wlog ( "[ADDTASK]-" . "<" . $taskid . ">" . $output );
 				
 				$temp = json_decode ( $output );
