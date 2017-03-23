@@ -1,16 +1,25 @@
 <div id="pointdiv" class="col-sm-12" style="max-height: 600px;display: none;padding: 0px 30px;">
 	<div class="divider40"></div>
 	<div class="col-sm-12">
-		<div class="col-sm-7" style="height: 500px;">
+		<div class="col-sm-7" style="">
 			<div id="mmap" style="width: 600px;height:500px;"></div>
 		</div>
-		<div class="col-sm-5" style="height: 500px;">
+		<div class="col-sm-5" style="">
+		<div class="col-sm-6">
 			<table>
 			<volist name="mps" id="vo" mod="2" >
-			<eq name="mod" value="0"><tr><td><input type="checkbox" name="cmpoint" value="{$vo.id}" pointtype="{$vo.point_type}" mname="{$vo.title}" <if condition="($vo.isdefault eq 1)">checked=""</if>>{$vo.title}&nbsp;&nbsp;</td></eq>
-			<eq name="mod" value="1"><td><input type="checkbox" name="cmpoint" value="{$vo.id}" pointtype="{$vo.point_type}" mname="{$vo.title}" <if condition="($vo.isdefault eq 1)">checked=""</if>>{$vo.title}</td></tr></eq>
+			<eq name="mod" value="0"><tr><td><input type="checkbox" name="cmpoint" value="{$vo.id}" pointtype="{$vo.point_type}" mname="{$vo.title}" <if condition="($vo.isdefault eq 1)">checked=""</if>>{$vo.title}&nbsp;&nbsp;</td></tr></eq>
 			</volist>
 			</table>
+		</div>
+		<div class="col-sm-6">
+			<table>
+			<volist name="mps" id="vo" mod="2" >
+			<eq name="mod" value="1"><tr><td><input type="checkbox" name="cmpoint" value="{$vo.id}" pointtype="{$vo.point_type}" mname="{$vo.title}" <if condition="($vo.isdefault eq 1)">checked=""</if>>{$vo.title}&nbsp;&nbsp;</td></tr></eq>
+			</volist>
+			</table>
+		</div>
+
 		</div>
 	</div>
 	<div class="col-sm-12">
